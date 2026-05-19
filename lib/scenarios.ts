@@ -178,8 +178,8 @@ export function getTrustLevelValue(level: TrustLevel): number {
 }
 
 export function getSliderTrustLevel(value: number): TrustLevel {
-  if (value < 35) return 'low'
-  if (value > 65) return 'high'
+  if (value < 35) return 'high'
+  if (value > 65) return 'low'
   return 'medium'
 }
 

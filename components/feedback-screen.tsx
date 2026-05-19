@@ -1,8 +1,7 @@
 "use client"
 
-import { Scenario, TrustLevel, getTrustLevelValue, isCorrectAssessment } from "@/lib/scenarios"
+import { Scenario, TrustLevel, isCorrectAssessment } from "@/lib/scenarios"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import { CheckCircle2, XCircle, ArrowRight, Lightbulb } from "lucide-react"
 
 interface FeedbackScreenProps {
@@ -13,30 +12,6 @@ interface FeedbackScreenProps {
 
 export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScreenProps) {
   const isCorrect = isCorrectAssessment(userTrust, scenario.recommendedTrust)
-  const userValue = getTrustLevelValue(userTrust)
-  const recommendedValue = getTrustLevelValue(scenario.recommendedTrust)
-
-  const getTrustColor = (level: TrustLevel) => {
-    switch (level) {
-      case "low":
-        return "bg-red-500"
-      case "medium":
-        return "bg-amber-500"
-      case "high":
-        return "bg-emerald-500"
-    }
-  }
-
-  const getTrustLabel = (level: TrustLevel) => {
-    switch (level) {
-      case "low":
-        return "Not trustworthy"
-      case "medium":
-        return "Unsure"
-      case "high":
-        return "Trustworthy"
-    }
-  }
 
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-center p-6 overflow-hidden">
@@ -65,50 +40,12 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
           </p>
         </div>
 
-        {/* Trust comparison */}
-        <Card className="p-4 glass-card border-border/50">
-          <h3 className="text-xs uppercase tracking-wide text-muted-foreground mb-4">
-            Trust Assessment Comparison
-          </h3>
-
-          {/* Visual comparison */}
-          <div className="space-y-4">
-            {/* User rating */}
-            <div className="space-y-1">
-              <div className="flex justify-between text-sm">
-                <span>Your Rating</span>
-                <span className="font-medium">{getTrustLabel(userTrust)}</span>
-              </div>
-              <div className="relative h-3 rounded-full bg-secondary overflow-hidden">
-                <div
-                  className={`absolute h-full rounded-full ${getTrustColor(userTrust)} transition-all duration-700`}
-                  style={{ width: `${userValue}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Recommended rating */}
-            <div className="space-y-1">
-              <div className="flex justify-between text-sm">
-                <span>Recommended</span>
-                <span className="font-medium">{getTrustLabel(scenario.recommendedTrust)}</span>
-              </div>
-              <div className="relative h-3 rounded-full bg-secondary overflow-hidden">
-                <div
-                  className={`absolute h-full rounded-full ${getTrustColor(scenario.recommendedTrust)} transition-all duration-700 delay-300`}
-                  style={{ width: `${recommendedValue}%` }}
-                />
-              </div>
-            </div>
-          </div>
-        </Card>
-
         {/* Educational takeaway */}
-        <Card className="p-4 glass-card border-accent/30 animate-slide-up" style={{ animationDelay: "0.3s" }}>
+        <div className="p-4 glass-card border border-emerald-500/30 rounded-xl animate-slide-up" style={{ animationDelay: "0.3s" }}>
           <div className="flex gap-3">
             <div className="shrink-0">
-              <div className="p-2 rounded-xl bg-accent/20">
-                <Lightbulb className="w-5 h-5 text-accent" />
+              <div className="p-2 rounded-xl bg-emerald-500/20">
+                <Lightbulb className="w-5 h-5 text-emerald-400" />
               </div>
             </div>
             <div>
@@ -118,7 +55,7 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
               </p>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* Continue button */}
         <Button
