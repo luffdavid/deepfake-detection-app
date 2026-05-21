@@ -6,13 +6,14 @@ export interface Scenario {
   description: string
   hint: string
   hintTiming: number // seconds before end when hint appears
+  videoSrc?: string
   videoPlaceholder: string
   thumbnailColor: string
   recommendedTrust: TrustLevel
   feedbackCorrect: string
   feedbackIncorrect: string
   educationalTakeaway: string
-  source: string
+  source?: string
   isVerified: boolean
   isFake: boolean
   // TikTok-style engagement metrics
@@ -25,25 +26,26 @@ export interface Scenario {
 
 export const scenarios: Scenario[] = [
   {
-    id: 'flood-munich',
-    title: 'Breaking: Massive Flood Hits Munich Central Station',
-    description: 'Something big just happened in the city center... stay safe!',
-    hint: 'It has been raining a lot recently...',
+    id: 'political-video',
+    title: 'Breaking: Olaf Scholz forbids AfD in Germany',
+    description: '',
+    hint: 'Olaf Scholz hatte kürzlich einen öffentlichen Streit mit der AfD...',
     hintTiming: 5,
-    videoPlaceholder: 'Dramatic flood footage - water rushing through train station',
+    videoSrc: '/example_video.mov',
+    videoPlaceholder: 'Dramatic political footage - Olaf Scholz speaking at a podium',
     thumbnailColor: 'from-blue-900 to-cyan-800',
     recommendedTrust: 'low',
     feedbackCorrect: 'You are absolutely right!',
     feedbackIncorrect: 'Think again.',
-    educationalTakeaway: 'Weather conditions can make fake content seem more plausible. Always verify dramatic claims with official sources before sharing.',
-    source: 'citizen_report',
+    educationalTakeaway: 'Political videos can be manipulated to spread misinformation. Always verify claims with multiple trusted sources before sharing.',
+    source: '',
     isVerified: false,
     isFake: true,
     viewerCount: '12.4K',
-    likes: '8,231',
-    comments: '1,452',
-    shares: '3,276',
-    hashtags: '#news #breaking',
+    likes: '',
+    comments: '',
+    shares: '',
+    hashtags: '',
   },
   {
     id: 'tagesschau-tiktok',
@@ -194,4 +196,26 @@ export function isCorrectAssessment(userTrust: TrustLevel, recommended: TrustLev
     return userTrust === 'high'
   }
   return userTrust === 'medium'
+}
+
+export function getTrustLevelLabel(level: TrustLevel): string {
+  switch (level) {
+    case 'high':
+      return 'Very trustworthy'
+    case 'medium':
+      return 'Not sure'
+    case 'low':
+      return 'Not trustworthy'
+  }
+}
+
+export function getTrustLevelColorClass(level: TrustLevel): string {
+  switch (level) {
+    case 'high':
+      return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+    case 'medium':
+      return 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+    case 'low':
+      return 'bg-red-500/20 text-red-400 border-red-500/40'
+  }
 }
