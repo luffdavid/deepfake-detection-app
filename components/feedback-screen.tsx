@@ -1,8 +1,46 @@
 "use client"
 
-import { Scenario, TrustLevel, isCorrectAssessment, getTrustLevelLabel, getTrustLevelColorClass, getTrustLevelValue } from "@/lib/scenarios"
+import { 
+  Scenario, 
+  TrustLevel, 
+  isCorrectAssessment, 
+  getTrustLevelLabel, 
+  getTrustLevelColorClass, 
+  getTrustLevelValue, 
+  securityChecklist, 
+} from "@/lib/scenarios"
+
 import { Button } from "@/components/ui/button"
-import { CheckCircle2, XCircle, ArrowRight, Lightbulb } from "lucide-react"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+import { 
+  CheckCircle2, 
+  XCircle, 
+  ArrowRight, 
+  Lightbulb,
+  ClipboardCheck,
+  Search,
+  BadgeCheck,
+  Newspaper,
+  Heart,
+  Brain,
+} from "lucide-react"
+
+const iconMap = {
+  search: Search,
+  "badge-check": BadgeCheck,
+  newspaper: Newspaper,
+  heart: Heart,
+  brain: Brain,
+}
 
 interface FeedbackScreenProps {
   scenario: Scenario
@@ -15,7 +53,62 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
   const recommendedSliderValue = getTrustLevelValue(scenario.recommendedTrust)
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center p-6 overflow-hidden">
+    <div className="relative min-h-screen h-screen w-screen flex flex-col items-center justify-center p-6 overflow-hidden">
+      <div className="absolute right-4 top-4 z-20 flex items-center gap-3">
+        <p className="hidden text-sm text-slate-300 sm:block">Need help?</p>
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              className="border-cyan-400/50 bg-cyan-400/10 text-cyan-100 hover:bg-cyan-400/20"
+            >
+            <ClipboardCheck className="mr-2 h-4 w-4" />
+            Open checklist
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent className="border-cyan-500/30 bg-slate-950 text-white sm:max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-2xl text-cyan-100">
+                <ClipboardCheck className="h-6 w-6" />
+                Security Checklist
+              </DialogTitle>
+
+              <DialogDescription className="text-slate-300">
+                Use this checklist when deciding whether online content is trustworthy.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="mt-4 space-y-3">
+              {securityChecklist.map((item) => {
+                const Icon = iconMap[item.icon as keyof typeof iconMap]
+
+                return (
+                  <div
+                    key={item.id}
+                    className="flex gap-4 rounded-xl border border-slate-700/70 bg-slate-900/70 p-4"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-300">
+                      <Icon className="h-5 w-5" />
+                    </div>
+
+                    <div>
+                      <h3 className="font-semibold text-slate-100">
+                        {item.title}
+                      </h3>
+                      <p className="mt-1 text-sm text-slate-300">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
       <div className="w-full max-w-2xl space-y-5 animate-scale-in">
 
         {/* User's choice badge */}
