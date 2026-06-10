@@ -9,6 +9,42 @@ import { Heart, MessageCircle, Share2, ChevronRight } from "lucide-react"
 const VIDEO_DURATION = 7   // seconds the clip "plays" before countdown
 const COUNTDOWN_DURATION = 10 // seconds of decision time
 
+function generateRandomCommentUser(): string {
+  const prefixes = [
+    "real",
+    "news",
+    "safe",
+    "watch",
+    "trust",
+    "fact",
+    "media",
+    "check",
+    "true",
+    "urban",
+    "daily",
+    "voice",
+  ]
+  const suffixes = [
+    "fox",
+    "pilot",
+    "viewer",
+    "radar",
+    "scope",
+    "nexus",
+    "spark",
+    "byte",
+    "echo",
+    "atlas",
+    "lane",
+    "focus",
+  ]
+
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)]
+  const suffix = suffixes[Math.floor(Math.random() * suffixes.length)]
+  const number = Math.floor(Math.random() * 900 + 100)
+  return `${prefix}_${suffix}${number}`
+}
+
 interface VideoExperienceProps {
   scenario: Scenario
   currentIndex: number
@@ -27,6 +63,7 @@ export function VideoExperience({
   const [videoProgress, setVideoProgress] = useState(0)
   const [countdown, setCountdown] = useState(COUNTDOWN_DURATION)
   const [showHint, setShowHint] = useState(false)
+  const [commentUser, setCommentUser] = useState(generateRandomCommentUser)
   const submittedRef = useRef(false)
   const hasEngagement = Boolean(scenario.likes || scenario.comments || scenario.shares)
 
@@ -78,6 +115,7 @@ export function VideoExperience({
     setVideoProgress(0)
     setCountdown(COUNTDOWN_DURATION)
     setShowHint(false)
+    setCommentUser(generateRandomCommentUser())
     submittedRef.current = false
   }, [scenario.id])
 
@@ -156,7 +194,9 @@ export function VideoExperience({
                 <div className="absolute right-3 bottom-32 flex flex-col items-center gap-4 z-10">
                   {/* Profile */}
                   <div className="relative">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 border-2 border-white" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white/95 bg-zinc-700 text-sm font-bold text-white shadow-[0_2px_10px_rgba(0,0,0,0.45)]">
+                      US
+                    </div>
                     <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
                       <span className="text-white text-xs">+</span>
                     </div>
@@ -201,14 +241,23 @@ export function VideoExperience({
                 <span className="text-xl">😊</span>
               </div>
 
-              {/* Hint overlay – inside phone, last 5 seconds */}
+              {/* Comment-like hint overlay – tiny transparent comment section */}
               {showHint && (
-                <div className="absolute bottom-12 left-2 right-2 z-30 animate-hint-reveal">
-                  <div className="bg-amber-400 rounded-xl px-3 py-2 shadow-xl">
-                    <p className="text-[10px] font-bold text-black uppercase tracking-wide mb-0.5">HINT</p>
-                    <p className="text-xs text-black leading-snug">"{scenario.hint}"</p>
+                <div className="absolute bottom-12 left-2 right-12 z-30 animate-live-comment">
+                  <div className="rounded-xl border border-white/30 bg-black/62 px-2.5 py-2 shadow-xl backdrop-blur-md">
+                    <p className="mb-1 text-[10px] font-medium uppercase tracking-wide text-white/75">Kommentare</p>
+                    <div className="flex items-start gap-2">
+                      <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-white/45 bg-gradient-to-br from-zinc-300 to-zinc-500 text-[9px] font-bold text-zinc-900">
+                        UB
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[11px] leading-none text-white/80">
+                          <span className="font-semibold text-white/95">{commentUser}</span> • gerade eben
+                        </p>
+                        <p className="mt-1 text-xs leading-snug text-white/95">{scenario.hint}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="ml-4 w-3 h-3 bg-amber-400 rotate-45 -mt-1.5" />
                 </div>
               )}
             </div>

@@ -171,6 +171,24 @@
   }
 }
 
+@keyframes live-comment-in {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+    filter: blur(1px);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.005);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
 @keyframes slide-up {
   from {
     opacity: 0;
@@ -212,6 +230,10 @@
 
 .animate-hint-reveal {
   animation: hint-reveal 0.5s ease-out forwards;
+}
+
+.animate-live-comment {
+  animation: live-comment-in 0.42s cubic-bezier(0.2, 0.75, 0.2, 1) forwards;
 }
 
 .animate-slide-up {
