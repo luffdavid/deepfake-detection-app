@@ -248,6 +248,32 @@
   animation: scale-in 0.4s ease-out forwards;
 }
 
+@keyframes spin-disc {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-disc {
+  animation: spin-disc 5s linear infinite;
+}
+
+@keyframes comments-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-comments-up {
+  animation: comments-up 0.25s ease-out forwards;
+}
+
 /* Trust slider gradient background */
 .trust-gradient {
   background: linear-gradient(to right, 
