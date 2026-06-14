@@ -30,7 +30,7 @@ export const scenarios: Scenario[] = [
     id: 'political-video',
     title: 'Hantavirus löst Alarm aus in München',
     description: 'Breaking: Tödlicher Hantavirus-Ausbruch in München! Behörden warnen vor hoher Sterblichkeitsrate.',
-    hint: 'Can you verify this claim through official sources...?',
+    hint: 'This looks like an official news update...',
     hintTiming: 5,
     videoSrc: '/Videos/Hantavirus.mp4',
     videoPlaceholder: 'Dramatic political footage - Olaf Scholz speaking at a podium',
@@ -53,7 +53,7 @@ export const scenarios: Scenario[] = [
     id: 'tagesschau-tiktok',
     title: 'How I turned €500 into €50,000',
     description: 'I made guaranteed profits with my secret trading strategy! DM me "PROFIT" to join my free signal group 🚀💰',
-    hint: 'Do guaranteed profits sound realistic...?',
+    hint: 'The dashboard looks impressive!! Is this real?',
     hintTiming: 5,
     videoSrc: '/Videos/trading.mp4',
     videoPlaceholder: 'Professional news broadcast style video',
@@ -76,7 +76,7 @@ export const scenarios: Scenario[] = [
     id: 'deutsche-bahn',
     title: 'Help us save lives — donate today',
     description: 'Every euro counts! Scan the QR code to support children in need. Your donation makes a difference ❤️',
-    hint: 'Can you verify the organization independently...?',
+    hint: 'This is heartbreaking... I just donated!',
     hintTiming: 5,
     videoSrc: '/Videos/charity.mp4',
     videoPlaceholder: 'Charity appeal video',
@@ -99,7 +99,7 @@ export const scenarios: Scenario[] = [
     id: 'celebrity-endorsement',
     title: 'WAKE UP! They are destroying our country',
     description: 'The mainstream media won\'t show you THIS! Share before they delete it! 🇩🇪 #Widerstand',
-    hint: 'Does the video provide any evidence...?',
+    hint: 'Where is the original source or official police statement?',
     hintTiming: 5,
     videoPlaceholder: 'Far-right political agitation video',
     thumbnailColor: 'from-amber-900 to-orange-800',
@@ -120,7 +120,7 @@ export const scenarios: Scenario[] = [
     id: 'emergency-alert',
     title: 'tagesschau: Bundestag verabschiedet neues Gesetz',
     description: 'Der Bundestag hat heute mit breiter Mehrheit das neue Gesetz beschlossen. Mehr dazu in den tagesthemen.',
-    hint: 'Look for signs of a trusted news source...',
+    hint: 'This seems trustworthy because the source is identifiable...',
     hintTiming: 5,
     videoPlaceholder: 'Official tagesschau news broadcast',
     thumbnailColor: 'from-blue-950 to-blue-900',
@@ -175,11 +175,11 @@ export const securityChecklist = [
 export function getTrustLevelValue(level: TrustLevel): number {
   switch (level) {
     case 'low':
-      return 20
+      return 80
     case 'medium':
       return 50
     case 'high':
-      return 80
+      return 20
     default:
       return 50
   }
