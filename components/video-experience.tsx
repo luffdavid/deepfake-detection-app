@@ -131,6 +131,7 @@ export function VideoExperience({
   const [countdown, setCountdown] = useState(COUNTDOWN_DURATION)
   const [showHint, setShowHint] = useState(false)
   const [commentUser, setCommentUser] = useState(generateRandomCommentUser)
+  const [hintLikes, setHintLikes] = useState(() => Math.floor(Math.random() * 50))
   const [postDate, setPostDate] = useState(generateRandomDate)
   const [comments, setComments] = useState<FakeComment[]>(generateFakeComments)
   const [liked, setLiked] = useState(false)
@@ -194,6 +195,7 @@ export function VideoExperience({
     setCountdown(COUNTDOWN_DURATION)
     setShowHint(false)
     setCommentUser(generateRandomCommentUser())
+    setHintLikes(Math.floor(Math.random() * 50))
     setPostDate(generateRandomDate())
     setComments(generateFakeComments())
     setLiked(false)
@@ -373,6 +375,26 @@ export function VideoExperience({
                 <AtSign className="h-4 w-4 text-white/60" />
               </button>
 
+              {/* Auto hint comment overlay */}
+              {showHint && !showComments && (
+                <div className="absolute bottom-12 left-2 right-12 z-30 animate-live-comment">
+                  <div className="rounded-xl border border-white/30 bg-black/62 px-2.5 py-2 shadow-xl backdrop-blur-md">
+                    <p className="mb-1 text-[10px] font-medium uppercase tracking-wide text-white/75">Kommentare</p>
+                    <div className="flex items-start gap-2">
+                      <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-white/45 bg-gradient-to-br from-zinc-300 to-zinc-500 text-[9px] font-bold text-zinc-900">
+                        UB
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[11px] leading-none text-white/80">
+                          <span className="font-semibold text-white/95">{commentUser}</span> • gerade eben
+                        </p>
+                        <p className="mt-1 text-xs leading-snug text-white/95">{scenario.hint}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Comments panel */}
               {showComments && (
                 <div className="absolute inset-0 z-40 flex flex-col justify-end">
@@ -385,6 +407,21 @@ export function VideoExperience({
                       </button>
                     </div>
                     <div className="flex-1 space-y-4 overflow-y-auto px-4 py-3">
+                      <div className="flex items-start gap-2.5">
+                        <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-zinc-300 to-zinc-500 text-[10px] font-bold text-zinc-900">
+                          UB
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[11px] text-white/60">
+                            <span className="font-semibold text-white/90">{commentUser}</span> · gerade eben
+                          </p>
+                          <p className="mt-0.5 text-xs leading-snug text-white/95">{scenario.hint}</p>
+                        </div>
+                        <div className="flex flex-col items-center pt-0.5">
+                          <Heart className="h-3.5 w-3.5 text-white/50" />
+                          <span className="text-[10px] text-white/50">{hintLikes}</span>
+                        </div>
+                      </div>
                       {comments.map((c, i) => (
                         <div key={i} className="flex items-start gap-2.5">
                           <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${c.user === "you" ? "bg-emerald-600" : "bg-zinc-700"}`}>
