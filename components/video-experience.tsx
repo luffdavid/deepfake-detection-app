@@ -140,6 +140,8 @@ export function VideoExperience({
   const [showComments, setShowComments] = useState(false)
   const [commentInput, setCommentInput] = useState("")
   const submittedRef = useRef(false)
+  const sliderRef = useRef(50) // immer aktueller Slider-Wert
+
   const videoRef = useRef<HTMLVideoElement>(null)
 
   const accountName = scenario.source
@@ -174,7 +176,7 @@ export function VideoExperience({
           clearInterval(interval)
           if (!submittedRef.current) {
             submittedRef.current = true
-            const trustLevel = getSliderTrustLevel(sliderValue[0])
+            const trustLevel = getSliderTrustLevel(sliderRef.current)
             onSubmit(trustLevel)
           }
           return 0
@@ -209,7 +211,7 @@ export function VideoExperience({
   const handleSubmit = useCallback(() => {
     if (submittedRef.current) return
     submittedRef.current = true
-    const trustLevel = getSliderTrustLevel(sliderValue[0])
+    const trustLevel = getSliderTrustLevel(sliderRef.current)
     onSubmit(trustLevel)
   }, [sliderValue, onSubmit])
 
@@ -485,7 +487,7 @@ export function VideoExperience({
             <div className="absolute inset-x-2 h-2 rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-red-500 top-1/2 -translate-y-1/2" />
             <Slider
               value={sliderValue}
-              onValueChange={setSliderValue}
+              onValueChange={(v) => { setSliderValue(v); sliderRef.current = v[0] }}
               max={100}
               step={1}
               className="relative trust-slider"
