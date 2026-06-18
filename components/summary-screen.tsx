@@ -95,7 +95,7 @@ export function SummaryScreen({
   const percentage = totalScenarios > 0 ? Math.round((correctCount / totalScenarios) * 100) : 0
 
   return (
-    <div className="min-h-screen w-full overflow-y-auto">
+    <div className="h-screen w-full overflow-y-auto">
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-6 py-12">
         {/* 1 — Score + per-scenario result icons */}
         <header className="flex flex-col items-center text-center">
