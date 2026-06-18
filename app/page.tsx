@@ -4,10 +4,10 @@ import { useState, useCallback } from "react"
 import { IntroScreen } from "@/components/intro-screen"
 import { VideoExperience } from "@/components/video-experience"
 import { FeedbackScreen } from "@/components/feedback-screen"
-import { ChecklistScreen } from "@/components/checklist-screen"
+import { SummaryScreen } from "@/components/summary-screen"
 import { scenarios, TrustLevel, isCorrectAssessment } from "@/lib/scenarios"
 
-type Screen = "intro" | "video" | "feedback" | "checklist"
+type Screen = "intro" | "video" | "feedback" | "summary"
 
 interface UserResult {
   scenarioId: string
@@ -56,7 +56,7 @@ export default function TrustCheckApp() {
       setCurrentScreen("video")
     } else {
       // All scenarios complete
-      setCurrentScreen("checklist")
+      setCurrentScreen("summary")
     }
   }, [currentScenarioIndex])
 
@@ -112,11 +112,13 @@ export default function TrustCheckApp() {
 
       <div
         className={`transition-opacity duration-500 ${
-          currentScreen === "checklist" ? "opacity-100" : "opacity-0 absolute inset-0 pointer-events-none"
+          currentScreen === "summary" ? "opacity-100" : "opacity-0 absolute inset-0 pointer-events-none"
         }`}
       >
-        {currentScreen === "checklist" && (
-          <ChecklistScreen
+        {currentScreen === "summary" && (
+          <SummaryScreen
+            scenarios={scenarios}
+            results={results}
             correctCount={correctCount}
             totalScenarios={scenarios.length}
             onRestart={handleRestart}
