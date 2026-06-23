@@ -20,7 +20,7 @@ import {
 } from "lucide-react"
 
 const VIDEO_DURATION = 0   // seconds before the interaction controls appear
-const COUNTDOWN_DURATION = 10 // seconds of decision time
+const HINT_DELAY = 10
 
 function generateRandomCommentUser(): string {
   const prefixes = [
@@ -128,7 +128,6 @@ export function VideoExperience({
   const [sliderValue, setSliderValue] = useState([50])
   const [phase, setPhase] = useState<"video" | "interaction">("video")
   const [videoProgress, setVideoProgress] = useState(0)
-  const [countdown, setCountdown] = useState(COUNTDOWN_DURATION)
   const [showHint, setShowHint] = useState(false)
   const [commentUser, setCommentUser] = useState(generateRandomCommentUser)
   const [hintLikes, setHintLikes] = useState(() => Math.floor(Math.random() * 50))
@@ -167,26 +166,13 @@ export function VideoExperience({
     return () => clearTimeout(timeout)
   }, [phase])
 
-  // Phase 2: countdown
+  // Show hint after a short delay, but do not auto-submit
   useEffect(() => {
     if (phase !== "interaction") return
-    const interval = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval)
-          if (!submittedRef.current) {
-            submittedRef.current = true
-            const trustLevel = getSliderTrustLevel(sliderRef.current)
-            onSubmit(trustLevel)
-          }
-          return 0
-        }
-        if (prev <= 6) setShowHint(true)
-        return prev - 1
-      })
-    }, 1000)
-    return () => clearInterval(interval)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const timeout = setTimeout(() => {
+      setShowHint(true)
+    }, HINT_DELAY * 1000)
+    return () => clearTimeout(timeout)
   }, [phase])
 
   // Reset on scenario change
@@ -194,7 +180,6 @@ export function VideoExperience({
     setSliderValue([50])
     setPhase("video")
     setVideoProgress(0)
-    setCountdown(COUNTDOWN_DURATION)
     setShowHint(false)
     setCommentUser(generateRandomCommentUser())
     setHintLikes(Math.floor(Math.random() * 50))
@@ -224,11 +209,6 @@ export function VideoExperience({
     ])
     setCommentInput("")
   }, [commentInput])
-
-  // Circular timer geometry
-  const circumference = 2 * Math.PI * 40
-  const timerProgress = (countdown / COUNTDOWN_DURATION) * 100
-  const strokeDashoffset = circumference - (timerProgress / 100) * circumference
 
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-between p-4 overflow-hidden">
@@ -501,27 +481,8 @@ export function VideoExperience({
             <span className="text-red-500 font-medium">Not trustworthy</span>
           </div>
 
-          {/* Timer and Submit button */}
-          <div className="flex items-center justify-between pt-1">
-            <div className="flex items-center gap-2.5">
-              <div className="relative w-12 h-12">
-                <svg className="w-12 h-12 -rotate-90" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="5" className="text-zinc-800" />
-                  <circle
-                    cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="5"
-                    strokeLinecap="round"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={strokeDashoffset}
-                    className={`transition-all duration-1000 ${countdown <= 5 ? "text-red-500" : "text-emerald-500"}`}
-                  />
-                </svg>
-                <span className="absolute inset-0 flex items-center justify-center text-base font-bold">
-                  {countdown}
-                </span>
-              </div>
-              <span className="text-xs text-muted-foreground">seconds</span>
-            </div>
-
+          {/* Submit button */}
+          <div className="flex justify-end pt-1 w-full">
             <Button
               onClick={handleSubmit}
               size="lg"
