@@ -32,8 +32,8 @@ export interface Scenario {
 export const scenarios: Scenario[] = [
   {
     id: 'political-video',
-    title: 'Hantavirus löst Alarm aus in München',
-    description: 'Breaking: Tödlicher Hantavirus-Ausbruch in München! Behörden warnen vor hoher Sterblichkeitsrate.',
+    title: 'Hantavirus outbreak in Munich',
+    description: 'Breaking: Deadly Hantavirus outbreak in Munich! Authorities warn of high mortality rate.',
     hint: 'This looks like an official news update...',
     hintTiming: 5,
     videoSrc: '/Videos/Hantavirus.mp4',
@@ -77,7 +77,7 @@ export const scenarios: Scenario[] = [
     feedbackIncorrect: 'Think again.',
     educationalTakeaway: 'If a stranger on TikTok is showing you their Gains and offering you guaranteed profits, they are selling the dream, not the result. Legitimate investments always carry risk and are regulated. Never hand over money or personal data based on a social media video.',
     whyConvincing:
-      'Polished dashboards, screenshots of "profits", and a wall of supportive comments manufacture social proof. The promise of guaranteed returns is engineered to override caution.',
+      'Polished dashboards, screenshots of "profits", and a supportive comment manufacture social proof. The promise of guaranteed returns is engineered to override caution.',
     cues: [
       '"Guaranteed profit" promise',
       'Pressure to DM a keyword',
@@ -97,8 +97,8 @@ export const scenarios: Scenario[] = [
   {
     id: 'deutsche-bahn',
     title: 'Help us save lives — donate today',
-    description: 'Every euro counts! Scan the QR code to support children in need. Your donation makes a difference ❤️',
-    hint: 'This is heartbreaking... I just donated!',
+    description: 'Every second counts! Scan the QR code to support children',
+    hint: 'This is heartbreaking...I just donated via the QR code!',
     hintTiming: 5,
     videoSrc: '/Videos/charity.mp4',
     videoPlaceholder: 'Charity appeal video',
@@ -112,7 +112,7 @@ export const scenarios: Scenario[] = [
       'Distressing images of suffering are designed to bypass scrutiny through empathy. A ready-to-scan QR code makes giving feel immediate, easy and safe.',
     cues: [
       'Strong emotional pressure',
-      'QR-code payment shortcut',
+      'QR-code payment',
       'No verifiable organisation details',
       '"Every second counts" urgency',
     ],
@@ -128,7 +128,7 @@ export const scenarios: Scenario[] = [
   },
   {
     id: 'celebrity-endorsement',
-    title: 'WAKE UP! They are destroying our country',
+    title: 'Following',
     description: 'The mainstream media won\'t show you THIS! Share before they delete it! 🇩🇪 #Widerstand',
     hint: 'Where is the original source or official police statement?',
     hintTiming: 5,
@@ -139,14 +139,14 @@ export const scenarios: Scenario[] = [
     feedbackIncorrect: 'Think again.',
     educationalTakeaway: 'Anger and outrage are the most viral emotions — and the most exploited by disinformation. Before sharing politically charged content, ask: Who made this? What evidence is cited? What is left out? Does this confirm what I already believe?',
     whyConvincing:
-      'Outrage is the most shareable emotion, and "they don\u2019t want you to see this" framing rewards spreading it fast. It confirms what people already believe, which quietly lowers their guard.',
+      ' Following',
     cues: [
-      'Outrage and "us vs them" framing',
-      'No original or official source',
-      '"Share before it\u2019s deleted" urgency',
-      'Appeals to identity and belief',
+      'Following1',
+      'Following2',
+      'Following3',
+      'Following4',
     ],
-    realWorldAction: 'Before sharing political content, find the original source and check whether established outlets report the same facts.',
+    realWorldAction: 'Following',
     source: 'patriot_news_de',
     isVerified: false,
     isFake: true,
