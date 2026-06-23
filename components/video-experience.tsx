@@ -19,7 +19,7 @@ import {
   User,
 } from "lucide-react"
 
-const VIDEO_DURATION = 7   // seconds before the interaction controls appear
+const VIDEO_DURATION = 0   // seconds before the interaction controls appear
 const COUNTDOWN_DURATION = 10 // seconds of decision time
 
 function generateRandomCommentUser(): string {
