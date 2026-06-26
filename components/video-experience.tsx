@@ -17,6 +17,7 @@ import {
   Smile,
   X,
   User,
+  Play,
 } from "lucide-react"
 
 const VIDEO_DURATION = 0   // seconds before the interaction controls appear
@@ -138,6 +139,8 @@ export function VideoExperience({
   const [following, setFollowing] = useState(false)
   const [showComments, setShowComments] = useState(false)
   const [commentInput, setCommentInput] = useState("")
+  const [isVideoEnded, setIsVideoEnded] = useState(false)
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true)
   const submittedRef = useRef(false)
   const sliderRef = useRef(50) // immer aktueller Slider-Wert
 
@@ -190,6 +193,8 @@ export function VideoExperience({
     setFollowing(false)
     setShowComments(false)
     setCommentInput("")
+    setIsVideoEnded(false)
+    setIsVideoPlaying(true)
     submittedRef.current = false
   }, [scenario.id])
 
@@ -209,6 +214,20 @@ export function VideoExperience({
     ])
     setCommentInput("")
   }, [commentInput])
+
+  const handleVideoClick = useCallback(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    if (video.paused) {
+      setIsVideoEnded(false) // hide overlay before/while replaying
+      video.play()
+      setIsVideoPlaying(true)
+    } else {
+      video.pause()
+      setIsVideoPlaying(false)
+    }
+  }, [])
 
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-between p-4 overflow-hidden">
@@ -240,10 +259,26 @@ export function VideoExperience({
                   autoPlay
                   muted
                   playsInline
-                  loop
                   preload="metadata"
                   onTimeUpdate={handleTimeUpdate}
+                  onClick={handleVideoClick}
+                  onEnded={() => {
+                    setIsVideoEnded(true)
+                    setIsVideoPlaying(false)
+                  }}
                 />
+              )}
+              {isVideoEnded && !isVideoPlaying && (
+                <button
+                  type="button"
+                  onClick={handleVideoClick}
+                  className="absolute inset-0 z-20 flex items-center justify-center bg-black/40"
+                  aria-label="Replay video"
+                >
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/90 text-black shadow-lg">
+                    <Play className="h-10 w-10 ml-1" />
+                  </div>
+                </button>
               )}
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
 
