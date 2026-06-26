@@ -247,12 +247,9 @@ export function VideoExperience({
       <div className="flex-1 flex items-center justify-center py-3 min-h-0 w-full">
         <div className="relative h-full flex items-center justify-center">
           {/* Phone frame */}
-          <div 
-            className="relative h-full max-h-[760px] aspect-[9/16] max-w-full bg-zinc-900 rounded-[2rem] border-[3px] border-zinc-700 shadow-2xl overflow-hidden"
-            onClick={handleVideoClick}
-          >
+          <div className="relative h-full max-h-[760px] aspect-[9/16] max-w-full bg-zinc-900 rounded-[2rem] border-[3px] border-zinc-700 shadow-2xl overflow-hidden">
             {/* Video content area */}
-            <div className={`absolute inset-0 ${scenario.videoSrc ? "bg-black" : `bg-gradient-to-br ${scenario.thumbnailColor}`}`}>
+            <div className={`absolute inset-0 ${scenario.videoSrc ? "bg-black" : `bg-gradient-to-br ${scenario.thumbnailColor}`}`} onClick={handleVideoClick}>
               {scenario.videoSrc && (
                 <video
                   ref={videoRef}
@@ -264,7 +261,6 @@ export function VideoExperience({
                   playsInline
                   preload="metadata"
                   onTimeUpdate={handleTimeUpdate}
-                  onClick={handleVideoClick}
                   onEnded={() => {
                     setIsVideoEnded(true)
                     setIsVideoPlaying(false)
@@ -304,7 +300,11 @@ export function VideoExperience({
                   </div>
                   {!following && (
                     <button
-                      onClick={() => setFollowing(true)}
+                      onClick={(e) => {
+                          e.stopPropagation()
+                          setFollowing(true)
+                        }
+                      }
                       className="absolute -bottom-1.5 left-1/2 flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full bg-red-500 text-white"
                       aria-label="Folgen"
                     >
@@ -314,7 +314,11 @@ export function VideoExperience({
                 </div>
 
                 <button
-                  onClick={() => setLiked((v) => !v)}
+                  onClick={(e) => {
+                      e.stopPropagation()
+                      setLiked((v) => !v)
+                    }
+                  }
                   className="flex flex-col items-center transition-transform active:scale-90"
                   aria-label="Gefällt mir"
                 >
@@ -323,7 +327,11 @@ export function VideoExperience({
                 </button>
 
                 <button
-                  onClick={() => setShowComments(true)}
+                  onClick={(e) => {
+                      e.stopPropagation()
+                      setShowComments(true)
+                    }
+                  }
                   className="flex flex-col items-center transition-transform active:scale-90"
                   aria-label="Kommentare"
                 >
@@ -332,7 +340,11 @@ export function VideoExperience({
                 </button>
 
                 <button
-                  onClick={() => setSaved((v) => !v)}
+                  onClick={(e) => {
+                      e.stopPropagation()
+                      setSaved((v) => !v)
+                    }
+                  }
                   className="flex flex-col items-center transition-transform active:scale-90"
                   aria-label="Speichern"
                 >
@@ -385,7 +397,11 @@ export function VideoExperience({
 
               {/* Comment input bar */}
               <button
-                onClick={() => setShowComments(true)}
+                onClick={(e) => {
+                    e.stopPropagation()
+                    setShowComments(true)
+                  }
+                }
                 className="absolute bottom-0 left-0 right-0 z-10 flex h-10 items-center gap-2 border-t border-white/10 bg-black/70 px-3"
               >
                 <span className="flex-1 text-left text-xs text-white/50">Kommentar hinzufügen ...</span>
@@ -417,11 +433,21 @@ export function VideoExperience({
               {/* Comments panel */}
               {showComments && (
                 <div className="absolute inset-0 z-40 flex flex-col justify-end">
-                  <div className="absolute inset-0 bg-black/40" onClick={() => setShowComments(false)} />
+                  <div className="absolute inset-0 bg-black/40" 
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        setShowComments(false)
+                      }
+                    } />
                   <div className="animate-comments-up relative flex max-h-[72%] flex-col rounded-t-2xl bg-zinc-900">
                     <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
                       <span className="text-sm font-semibold text-white">{formatCount(commentCount)} Kommentare</span>
-                      <button onClick={() => setShowComments(false)} aria-label="Schließen">
+                      <button onClick={(e) => { 
+                            e.stopPropagation()
+                            setShowComments(false)
+                          } 
+                        }
+                        aria-label="Schließen">
                         <X className="h-5 w-5 text-white/70" />
                       </button>
                     </div>
