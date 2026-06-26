@@ -247,7 +247,10 @@ export function VideoExperience({
       <div className="flex-1 flex items-center justify-center py-3 min-h-0 w-full">
         <div className="relative h-full flex items-center justify-center">
           {/* Phone frame */}
-          <div className="relative h-full max-h-[760px] aspect-[9/16] max-w-full bg-zinc-900 rounded-[2rem] border-[3px] border-zinc-700 shadow-2xl overflow-hidden">
+          <div 
+            className="relative h-full max-h-[760px] aspect-[9/16] max-w-full bg-zinc-900 rounded-[2rem] border-[3px] border-zinc-700 shadow-2xl overflow-hidden"
+            onClick={handleVideoClick}
+          >
             {/* Video content area */}
             <div className={`absolute inset-0 ${scenario.videoSrc ? "bg-black" : `bg-gradient-to-br ${scenario.thumbnailColor}`}`}>
               {scenario.videoSrc && (
@@ -268,10 +271,9 @@ export function VideoExperience({
                   }}
                 />
               )}
-              {isVideoEnded && !isVideoPlaying && (
+              {!isVideoPlaying && (
                 <button
                   type="button"
-                  onClick={handleVideoClick}
                   className="absolute inset-0 z-20 flex items-center justify-center bg-black/40"
                   aria-label="Replay video"
                 >
