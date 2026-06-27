@@ -17,10 +17,11 @@ import {
   Smile,
   X,
   User,
+  Play,
 } from "lucide-react"
 
-const VIDEO_DURATION = 7   // seconds before the interaction controls appear
-const COUNTDOWN_DURATION = 10 // seconds of decision time
+const VIDEO_DURATION = 0   // seconds before the interaction controls appear
+const HINT_DELAY = 10
 
 function generateRandomCommentUser(): string {
   const prefixes = [
@@ -128,7 +129,6 @@ export function VideoExperience({
   const [sliderValue, setSliderValue] = useState([50])
   const [phase, setPhase] = useState<"video" | "interaction">("video")
   const [videoProgress, setVideoProgress] = useState(0)
-  const [countdown, setCountdown] = useState(COUNTDOWN_DURATION)
   const [showHint, setShowHint] = useState(false)
   const [commentUser, setCommentUser] = useState(generateRandomCommentUser)
   const [hintLikes, setHintLikes] = useState(() => Math.floor(Math.random() * 50))
@@ -139,6 +139,8 @@ export function VideoExperience({
   const [following, setFollowing] = useState(false)
   const [showComments, setShowComments] = useState(false)
   const [commentInput, setCommentInput] = useState("")
+  const [isVideoEnded, setIsVideoEnded] = useState(false)
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true)
   const submittedRef = useRef(false)
   const sliderRef = useRef(50) // immer aktueller Slider-Wert
 
@@ -167,26 +169,13 @@ export function VideoExperience({
     return () => clearTimeout(timeout)
   }, [phase])
 
-  // Phase 2: countdown
+  // Show hint after a short delay, but do not auto-submit
   useEffect(() => {
     if (phase !== "interaction") return
-    const interval = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval)
-          if (!submittedRef.current) {
-            submittedRef.current = true
-            const trustLevel = getSliderTrustLevel(sliderRef.current)
-            onSubmit(trustLevel)
-          }
-          return 0
-        }
-        if (prev <= 6) setShowHint(true)
-        return prev - 1
-      })
-    }, 1000)
-    return () => clearInterval(interval)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const timeout = setTimeout(() => {
+      setShowHint(true)
+    }, HINT_DELAY * 1000)
+    return () => clearTimeout(timeout)
   }, [phase])
 
   // Reset on scenario change
@@ -194,7 +183,6 @@ export function VideoExperience({
     setSliderValue([50])
     setPhase("video")
     setVideoProgress(0)
-    setCountdown(COUNTDOWN_DURATION)
     setShowHint(false)
     setCommentUser(generateRandomCommentUser())
     setHintLikes(Math.floor(Math.random() * 50))
@@ -205,6 +193,8 @@ export function VideoExperience({
     setFollowing(false)
     setShowComments(false)
     setCommentInput("")
+    setIsVideoEnded(false)
+    setIsVideoPlaying(true)
     submittedRef.current = false
   }, [scenario.id])
 
@@ -225,10 +215,19 @@ export function VideoExperience({
     setCommentInput("")
   }, [commentInput])
 
-  // Circular timer geometry
-  const circumference = 2 * Math.PI * 40
-  const timerProgress = (countdown / COUNTDOWN_DURATION) * 100
-  const strokeDashoffset = circumference - (timerProgress / 100) * circumference
+  const handleVideoClick = useCallback(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    if (video.paused) {
+      setIsVideoEnded(false) // hide overlay before/while replaying
+      video.play()
+      setIsVideoPlaying(true)
+    } else {
+      video.pause()
+      setIsVideoPlaying(false)
+    }
+  }, [])
 
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-between p-4 overflow-hidden">
@@ -250,7 +249,7 @@ export function VideoExperience({
           {/* Phone frame */}
           <div className="relative h-full max-h-[760px] aspect-[9/16] max-w-full bg-zinc-900 rounded-[2rem] border-[3px] border-zinc-700 shadow-2xl overflow-hidden">
             {/* Video content area */}
-            <div className={`absolute inset-0 ${scenario.videoSrc ? "bg-black" : `bg-gradient-to-br ${scenario.thumbnailColor}`}`}>
+            <div className={`absolute inset-0 ${scenario.videoSrc ? "bg-black" : `bg-gradient-to-br ${scenario.thumbnailColor}`}`} onClick={handleVideoClick}>
               {scenario.videoSrc && (
                 <video
                   ref={videoRef}
@@ -260,10 +259,24 @@ export function VideoExperience({
                   autoPlay
                   muted
                   playsInline
-                  loop
                   preload="metadata"
                   onTimeUpdate={handleTimeUpdate}
+                  onEnded={() => {
+                    setIsVideoEnded(true)
+                    setIsVideoPlaying(false)
+                  }}
                 />
+              )}
+              {!isVideoPlaying && (
+                <button
+                  type="button"
+                  className="absolute inset-0 z-20 flex items-center justify-center bg-black/40"
+                  aria-label="Replay video"
+                >
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/90 text-black shadow-lg">
+                    <Play className="h-10 w-10 ml-1" />
+                  </div>
+                </button>
               )}
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
 
@@ -287,7 +300,11 @@ export function VideoExperience({
                   </div>
                   {!following && (
                     <button
-                      onClick={() => setFollowing(true)}
+                      onClick={(e) => {
+                          e.stopPropagation()
+                          setFollowing(true)
+                        }
+                      }
                       className="absolute -bottom-1.5 left-1/2 flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full bg-red-500 text-white"
                       aria-label="Folgen"
                     >
@@ -297,7 +314,11 @@ export function VideoExperience({
                 </div>
 
                 <button
-                  onClick={() => setLiked((v) => !v)}
+                  onClick={(e) => {
+                      e.stopPropagation()
+                      setLiked((v) => !v)
+                    }
+                  }
                   className="flex flex-col items-center transition-transform active:scale-90"
                   aria-label="Gefällt mir"
                 >
@@ -306,7 +327,11 @@ export function VideoExperience({
                 </button>
 
                 <button
-                  onClick={() => setShowComments(true)}
+                  onClick={(e) => {
+                      e.stopPropagation()
+                      setShowComments(true)
+                    }
+                  }
                   className="flex flex-col items-center transition-transform active:scale-90"
                   aria-label="Kommentare"
                 >
@@ -315,7 +340,11 @@ export function VideoExperience({
                 </button>
 
                 <button
-                  onClick={() => setSaved((v) => !v)}
+                  onClick={(e) => {
+                      e.stopPropagation()
+                      setSaved((v) => !v)
+                    }
+                  }
                   className="flex flex-col items-center transition-transform active:scale-90"
                   aria-label="Speichern"
                 >
@@ -368,7 +397,11 @@ export function VideoExperience({
 
               {/* Comment input bar */}
               <button
-                onClick={() => setShowComments(true)}
+                onClick={(e) => {
+                    e.stopPropagation()
+                    setShowComments(true)
+                  }
+                }
                 className="absolute bottom-0 left-0 right-0 z-10 flex h-10 items-center gap-2 border-t border-white/10 bg-black/70 px-3"
               >
                 <span className="flex-1 text-left text-xs text-white/50">Kommentar hinzufügen ...</span>
@@ -400,11 +433,21 @@ export function VideoExperience({
               {/* Comments panel */}
               {showComments && (
                 <div className="absolute inset-0 z-40 flex flex-col justify-end">
-                  <div className="absolute inset-0 bg-black/40" onClick={() => setShowComments(false)} />
+                  <div className="absolute inset-0 bg-black/40" 
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        setShowComments(false)
+                      }
+                    } />
                   <div className="animate-comments-up relative flex max-h-[72%] flex-col rounded-t-2xl bg-zinc-900">
                     <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
                       <span className="text-sm font-semibold text-white">{formatCount(commentCount)} Kommentare</span>
-                      <button onClick={() => setShowComments(false)} aria-label="Schließen">
+                      <button onClick={(e) => { 
+                            e.stopPropagation()
+                            setShowComments(false)
+                          } 
+                        }
+                        aria-label="Schließen">
                         <X className="h-5 w-5 text-white/70" />
                       </button>
                     </div>
@@ -501,27 +544,8 @@ export function VideoExperience({
             <span className="text-red-500 font-medium">Not trustworthy</span>
           </div>
 
-          {/* Timer and Submit button */}
-          <div className="flex items-center justify-between pt-1">
-            <div className="flex items-center gap-2.5">
-              <div className="relative w-12 h-12">
-                <svg className="w-12 h-12 -rotate-90" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="5" className="text-zinc-800" />
-                  <circle
-                    cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="5"
-                    strokeLinecap="round"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={strokeDashoffset}
-                    className={`transition-all duration-1000 ${countdown <= 5 ? "text-red-500" : "text-emerald-500"}`}
-                  />
-                </svg>
-                <span className="absolute inset-0 flex items-center justify-center text-base font-bold">
-                  {countdown}
-                </span>
-              </div>
-              <span className="text-xs text-muted-foreground">seconds</span>
-            </div>
-
+          {/* Submit button */}
+          <div className="flex justify-end pt-1 w-full">
             <Button
               onClick={handleSubmit}
               size="lg"
