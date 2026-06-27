@@ -14,6 +14,10 @@ export interface Scenario {
   feedbackCorrect: string
   feedbackIncorrect: string
   educationalTakeaway: string
+  // End-screen scenario review microcopy
+  whyConvincing: string // why this clip was hard to judge, deceptive or (for authentic clips) credible
+  cues: string[] // the signals that actually mattered in this case
+  realWorldAction: string // concrete behavioural guidance for real life
   source?: string
   isVerified: boolean
   isFake: boolean
@@ -28,8 +32,8 @@ export interface Scenario {
 export const scenarios: Scenario[] = [
   {
     id: 'political-video',
-    title: 'Hantavirus löst Alarm aus in München',
-    description: 'Breaking: Tödlicher Hantavirus-Ausbruch in München! Behörden warnen vor hoher Sterblichkeitsrate.',
+    title: 'Hantavirus outbreak in Munich',
+    description: 'Breaking: Deadly Hantavirus outbreak in Munich! Authorities warn of high mortality rate.',
     hint: 'This looks like an official news update...',
     hintTiming: 5,
     videoSrc: '/Videos/Hantavirus.mp4',
@@ -40,6 +44,15 @@ export const scenarios: Scenario[] = [
     feedbackCorrect: 'You are absolutely right!',
     feedbackIncorrect: 'Think again.',
     educationalTakeaway: 'Professional production quality and urgent tone do not make a story true. Always verify breaking health news through official sources (RKI, official health agencies) before reacting or sharing.',
+    whyConvincing:
+      'It borrows the look and authority of a real newsroom — a familiar logo, lower-thirds, and an anchor-style delivery. A deadly outbreak triggers fear, and fear makes people act and share before they verify.',
+    cues: [
+      'Mimicked public-broadcaster branding',
+      'Account was not verified',
+      'Fear and urgency framing',
+      'No link to an official health authority',
+    ],
+    realWorldAction: 'For health alerts, confirm the story with the RKI or your local health authority before reacting or forwarding it.',
     source: 'tagesschau',
     isVerified: false,
     isFake: true,
@@ -63,6 +76,15 @@ export const scenarios: Scenario[] = [
     feedbackCorrect: 'You are absolutely right!',
     feedbackIncorrect: 'Think again.',
     educationalTakeaway: 'If a stranger on TikTok is showing you their Gains and offering you guaranteed profits, they are selling the dream, not the result. Legitimate investments always carry risk and are regulated. Never hand over money or personal data based on a social media video.',
+    whyConvincing:
+      'Polished dashboards, screenshots of "profits", and a supportive comment manufacture social proof. The promise of guaranteed returns is engineered to override caution.',
+    cues: [
+      '"Guaranteed profit" promise',
+      'Pressure to DM a keyword',
+      'Anonymous, unregulated account',
+      'Screenshots that cannot be verified',
+    ],
+    realWorldAction: 'Treat any guaranteed-return offer as a scam. Check whether the provider is licensed by a financial regulator such as BaFin.',
     source: 'trading_guru',
     isVerified: false,
     isFake: true,
@@ -75,8 +97,8 @@ export const scenarios: Scenario[] = [
   {
     id: 'deutsche-bahn',
     title: 'Help us save lives — donate today',
-    description: 'Every euro counts! Scan the QR code to support children in need. Your donation makes a difference ❤️',
-    hint: 'This is heartbreaking... I just donated!',
+    description: 'Every second counts! Scan the QR code to support children',
+    hint: 'This is heartbreaking...I just donated via the QR code!',
     hintTiming: 5,
     videoSrc: '/Videos/charity.mp4',
     videoPlaceholder: 'Charity appeal video',
@@ -86,6 +108,15 @@ export const scenarios: Scenario[] = [
     feedbackCorrect: 'You are absolutely right!',
     feedbackIncorrect: 'Think again.',
     educationalTakeaway: 'Sympathy is a powerful manipulation tool. Legitimate charities always provide verifiable credentials, transparent fund usage reports, and official payment channels. Scan QR codes only from organisations you can independently confirm.',
+    whyConvincing:
+      'Distressing images of suffering are designed to bypass scrutiny through empathy. A ready-to-scan QR code makes giving feel immediate, easy and safe.',
+    cues: [
+      'Strong emotional pressure',
+      'QR-code payment',
+      'No verifiable organisation details',
+      '"Every second counts" urgency',
+    ],
+    realWorldAction: 'Donate only through a charity\u2019s official website that you reach yourself — never through a QR code or link inside a video.',
     source: 'hwb_ev',
     isVerified: false,
     isFake: true,
@@ -97,7 +128,7 @@ export const scenarios: Scenario[] = [
   },
   {
     id: 'celebrity-endorsement',
-    title: 'WAKE UP! They are destroying our country',
+    title: 'Following',
     description: 'The mainstream media won\'t show you THIS! Share before they delete it! 🇩🇪 #Widerstand',
     hint: 'Where is the original source or official police statement?',
     hintTiming: 5,
@@ -107,6 +138,15 @@ export const scenarios: Scenario[] = [
     feedbackCorrect: 'You are absolutely right!',
     feedbackIncorrect: 'Think again.',
     educationalTakeaway: 'Anger and outrage are the most viral emotions — and the most exploited by disinformation. Before sharing politically charged content, ask: Who made this? What evidence is cited? What is left out? Does this confirm what I already believe?',
+    whyConvincing:
+      ' Following',
+    cues: [
+      'Following1',
+      'Following2',
+      'Following3',
+      'Following4',
+    ],
+    realWorldAction: 'Following',
     source: 'patriot_news_de',
     isVerified: false,
     isFake: true,
@@ -128,6 +168,15 @@ export const scenarios: Scenario[] = [
     feedbackCorrect: 'You are absolutely right!',
     feedbackIncorrect: 'Think again.',
     educationalTakeaway: 'Trustworthy news content has identifiable verification signals: named sources, institutional credibility markers, a measured tone, and cross-referencing links. Recognising these signals is just as important as spotting fakes.',
+    whyConvincing:
+      'This clip carried genuine signals of trustworthiness: a named, verified institution, a measured and neutral tone, and specific claims you can independently cross-check in other established outlets.',
+    cues: [
+      'Verified, named news institution',
+      'Calm, neutral reporting tone',
+      'Specific, checkable claims',
+      'Reported consistently elsewhere',
+    ],
+    realWorldAction: 'Recognising real trust signals matters as much as spotting fakes — but still cross-check important news across more than one source.',
     source: 'tagesschau',
     isVerified: true,
     isFake: false,

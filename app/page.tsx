@@ -4,10 +4,10 @@ import { useState, useCallback } from "react"
 import { IntroScreen } from "@/components/intro-screen"
 import { VideoExperience } from "@/components/video-experience"
 import { FeedbackScreen } from "@/components/feedback-screen"
-import { ChecklistScreen } from "@/components/checklist-screen"
+import { SummaryScreen } from "@/components/summary-screen"
 import { scenarios, TrustLevel, isCorrectAssessment } from "@/lib/scenarios"
 
-type Screen = "intro" | "video" | "feedback" | "checklist"
+type Screen = "intro" | "video" | "feedback" | "summary"
 
 interface UserResult {
   scenarioId: string
@@ -56,7 +56,7 @@ export default function TrustCheckApp() {
       setCurrentScreen("video")
     } else {
       // All scenarios complete
-      setCurrentScreen("checklist")
+      setCurrentScreen("summary")
     }
   }, [currentScenarioIndex])
 
@@ -67,10 +67,32 @@ export default function TrustCheckApp() {
     setCurrentUserTrust("medium")
   }, [])
 
+  // Dev shortcut: jump straight to the end screen with sample results
+  const handleSkipToSummary = useCallback(() => {
+    setResults(
+      scenarios.map((s, i) => ({
+        scenarioId: s.id,
+        userTrust: s.recommendedTrust,
+        isCorrect: i !== 1,
+      })),
+    )
+    setCurrentScreen("summary")
+  }, [])
+
   const correctCount = results.filter((r) => r.isCorrect).length
 
   return (
     <main className="min-h-screen bg-background">
+      {/* Dev shortcut to preview the end screen directly */}
+      {currentScreen !== "summary" && (
+        <button
+          onClick={handleSkipToSummary}
+          className="fixed bottom-4 right-4 z-50 rounded-full border border-border bg-card/80 px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur transition-colors hover:bg-card hover:text-foreground"
+        >
+          Skip to results
+        </button>
+      )}
+
       {/* Screen transitions */}
       <div
         className={`transition-opacity duration-500 ${
@@ -112,11 +134,13 @@ export default function TrustCheckApp() {
 
       <div
         className={`transition-opacity duration-500 ${
-          currentScreen === "checklist" ? "opacity-100" : "opacity-0 absolute inset-0 pointer-events-none"
+          currentScreen === "summary" ? "opacity-100" : "opacity-0 absolute inset-0 pointer-events-none"
         }`}
       >
-        {currentScreen === "checklist" && (
-          <ChecklistScreen
+        {currentScreen === "summary" && (
+          <SummaryScreen
+            scenarios={scenarios}
+            results={results}
             correctCount={correctCount}
             totalScenarios={scenarios.length}
             onRestart={handleRestart}
