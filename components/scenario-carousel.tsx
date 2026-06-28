@@ -9,7 +9,7 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel"
-import { ScenarioInsightCard } from "./scenario-insight-card"
+import { ScenarioReviewSlide } from "./scenario-review-slide"
 import type { ScenarioReview } from "@/types/scenario"
 
 interface ScenarioCarouselProps {
@@ -55,7 +55,13 @@ export function ScenarioCarousel({ scenarios, activeIndex, onIndexChange }: Scen
         <CarouselContent>
           {scenarios.map((scenario, index) => (
             <CarouselItem key={scenario.id}>
-              <ScenarioInsightCard scenario={scenario} index={index} total={scenarios.length} />
+              <ScenarioReviewSlide
+                scenario={scenario}
+                index={index}
+                total={scenarios.length}
+                userTrust={scenario.userTrust}
+                isCorrect={scenario.isCorrect}
+              />
             </CarouselItem>
           ))}
         </CarouselContent>
