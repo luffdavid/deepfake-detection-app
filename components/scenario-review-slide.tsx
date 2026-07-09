@@ -63,7 +63,7 @@ export function ScenarioReviewSlide({
             {authentic ? "Authentic" : "Manipulated"}
           </span>
 
-          {userTrust && (
+          {userTrust ? (
             <span
               className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs ${
                 isCorrect
@@ -73,6 +73,11 @@ export function ScenarioReviewSlide({
             >
               {isCorrect ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
               You rated it &ldquo;{getTrustLevelLabel(userTrust)}&rdquo;
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs text-red-400">
+              <X className="h-3.5 w-3.5" />
+              You did not rate this clip
             </span>
           )}
         </div>

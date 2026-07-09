@@ -109,13 +109,6 @@ export default function TrustCheckApp() {
 
   // Dev shortcut: jump straight to the end screen with sample results
   const handleSkipToSummary = useCallback(() => {
-    setResults(
-      scenarios.map((s, i) => ({
-        scenarioId: s.id,
-        userTrust: s.recommendedTrust,
-        isCorrect: i !== 1,
-      })),
-    )
     setCurrentScreen("summary")
   }, [])
 
@@ -124,7 +117,7 @@ export default function TrustCheckApp() {
   return (
     <main className="min-h-screen bg-background">
       {/* Dev shortcut to preview the end screen directly */}
-      {currentScreen !== "summary" && (
+      {currentScreen !== "summary" && currentScreen !== "intro" && (
         <button
           onClick={handleSkipToSummary}
           className="fixed bottom-4 right-4 z-50 rounded-full border border-border bg-card/80 px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur transition-colors hover:bg-card hover:text-foreground"
