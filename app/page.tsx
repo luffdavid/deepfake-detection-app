@@ -32,7 +32,6 @@ export default function TrustCheckApp() {
   const sessionCompletedTrackedRef = useRef(false)
 
   const currentScenario = scenarios[currentScenarioIndex]
-  const nextScenario = scenarios[currentScenarioIndex + 1]
 
   const handleStart = useCallback(() => {
     // Reset session when starting or restarting
@@ -108,6 +107,53 @@ export default function TrustCheckApp() {
     return () => window.removeEventListener('sessionTimeout', handleSessionTimeout)
   }, [handleRestart])
 
+  // Warm the browser media cache sequentially while the intro screen is visible.
+  // This avoids competing downloads during playback while still making later clips faster.
+  useEffect(() => {
+    if (currentScreen !== "intro") return
+
+    const videoSources = scenarios
+      .map((scenario) => scenario.videoSrc)
+      .filter((src): src is string => Boolean(src))
+
+    if (videoSources.length === 0) return
+
+    let cancelled = false
+    const preloadVideo = document.createElement("video")
+    preloadVideo.muted = true
+    preloadVideo.playsInline = true
+    preloadVideo.preload = "auto"
+
+    const waitForWarmup = (src: string) =>
+      new Promise<void>((resolve) => {
+        const finish = () => {
+          preloadVideo.removeEventListener("loadeddata", finish)
+          preloadVideo.removeEventListener("error", finish)
+          resolve()
+        }
+
+        preloadVideo.addEventListener("loadeddata", finish, { once: true })
+        preloadVideo.addEventListener("error", finish, { once: true })
+        preloadVideo.src = src
+        preloadVideo.load()
+      })
+
+    const warmVideos = async () => {
+      for (const src of videoSources) {
+        if (cancelled) break
+        await waitForWarmup(src)
+      }
+    }
+
+    void warmVideos()
+
+    return () => {
+      cancelled = true
+      preloadVideo.removeAttribute("src")
+      preloadVideo.load()
+    }
+  }, [currentScreen])
+
   // Dev shortcut: jump straight to the end screen with sample results
   const handleSkipToSummary = useCallback(() => {
     setCurrentScreen("summary")
@@ -145,7 +191,6 @@ export default function TrustCheckApp() {
           <VideoExperience
             key={currentScenario.id}
             scenario={currentScenario}
-            nextVideoSrc={nextScenario?.videoSrc}
             currentIndex={currentScenarioIndex}
             totalScenarios={scenarios.length}
             onSubmit={handleVideoSubmit}
