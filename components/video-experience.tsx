@@ -117,6 +117,7 @@ function formatCount(value: number): string {
 
 interface VideoExperienceProps {
   scenario: Scenario
+  nextVideoSrc?: string
   currentIndex: number
   totalScenarios: number
   onSubmit: (userTrust: TrustLevel) => void
@@ -124,6 +125,7 @@ interface VideoExperienceProps {
 
 export function VideoExperience({
   scenario,
+  nextVideoSrc,
   currentIndex,
   totalScenarios,
   onSubmit,
@@ -204,6 +206,22 @@ export function VideoExperience({
     submittedRef.current = false
   }, [scenario.id])
 
+  useEffect(() => {
+    if (!nextVideoSrc) return
+
+    const preloadVideo = document.createElement("video")
+    preloadVideo.preload = "auto"
+    preloadVideo.muted = true
+    preloadVideo.playsInline = true
+    preloadVideo.src = nextVideoSrc
+    preloadVideo.load()
+
+    return () => {
+      preloadVideo.removeAttribute("src")
+      preloadVideo.load()
+    }
+  }, [nextVideoSrc])
+
   const handleSubmit = useCallback(() => {
     if (submittedRef.current) return
     submittedRef.current = true
@@ -283,7 +301,7 @@ export function VideoExperience({
                   autoPlay
                   muted
                   playsInline
-                  preload="metadata"
+                  preload="auto"
                   onTimeUpdate={handleTimeUpdate}
                   onEnded={() => {
                     setIsVideoEnded(true)

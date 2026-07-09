@@ -32,6 +32,7 @@ export default function TrustCheckApp() {
   const sessionCompletedTrackedRef = useRef(false)
 
   const currentScenario = scenarios[currentScenarioIndex]
+  const nextScenario = scenarios[currentScenarioIndex + 1]
 
   const handleStart = useCallback(() => {
     // Reset session when starting or restarting
@@ -144,6 +145,7 @@ export default function TrustCheckApp() {
           <VideoExperience
             key={currentScenario.id}
             scenario={currentScenario}
+            nextVideoSrc={nextScenario?.videoSrc}
             currentIndex={currentScenarioIndex}
             totalScenarios={scenarios.length}
             onSubmit={handleVideoSubmit}
