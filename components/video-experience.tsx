@@ -1,9 +1,11 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-import { Scenario, getSliderTrustLevel, TrustLevel } from "@/lib/scenarios"
+import { Scenario, getSliderTrustLevel, TrustLevel, isCorrectAssessment } from "@/lib/scenarios"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
+import { useSessionTracking } from "@/hooks/use-session-tracking"
+import { useAnalytics } from "@/hooks/use-analytics"
 import {
   Heart,
   MessageCircle,
@@ -126,6 +128,10 @@ export function VideoExperience({
   totalScenarios,
   onSubmit,
 }: VideoExperienceProps) {
+  // Session tracking and analytics
+  const { getSessionId } = useSessionTracking()
+  const { trackVideoReplay, trackSliderSubmitted } = useAnalytics()
+
   const [sliderValue, setSliderValue] = useState([50])
   const [phase, setPhase] = useState<"video" | "interaction">("video")
   const [videoProgress, setVideoProgress] = useState(0)
@@ -202,8 +208,18 @@ export function VideoExperience({
     if (submittedRef.current) return
     submittedRef.current = true
     const trustLevel = getSliderTrustLevel(sliderRef.current)
+    
+    // Calculate accuracy: is the user's assessment correct?
+    const isCorrect = isCorrectAssessment(trustLevel, scenario.recommendedTrust)
+    
+    // Track slider submission with accuracy
+    const sessionId = getSessionId()
+    if (sessionId) {
+      trackSliderSubmitted(sessionId, scenario.id, String(sliderRef.current), isCorrect)
+    }
+    
     onSubmit(trustLevel)
-  }, [sliderValue, onSubmit])
+  }, [sliderValue, onSubmit, getSessionId, scenario.id, scenario.recommendedTrust, trackSliderSubmitted])
 
   const handleAddComment = useCallback(() => {
     const text = commentInput.trim()
@@ -220,6 +236,14 @@ export function VideoExperience({
     if (!video) return
 
     if (video.paused) {
+      // Track replay event if video had ended
+      if (isVideoEnded) {
+        const sessionId = getSessionId()
+        if (sessionId) {
+          trackVideoReplay(sessionId, scenario.id)
+        }
+      }
+      
       setIsVideoEnded(false) // hide overlay before/while replaying
       video.play()
       setIsVideoPlaying(true)
@@ -227,7 +251,7 @@ export function VideoExperience({
       video.pause()
       setIsVideoPlaying(false)
     }
-  }, [])
+  }, [isVideoEnded, getSessionId, scenario.id, trackVideoReplay])
 
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-between p-4 overflow-hidden">

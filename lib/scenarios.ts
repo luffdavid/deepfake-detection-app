@@ -31,7 +31,7 @@ export interface Scenario {
 
 export const scenarios: Scenario[] = [
   {
-    id: 'political-video',
+    id: 'hantavirus-video1',
     title: 'Hantavirus outbreak in Munich',
     description: 'Breaking: Deadly Hantavirus outbreak in Munich! Authorities warn of high mortality rate.',
     hint: 'This looks like an official news update...',
@@ -63,7 +63,7 @@ export const scenarios: Scenario[] = [
     hashtags: '#tagesschau #münchen #hantavirus',
   },
   {
-    id: 'tagesschau-tiktok',
+    id: 'trading-video2',
     title: 'How I turned €500 into €50,000',
     description: 'I made guaranteed profits with my secret trading strategy! DM me "PROFIT" to join my free signal group 🚀💰',
     hint: 'The dashboard looks impressive!! Is this real?',
@@ -95,7 +95,7 @@ export const scenarios: Scenario[] = [
     hashtags: '#trading #crypto #passiveincome',
   },
   {
-    id: 'deutsche-bahn',
+    id: 'donationappeal-video3',
     title: 'Help us save lives — donate today',
     description: 'Every second counts! Scan the QR code to support children',
     hint: 'This is heartbreaking...I just donated via the QR code!',
@@ -127,7 +127,7 @@ export const scenarios: Scenario[] = [
     hashtags: '#charity #donate #help',
   },
   {
-    id: 'celebrity-endorsement',
+    id: 'product-recall-video4',
     title: 'Following',
     description: 'The mainstream media won\'t show you THIS! Share before they delete it! 🇩🇪 #Widerstand',
     hint: 'Where is the original source or official police statement?',
@@ -158,7 +158,7 @@ export const scenarios: Scenario[] = [
     hashtags: '#politik #afd #deutschland',
   },
   {
-    id: 'emergency-alert',
+    id: 'tagesschau-video5',
     title: 'tagesschau: Bundestag verabschiedet neues Gesetz',
     description: 'Der Bundestag hat heute mit breiter Mehrheit das neue Gesetz beschlossen. Mehr dazu in den tagesthemen.',
     hint: 'This seems trustworthy because the source is identifiable...',

@@ -1,11 +1,13 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { IntroScreen } from "@/components/intro-screen"
 import { VideoExperience } from "@/components/video-experience"
 import { FeedbackScreen } from "@/components/feedback-screen"
 import { SummaryScreen } from "@/components/summary-screen"
 import { scenarios, TrustLevel, isCorrectAssessment } from "@/lib/scenarios"
+import { useSessionTracking } from "@/hooks/use-session-tracking"
+import { useAnalytics } from "@/hooks/use-analytics"
 
 type Screen = "intro" | "video" | "feedback" | "summary"
 
@@ -20,14 +22,24 @@ export default function TrustCheckApp() {
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0)
   const [currentUserTrust, setCurrentUserTrust] = useState<TrustLevel>("medium")
   const [results, setResults] = useState<UserResult[]>([])
+  
+  // Session tracking and analytics
+  const { sessionId, resetSessionId, getSessionId } = useSessionTracking()
+  const { trackSessionCompleted } = useAnalytics()
+  
+  // Ref to track if we've already fired session_completed for this session
+  // This prevents duplicate events from React Strict Mode or state updates
+  const sessionCompletedTrackedRef = useRef(false)
 
   const currentScenario = scenarios[currentScenarioIndex]
 
   const handleStart = useCallback(() => {
+    // Reset session when starting or restarting
+    resetSessionId()
     setCurrentScreen("video")
     setCurrentScenarioIndex(0)
     setResults([])
-  }, [])
+  }, [resetSessionId])
 
   const handleVideoSubmit = useCallback(
     (userTrust: TrustLevel) => {
@@ -61,11 +73,39 @@ export default function TrustCheckApp() {
   }, [currentScenarioIndex])
 
   const handleRestart = useCallback(() => {
+    // Reset session when restarting
+    resetSessionId()
     setCurrentScreen("intro")
     setCurrentScenarioIndex(0)
     setResults([])
     setCurrentUserTrust("medium")
-  }, [])
+  }, [resetSessionId])
+
+  // Track session completion when user reaches summary screen (only fire once)
+  useEffect(() => {
+    if (currentScreen === "summary" && sessionId) {
+      // Only track if we haven't already tracked this session completion
+      if (!sessionCompletedTrackedRef.current) {
+        console.log('🎯 Tracking session_completed for sessionId:', sessionId)
+        trackSessionCompleted(sessionId)
+        sessionCompletedTrackedRef.current = true
+      }
+    } else if (currentScreen !== "summary") {
+      // Reset tracking flag when leaving summary (so next session can track again)
+      sessionCompletedTrackedRef.current = false
+    }
+  }, [currentScreen, sessionId, trackSessionCompleted])
+
+  // Listen for session timeout on public display (after 30 minutes inactivity)
+  useEffect(() => {
+    const handleSessionTimeout = () => {
+      // Reset to intro screen when session times out
+      handleRestart()
+    }
+
+    window.addEventListener('sessionTimeout', handleSessionTimeout)
+    return () => window.removeEventListener('sessionTimeout', handleSessionTimeout)
+  }, [handleRestart])
 
   // Dev shortcut: jump straight to the end screen with sample results
   const handleSkipToSummary = useCallback(() => {
