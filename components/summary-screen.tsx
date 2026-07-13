@@ -18,8 +18,6 @@ import {
   RotateCcw,
   Check,
   X,
-  ShieldCheck,
-  AlertTriangle,
   Shield,
   Search,
   BadgeCheck,
@@ -75,25 +73,25 @@ export function SummaryScreen({
 
   return (
     <div className="h-screen w-full overflow-y-auto">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-10 py-12">
+      <div className="mx-auto flex h-full w-full max-w-7xl flex-col gap-6 px-10 py-8">
 
         {/* 1. Review first */}
         <section>
-          <div className="mb-6 text-center">
+          <div className="mb-4 text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
               Experience complete
             </p>
 
-            <h1 className="mt-2 text-4xl font-bold">
+            <h1 className="mt-1 text-4xl font-bold">
               Review your decisions
             </h1>
 
-            <p className="mx-auto mt-3 max-w-2xl text-lg text-muted-foreground">
+            <p className="mx-auto mt-1 max-w-2xl text-lg text-muted-foreground">
               Here is how you assessed each video.
             </p>
           </div>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             {scenarios.map((scenario, index) => {
               const result = resultFor(scenario.id)
               const authentic = !scenario.isFake
@@ -101,22 +99,22 @@ export function SummaryScreen({
               return (
                 <div
                   key={scenario.id}
-                  className="grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-2xl border bg-card px-5 py-7"
+                  className="grid min-h-[130px] grid-cols-[auto_minmax(0,1fr)_minmax(250px,auto)] items-center gap-7 rounded-2xl border bg-card px-8 py-6"
                 >
                   {/* Scenario number */}
-                  <div className="flex h-12 w-12 text-lg items-center justify-center rounded-full bg-secondary text-base font-bold">
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-secondary text-xl font-bold">
                     {index + 1}
                   </div>
 
                   {/* Condensed review information */}
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="truncate text-lg font-semibold">
+                      <h2 className="text-3xl font-bold leading-tight">
                         {scenario.title}
                       </h2>
 
                       <span
-                        className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                        className={`rounded-full px-3.5 py-1.5 text-base font-semibold ${
                           authentic
                             ? "bg-emerald-500/10 text-emerald-400"
                             : "bg-red-500/10 text-red-400"
@@ -126,23 +124,23 @@ export function SummaryScreen({
                       </span>
                     </div>
 
-                    <p className="mt-1 line-clamp-2 text-base leading-relaxed text-muted-foreground">
+                    <p className="mt-2 text-xl leading-snug text-muted-foreground">
                       {scenario.realWorldAction}
                     </p>
                   </div>
 
                   {/* User result */}
                   <div
-                    className={`flex min-w-[190px] items-center justify-center gap-2 rounded-xl px-6 py-4 text-sm font-semibold ${
+                    className={`flex min-w-[250px] items-center justify-center gap-3 rounded-xl px-7 py-6 text-xl font-semibold ${
                       result?.isCorrect
                         ? "bg-emerald-500/10 text-emerald-400"
                         : "bg-amber-500/10 text-amber-400"
                     }`}
                   >
                     {result?.isCorrect ? (
-                      <Check className="h-5 w-5" />
+                      <Check className="h-6 w-6 shrink-0" />
                     ) : (
-                      <X className="h-5 w-5" />
+                      <X className="h-6 w-6 shrink-0" />
                     )}
 
                     {result
@@ -155,110 +153,119 @@ export function SummaryScreen({
           </div>
         </section>
 
-        {/* 2. Score comes afterwards */}
-        <section className="flex flex-col items-center border-t pt-10 text-center">
-          <h2 className="text-3xl font-bold">Your final score</h2>
+        {/* 2. Score and checklist side by side */}
+        <section className="grid grid-cols-[0.8fr_1.2fr] gap-6 border-t pt-6">
+          {/* Compact score card */}
+          <div className="flex items-center justify-center gap-7 rounded-3xl border bg-card px-7 py-6">
+            <div className="relative flex h-36 w-36 shrink-0 items-center justify-center">
+              <svg viewBox="0 0 128 128" className="h-36 w-36 -rotate-90">
+                <defs>
+                  <linearGradient
+                    id="scoreGradient"
+                    x1="0%"
+                    y1="100%"
+                    x2="100%"
+                    y2="0%"
+                  >
+                    <stop offset="0%" stopColor="#fb7185" />
+                    <stop offset="50%" stopColor="#fbbf24" />
+                    <stop offset="100%" stopColor="#34d399" />
+                  </linearGradient>
+                </defs>
 
-          <div className="relative mt-6 flex h-52 w-52 items-center justify-center">
-            <svg viewBox="0 0 128 128" className="h-52 w-52 -rotate-90">
-              <defs>
-                <linearGradient
-                  id="scoreGradient"
-                  x1="0%"
-                  y1="100%"
-                  x2="100%"
-                  y2="0%"
-                >
-                  <stop offset="0%" stopColor="#fb7185" />
-                  <stop offset="50%" stopColor="#fbbf24" />
-                  <stop offset="100%" stopColor="#34d399" />
-                </linearGradient>
-              </defs>
+                <circle
+                  cx="64"
+                  cy="64"
+                  r={RADIUS}
+                  fill="none"
+                  strokeWidth="8"
+                  className="stroke-border"
+                />
 
-              <circle
-                cx="64"
-                cy="64"
-                r={RADIUS}
-                fill="none"
-                strokeWidth="8"
-                className="stroke-border"
-              />
+                <circle
+                  cx="64"
+                  cy="64"
+                  r={RADIUS}
+                  fill="none"
+                  stroke="url(#scoreGradient)"
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                  strokeDasharray={CIRCUMFERENCE}
+                  strokeDashoffset={animatedOffset}
+                  className="transition-[stroke-dashoffset] duration-1000 ease-out"
+                />
+              </svg>
 
-              <circle
-                cx="64"
-                cy="64"
-                r={RADIUS}
-                fill="none"
-                stroke="url(#scoreGradient)"
-                strokeWidth="8"
-                strokeLinecap="round"
-                strokeDasharray={CIRCUMFERENCE}
-                strokeDashoffset={animatedOffset}
-                className="transition-[stroke-dashoffset] duration-1000 ease-out"
-              />
-            </svg>
+              <div className="absolute flex flex-col items-center">
+                <span className="text-4xl font-extrabold">
+                  {percentage}%
+                </span>
 
-            <div className="absolute flex flex-col items-center">
-              <span className="text-6xl font-extrabold">
-                {percentage}%
-              </span>
+                <span className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Accuracy
+                </span>
+              </div>
+            </div>
 
-              <span className="mt-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Accuracy
-              </span>
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Your final score
+              </p>
+
+              <p className="mt-2 text-4xl font-bold">
+                {correctCount} of {totalScenarios}
+              </p>
+
+              <p className="mt-1 text-lg leading-snug text-muted-foreground">
+                scenarios judged correctly
+              </p>
             </div>
           </div>
 
-          <p className="mt-4 text-xl text-muted-foreground">
-            You judged{" "}
-            <span className="font-bold text-foreground">
-              {correctCount} of {totalScenarios}
-            </span>{" "}
-            scenarios correctly.
-          </p>
-        </section>
+          {/* Highlighted checklist card */}
+          <div className="flex items-center gap-6 rounded-3xl border-2 border-accent/40 bg-accent/10 px-8 py-6 shadow-lg">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
+              <Shield className="h-8 w-8" />
+            </div>
 
-        {/* 3. Highlighted checklist call to action */}
-        <section className="rounded-3xl border-2 border-accent/40 bg-accent/10 p-7 text-center shadow-lg">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent text-accent-foreground">
-            <Shield className="h-7 w-7" />
+            <div className="min-w-0 flex-1">
+              <h2 className="text-2xl font-bold">
+                One last thing before you go
+              </h2>
+
+              <p className="mt-1 text-lg leading-snug text-muted-foreground">
+                Open the checklist and remember these steps when you encounter
+                suspicious content online.
+              </p>
+            </div>
+
+            <Button
+              onClick={() => setIsChecklistOpen(true)}
+              size="lg"
+              className="h-16 shrink-0 rounded-full px-8 text-xl font-bold shadow-xl"
+            >
+              View checklist
+              <ArrowRight className="ml-3 h-6 w-6" />
+            </Button>
           </div>
-
-          <h2 className="mt-4 text-2xl font-bold">
-            One last thing before you go
-          </h2>
-
-          <p className="mx-auto mt-2 max-w-xl text-base text-muted-foreground">
-            Open the checklist and remember these steps when you encounter
-            suspicious content online.
-          </p>
-
-          <Button
-            onClick={() => setIsChecklistOpen(true)}
-            size="lg"
-            className="mt-5 h-16 min-w-[340px] rounded-full px-10 text-xl font-bold shadow-xl"
-          >
-            View your deepfake checklist
-            <ArrowRight className="ml-3 h-6 w-6" />
-          </Button>
         </section>
 
         {/* 4. Restart remains secondary */}
-        <footer className="flex flex-col items-center gap-4">
+        <footer className="flex items-center justify-between pb-2">
+          <p className="text-[11px] uppercase tracking-widest text-muted-foreground/50">
+            LMU Munich · Usable Security Research
+          </p>
+
           <Button
             onClick={onRestart}
             variant="outline"
             size="lg"
-            className="h-14 min-w-[280px] rounded-full px-10 text-lg"
+            className="h-14 rounded-full px-10 text-lg"
           >
             <RotateCcw className="mr-2 h-5 w-5" />
             Start again
           </Button>
-
-          <p className="text-center text-[11px] uppercase tracking-widest text-muted-foreground/50">
-            LMU Munich · Usable Security Research
-          </p>
-        </footer>
+        </footer>   
 
         {/* Checklist popup */}
         <Dialog open={isChecklistOpen} onOpenChange={setIsChecklistOpen}>
@@ -293,7 +300,7 @@ export function SummaryScreen({
 
                     <div>
                       <h3 className="text-xl font-bold">{item.title}</h3>
-                      <p className="mt-1 text-base leading-relaxed leading-snug text-muted-foreground">
+                      <p className="mt-1 text-base leading-relaxed text-muted-foreground">
                         {item.description}
                       </p>
                     </div>
