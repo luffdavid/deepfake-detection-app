@@ -285,7 +285,6 @@ export default function TrustCheckApp() {
           <FeedbackScreen
             scenario={currentScenario}
             userTrust={currentUserTrust}
-            isLastScenario={currentScenarioIndex === scenarios.length - 1}
             onContinue={handleContinue}
           />
         )}
