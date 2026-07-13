@@ -187,7 +187,7 @@ export default function TrustCheckApp() {
       {currentScreen !== "summary" && currentScreen !== "intro" && (
        <button
   onClick={handleSkipToSummary}
-  className="fixed bottom-8 right-8 z-50 rounded-2xl border border-border bg-card/90 px-8 py-5 text-xl font-semibold text-muted-foreground shadow-xl backdrop-blur transition-colors hover:bg-card hover:text-foreground"
+  className="fixed bottom-1 right-1 z-50 rounded-2xl border border-border bg-card/90 px-8 py-5 text-xl font-semibold text-muted-foreground shadow-xl backdrop-blur transition-colors hover:bg-card hover:text-foreground"
 >
   Skip to results
 </button>
