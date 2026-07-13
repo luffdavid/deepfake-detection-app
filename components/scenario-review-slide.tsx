@@ -26,7 +26,7 @@ export function ScenarioReviewSlide({
   const authentic = !scenario.isFake
 
   return (
-    <div className="mx-auto flex h-full w-full max-w-2xl flex-col overflow-y-auto rounded-2xl border border-border bg-card">
+    <div className="mx-auto flex h-full w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-border bg-card">
       {/* Slide header: which clip, and how the visitor judged it */}
       <div className="flex items-start justify-between gap-3 border-b border-border/70 px-5 py-4">
         <div className="flex min-w-0 items-center gap-3">

@@ -252,9 +252,9 @@ export function VideoExperience({
 
   return (
     <div className="h-screen w-screen overflow-hidden px-4 pt-2 pb-2">
-      <div className="mx-auto flex h-full w-full max-w-3xl flex-col items-center justify-start gap-24">
+      <div className="mx-auto flex h-full w-full max-w-3xl flex-col items-center justify-start gap-12">
       {/* Header */}
-      <div className="text-center pt-24 shrink-0">
+      <div className="text-center pt-28 shrink-0">
         <h1 className="text-xl sm:text-5xl font-medium text-balance">
           {phase === "video"
             ? "Watch the clip carefully."
@@ -302,8 +302,9 @@ export function VideoExperience({
       )}
 
       {/* Phone Mockup with Video */}
-      <div className="w-full flex items-start justify-center py-0 min-h-0">
-        <div className="relative h-[74vh] min-h-[460px] max-h-[1000px] flex items-center justify-center">
+      <div className="w-full min-h-0 py-0">
+        <div className="flex w-full flex-col items-center">
+          <div className="relative h-[74vh] min-h-[460px] max-h-[1000px] flex items-center justify-center">
           {/* Phone frame */}
           <div className="relative h-full max-h-[1000px] aspect-[9/16] max-w-full bg-zinc-900 rounded-[2rem] border-[3px] border-zinc-700 shadow-2xl overflow-hidden">
             {/* Video content area */}
@@ -509,7 +510,7 @@ export function VideoExperience({
                         <X className="h-5 w-5 text-white/70" />
                       </button>
                     </div>
-                    <div className="flex-1 space-y-4 overflow-y-auto px-4 py-3">
+                    <div className="flex-1 space-y-4 overflow-hidden px-4 py-3">
                       <div className="flex items-start gap-2.5">
                         <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-zinc-300 to-zinc-500 text-[10px] font-bold text-zinc-900">
                           UB
@@ -577,6 +578,19 @@ export function VideoExperience({
               />
             </div>
           </div>
+          </div>
+
+          {/* Progress dots */}
+          <div className="mt-2 flex justify-center gap-2">
+            {Array.from({ length: totalScenarios }).map((_, i) => (
+              <div
+                key={i}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  i < currentIndex ? "bg-emerald-500" : i === currentIndex ? "bg-white" : "bg-zinc-700"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
@@ -586,32 +600,10 @@ export function VideoExperience({
       {phase === "video" && (
         <div className="pb-1.5 space-y-1.5 text-center shrink-0">
           <p className="text-sm text-muted-foreground animate-pulse">Watch carefully before judging...</p>
-          <div className="flex justify-center gap-2">
-            {Array.from({ length: totalScenarios }).map((_, i) => (
-              <div
-                key={i}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  i < currentIndex ? "bg-emerald-500" : i === currentIndex ? "bg-white" : "bg-zinc-700"
-                }`}
-              />
-            ))}
-          </div>
-          
         </div>
         
       )}
       </div>
-       {/* Progress dots */}
-          <div className="flex justify-center gap-2">
-            {Array.from({ length: totalScenarios }).map((_, i) => (
-              <div
-                key={i}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  i < currentIndex ? "bg-emerald-500" : i === currentIndex ? "bg-white" : "bg-zinc-700"
-                }`}
-              />
-            ))}
-          </div>
     </div>
   )
 }

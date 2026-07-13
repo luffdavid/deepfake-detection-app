@@ -107,12 +107,11 @@ export function SummaryScreen({
 }, [percentage])
 
   return (
-    <div className="h-screen w-full overflow-y-auto">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-6 py-12">
+    <div className="h-screen w-full overflow-hidden">
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-6 py-28">
        {/* 1 — Score + per-scenario result icons */}
 <header className="flex flex-col items-center text-center">
-  <h1 className="text-balance text-3xl font-semibold leading-tight sm:text-4xl">Experience Complete</h1>
-
+<h1 className="text-xl sm:text-5xl font-medium text-balance">Experience Complete</h1>
   <div className="relative mt-8 flex h-40 w-40 items-center justify-center">
     <svg viewBox="0 0 128 128" className="h-40 w-40 -rotate-90">
       <defs>

@@ -182,7 +182,7 @@ export default function TrustCheckApp() {
   const correctCount = results.filter((r) => r.isCorrect).length
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="h-screen w-screen overflow-hidden bg-background">
       {/* Dev shortcut to preview the end screen directly */}
       {currentScreen !== "summary" && currentScreen !== "intro" && (
        <button
