@@ -91,7 +91,7 @@ export function SummaryScreen({
             </p>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-6">
             {scenarios.map((scenario, index) => {
               const result = resultFor(scenario.id)
               const authentic = !scenario.isFake
@@ -99,16 +99,16 @@ export function SummaryScreen({
               return (
                 <div
                   key={scenario.id}
-                  className="grid min-h-[130px] grid-cols-[auto_minmax(0,1fr)_minmax(250px,auto)] items-center gap-7 rounded-2xl border bg-card px-8 py-6"
+                  className="grid min-h-[145px] grid-cols-[auto_minmax(0,1fr)_minmax(250px,auto)] items-center gap-9 rounded-3xl border bg-card px-10 py-7"
                 >
                   {/* Scenario number */}
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-secondary text-xl font-bold">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary text-lg font-bold">
                     {index + 1}
                   </div>
 
                   {/* Condensed review information */}
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
+                  <div className="min-w-0 py-2">
+                    <div className="flex flex-wrap items-center gap-4">
                       <h2 className="text-3xl font-bold leading-tight">
                         {scenario.title}
                       </h2>
@@ -124,29 +124,35 @@ export function SummaryScreen({
                       </span>
                     </div>
 
-                    <p className="mt-2 text-xl leading-snug text-muted-foreground">
+                    <p className="mt-4 text-xl leading-relaxed text-muted-foreground">
                       {scenario.realWorldAction}
                     </p>
                   </div>
 
                   {/* User result */}
                   <div
-                    className={`flex min-w-[250px] items-center justify-center gap-3 rounded-xl px-7 py-6 text-xl font-semibold ${
+                    className={`flex min-w-[190px] flex-col items-center justify-center gap-1 rounded-xl px-4 py-3 text-center ${
                       result?.isCorrect
                         ? "bg-emerald-500/10 text-emerald-400"
                         : "bg-amber-500/10 text-amber-400"
                     }`}
                   >
+                  <div className="flex items-center gap-2 text-base font-semibold">
                     {result?.isCorrect ? (
-                      <Check className="h-6 w-6 shrink-0" />
+                      <Check className="h-5 w-5 shrink-0" />
                     ) : (
-                      <X className="h-6 w-6 shrink-0" />
+                      <X className="h-5 w-5 shrink-0" />
                     )}
 
-                    {result
-                      ? `You chose ${getTrustLevelLabel(result.userTrust)}`
-                      : "No rating"}
+                    Your rating
                   </div>
+
+                  <span className="text-lg font-bold">
+                    {result
+                      ? getTrustLevelLabel(result.userTrust)
+                      : "No rating"}
+                  </span>
+                </div>
                 </div>
               )
             })}
