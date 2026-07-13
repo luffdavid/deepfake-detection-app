@@ -105,7 +105,7 @@ http://localhost:3000
 
 > Critical note: Analytics mounting in [app/layout.tsx](app/layout.tsx#L55) is only enabled in `production`. Local runs therefore do not show Vercel Analytics events in production dashboards by default.
 >
-> Critical note: In [hooks/use-session-tracking.ts](hooks/use-session-tracking.ts#L4), timeout is currently set to 45 seconds (`SESSION_TIMEOUT_MS = 45 * 1000`), while comments partly mention 30 minutes. For real kiosk deployments, this value should be reviewed and adjusted.
+> Critical note: In [hooks/use-session-tracking.ts](hooks/use-session-tracking.ts#L4), timeout is currently set to 60 seconds (`SESSION_TIMEOUT_MS = 60 * 1000`) 
 
 ## 5. Usage
 

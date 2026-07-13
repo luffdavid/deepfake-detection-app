@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { Scenario, getSliderTrustLevel, TrustLevel, isCorrectAssessment } from "@/lib/scenarios"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
-import { useSessionTracking } from "@/hooks/use-session-tracking"
 import { useAnalytics } from "@/hooks/use-analytics"
 import {
   Heart,
@@ -119,6 +118,7 @@ interface VideoExperienceProps {
   scenario: Scenario
   currentIndex: number
   totalScenarios: number
+  sessionId: string | null
   onSubmit: (userTrust: TrustLevel) => void
 }
 
@@ -126,10 +126,9 @@ export function VideoExperience({
   scenario,
   currentIndex,
   totalScenarios,
+  sessionId,
   onSubmit,
 }: VideoExperienceProps) {
-  // Session tracking and analytics
-  const { getSessionId } = useSessionTracking()
   const { trackVideoReplay, trackSliderSubmitted } = useAnalytics()
 
   const [sliderValue, setSliderValue] = useState([50])
@@ -213,13 +212,12 @@ export function VideoExperience({
     const isCorrect = isCorrectAssessment(trustLevel, scenario.recommendedTrust)
     
     // Track slider submission with accuracy
-    const sessionId = getSessionId()
     if (sessionId) {
       trackSliderSubmitted(sessionId, scenario.id, String(sliderRef.current), isCorrect)
     }
     
     onSubmit(trustLevel)
-  }, [sliderValue, onSubmit, getSessionId, scenario.id, scenario.recommendedTrust, trackSliderSubmitted])
+  }, [onSubmit, scenario.id, scenario.recommendedTrust, sessionId, trackSliderSubmitted])
 
   const handleAddComment = useCallback(() => {
     const text = commentInput.trim()
@@ -238,7 +236,6 @@ export function VideoExperience({
     if (video.paused) {
       // Track replay event if video had ended
       if (isVideoEnded) {
-        const sessionId = getSessionId()
         if (sessionId) {
           trackVideoReplay(sessionId, scenario.id)
         }
@@ -251,7 +248,7 @@ export function VideoExperience({
       video.pause()
       setIsVideoPlaying(false)
     }
-  }, [isVideoEnded, getSessionId, scenario.id, trackVideoReplay])
+  }, [isVideoEnded, scenario.id, sessionId, trackVideoReplay])
 
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-between p-4 overflow-hidden">
