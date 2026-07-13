@@ -73,7 +73,7 @@ export function SummaryScreen({
 
   return (
     <div className="h-screen w-full overflow-y-auto">
-      <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-12 px-12 py-12">
+      <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-8 px-12 py-10">
         {/* 1. Review first */}
         <section>
           <div className="mb-10 text-center">
@@ -81,8 +81,8 @@ export function SummaryScreen({
               Experience complete
             </p>
 
-            <h1 className="mt-4 text-6xl font-extrabold leading-tight">
-              Review your decisions
+            <h1 className="mt-3 text-5xl font-extrabold leading-tight">
+              Review your decisions.
             </h1>
 
             <p className="mx-auto mt-5 max-w-4xl text-2xl leading-relaxed text-muted-foreground">
@@ -90,14 +90,14 @@ export function SummaryScreen({
             </p>
           </div>
 
-          <div className="flex flex-col gap-9">
+          <div className="flex flex-col gap-5">
             {scenarios.map((scenario, index) => {
               const authentic = !scenario.isFake
 
               return (
                 <div
                   key={scenario.id}
-                    className="grid min-h-[175px] grid-cols-[auto_1fr] items-center gap-12 rounded-3xl border bg-card px-12 py-9"                
+                    className="grid min-h-[120px] grid-cols-[auto_1fr] items-center gap-8 rounded-3xl border bg-card px-10 py-6"                
                   >
                   {/* Scenario number */}
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary text-lg font-bold">
@@ -136,7 +136,7 @@ export function SummaryScreen({
         <section className="grid grid-cols-[0.8fr_1.2fr] gap-10 border-t pt-10">
           {/* Compact score card */}
           <div className="flex items-center justify-center gap-10 rounded-3xl border bg-card px-10 py-9">
-            <div className="relative flex h-36 w-36 shrink-0 items-center justify-center">
+            <div className="relative flex h-28 w-28 shrink-0 items-center justify-center">
               <svg viewBox="0 0 128 128" className="h-36 w-36 -rotate-90">
                 <defs>
                   <linearGradient
@@ -176,7 +176,7 @@ export function SummaryScreen({
               </svg>
 
               <div className="absolute flex flex-col items-center">
-                <span className="text-4xl font-extrabold">
+                <span className="text-3xl font-extrabold">
                   {percentage}%
                 </span>
 
@@ -191,7 +191,7 @@ export function SummaryScreen({
                 Your final score
               </p>
 
-              <p className="mt-2 text-4xl font-bold">
+              <p className="mt-2 text-3xl font-bold">
                 {correctCount} of {totalScenarios}
               </p>
 
@@ -202,7 +202,7 @@ export function SummaryScreen({
           </div>
 
           {/* Highlighted checklist card */}
-          <div className="flex items-center gap-10 rounded-3xl border-2 border-accent/40 bg-accent/10 px-10 py-9 shadow-lg">
+          <div className="flex items-center gap-8 rounded-3xl border-2 border-accent/40 bg-accent/10 px-10 py-6 shadow-lg">
             <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
               <Shield className="h-8 w-8" />
             </div>
@@ -216,7 +216,7 @@ export function SummaryScreen({
             <Button
               onClick={() => setIsChecklistOpen(true)}
               size="lg"
-              className="h-16 shrink-0 rounded-full px-8 text-xl font-bold shadow-xl"
+              className="h-14 shrink-0 rounded-full px-8 text-lg font-bold shadow-xl"
             >
               View checklist
               <ArrowRight className="ml-3 h-6 w-6" />
@@ -225,7 +225,7 @@ export function SummaryScreen({
         </section>
 
         {/* 4. Restart remains secondary */}
-        <footer className="flex items-center justify-between border-t pt-10 pb-6">
+        <footer className="flex items-center justify-between border-t pt-8 pb-4">
           <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground/60">
             LMU Munich · Usable Security Research
           </p>
@@ -234,7 +234,7 @@ export function SummaryScreen({
             onClick={onRestart}
             variant="outline"
             size="lg"
-            className="h-20 min-w-[300px] rounded-full px-12 text-2xl font-bold"
+            className="h-16 min-w-[240px] rounded-full px-12 text-xl font-bold"
           >
             <RotateCcw className="mr-3 h-7 w-7" />
             Start again
