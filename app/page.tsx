@@ -5,6 +5,7 @@ import { IntroScreen } from "@/components/intro-screen"
 import { VideoExperience } from "@/components/video-experience"
 import { FeedbackScreen } from "@/components/feedback-screen"
 import { SummaryScreen } from "@/components/summary-screen"
+import { FinalChecklistScreen } from "@/components/final-checklist-screen"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -19,7 +20,7 @@ import { useSessionTracking } from "@/hooks/use-session-tracking"
 import { useAnalytics } from "@/hooks/use-analytics"
 import { Clock3 } from "lucide-react"
 
-type Screen = "intro" | "video" | "feedback" | "summary"
+type Screen = "intro" | "video" | "feedback" | "summary" | "checklist"
 
 interface UserResult {
   scenarioId: string
@@ -32,7 +33,16 @@ export default function TrustCheckApp() {
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0)
   const [currentUserTrust, setCurrentUserTrust] = useState<TrustLevel>("medium")
   const [results, setResults] = useState<UserResult[]>([])
-  
+  const [videosReady, setVideosReady] = useState(false)
+  const [loadingProgress, setLoadingProgress] = useState(0)
+  const handleShowChecklist = () => {
+    setCurrentScreen("checklist")
+  }
+
+  const handleBackToSummary = () => {
+    setCurrentScreen("summary")
+  }
+
   // Session tracking and analytics
   const {
     sessionId,
@@ -127,52 +137,93 @@ export default function TrustCheckApp() {
     return () => window.removeEventListener('sessionTimeout', handleSessionTimeout)
   }, [resetExperienceState])
 
-  // Warm the browser media cache sequentially while the intro screen is visible.
-  // This avoids competing downloads during playback while still making later clips faster.
+  // Preload all videos in PARALLEL for faster loading on mobile/tablet devices.
+  // This ensures all videos are buffered before the user starts instead of loading sequentially.
   useEffect(() => {
-    if (currentScreen !== "intro") return
-
     const videoSources = scenarios
       .map((scenario) => scenario.videoSrc)
       .filter((src): src is string => Boolean(src))
 
-    if (videoSources.length === 0) return
+    if (videoSources.length === 0) {
+      setVideosReady(true)
+      return
+    }
 
     let cancelled = false
+    setVideosReady(false)
+    setLoadingProgress(0)
+
     const preloadVideo = document.createElement("video")
     preloadVideo.muted = true
     preloadVideo.playsInline = true
     preloadVideo.preload = "auto"
 
-    const waitForWarmup = (src: string) =>
-      new Promise<void>((resolve) => {
-        const finish = () => {
-          preloadVideo.removeEventListener("loadeddata", finish)
-          preloadVideo.removeEventListener("error", finish)
-          resolve()
+    const preloadSingleVideo = (src: string): Promise<boolean> =>
+      new Promise<boolean>((resolve) => {
+        const timeout = setTimeout(() => {
+          preloadVideo.removeEventListener("loadeddata", onSuccess)
+          preloadVideo.removeEventListener("error", onError)
+          console.warn(`Video preload timeout: ${src}`)
+          resolve(false)
+        }, 30000)
+
+        const onSuccess = () => {
+          clearTimeout(timeout)
+          preloadVideo.removeEventListener("loadeddata", onSuccess)
+          preloadVideo.removeEventListener("error", onError)
+          resolve(true)
         }
 
-        preloadVideo.addEventListener("loadeddata", finish, { once: true })
-        preloadVideo.addEventListener("error", finish, { once: true })
+        const onError = () => {
+          clearTimeout(timeout)
+          preloadVideo.removeEventListener("loadeddata", onSuccess)
+          preloadVideo.removeEventListener("error", onError)
+          console.warn(`Video preload error: ${src}`)
+          resolve(false)
+        }
+
+        preloadVideo.addEventListener("loadeddata", onSuccess, { once: true })
+        preloadVideo.addEventListener("error", onError, { once: true })
         preloadVideo.src = src
         preloadVideo.load()
       })
 
-    const warmVideos = async () => {
-      for (const src of videoSources) {
-        if (cancelled) break
-        await waitForWarmup(src)
+    const warmAllVideos = async () => {
+      const promises = videoSources.map((src, index) => {
+        return preloadSingleVideo(src).then((success) => {
+          if (!cancelled) {
+            setLoadingProgress((prev) => {
+              const newProgress = ((index + 1) / videoSources.length) * 100
+              return Math.max(prev, newProgress)
+            })
+          }
+          return success
+        })
+      })
+
+      try {
+        await Promise.all(promises)
+        if (!cancelled) {
+          await new Promise((resolve) => setTimeout(resolve, 500))
+          setVideosReady(true)
+          setLoadingProgress(100)
+        }
+      } catch (error) {
+        console.error("Video preload failed:", error)
+        if (!cancelled) {
+          setVideosReady(true)
+        }
       }
     }
 
-    void warmVideos()
+    void warmAllVideos()
 
     return () => {
       cancelled = true
       preloadVideo.removeAttribute("src")
       preloadVideo.load()
     }
-  }, [currentScreen])
+  }, [])
 
   // Dev shortcut: jump straight to the end screen with sample results
   const handleSkipToSummary = useCallback(() => {
@@ -199,7 +250,13 @@ export default function TrustCheckApp() {
           currentScreen === "intro" ? "opacity-100" : "opacity-0 absolute inset-0 pointer-events-none"
         }`}
       >
-        {currentScreen === "intro" && <IntroScreen onStart={handleStart} />}
+        {currentScreen === "intro" && (
+          <IntroScreen
+            onStart={handleStart}
+            isVideosReady={videosReady}
+            loadingProgress={loadingProgress}
+          />
+        )}
       </div>
 
       <div
@@ -244,6 +301,22 @@ export default function TrustCheckApp() {
             results={results}
             correctCount={correctCount}
             totalScenarios={scenarios.length}
+            onShowChecklist={handleShowChecklist}
+            onRestart={handleRestart}
+          />
+        )}
+      </div>
+
+      <div
+        className={`transition-opacity duration-500 ${
+          currentScreen === "checklist"
+            ? "opacity-100"
+            : "opacity-0 absolute inset-0 pointer-events-none"
+        }`}
+      >
+        {currentScreen === "checklist" && (
+          <FinalChecklistScreen
+            onBack={handleBackToSummary}
             onRestart={handleRestart}
           />
         )}
