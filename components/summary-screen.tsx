@@ -73,32 +73,31 @@ export function SummaryScreen({
 
   return (
     <div className="h-screen w-full overflow-y-auto">
-      <div className="mx-auto flex h-full w-full max-w-7xl flex-col gap-6 px-10 py-8">
-
+      <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-12 px-12 py-12">
         {/* 1. Review first */}
         <section>
-          <div className="mb-6 text-center">
+          <div className="mb-10 text-center">
             <p className="text-lg font-bold uppercase tracking-[0.22em] text-accent">
               Experience complete
             </p>
 
-            <h1 className="mt-2 text-6xl font-extrabold leading-tight">
+            <h1 className="mt-4 text-6xl font-extrabold leading-tight">
               Review your decisions
             </h1>
 
-            <p className="mx-auto mt-3 max-w-3xl text-2l leading-relaxed text-muted-foreground">
+            <p className="mx-auto mt-5 max-w-4xl text-2xl leading-relaxed text-muted-foreground">
               Here is how you assessed each video. Keep in mind that a good score doesn't mean you're safe and stay aware!
             </p>
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-9">
             {scenarios.map((scenario, index) => {
               const authentic = !scenario.isFake
 
               return (
                 <div
                   key={scenario.id}
-                    className="grid min-h-[145px] grid-cols-[auto_1fr] items-center gap-8 rounded-3xl border bg-card px-10 py-7"                
+                    className="grid min-h-[175px] grid-cols-[auto_1fr] items-center gap-12 rounded-3xl border bg-card px-12 py-9"                
                   >
                   {/* Scenario number */}
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary text-lg font-bold">
@@ -106,8 +105,8 @@ export function SummaryScreen({
                   </div>
 
                   {/* Condensed review information */}
-                  <div className="min-w-0 py-2">
-                    <div className="flex flex-wrap items-center gap-4">
+                  <div className="min-w-0 py-3">
+                    <div className="flex flex-wrap items-center gap-6">
                       <h2 className="text-3xl font-bold leading-tight">
                         {scenario.title}
                       </h2>
@@ -123,7 +122,7 @@ export function SummaryScreen({
                       </span>
                     </div>
 
-                    <p className="mt-4 text-xl leading-relaxed text-muted-foreground">
+                    <p className="mt-6 max-w-5xl text-xl leading-relaxed text-muted-foreground">
                       {scenario.realWorldAction}
                     </p>
                   </div>
@@ -134,9 +133,9 @@ export function SummaryScreen({
         </section>
 
         {/* 2. Score and checklist side by side */}
-        <section className="grid grid-cols-[0.8fr_1.2fr] gap-6 border-t pt-6">
+        <section className="grid grid-cols-[0.8fr_1.2fr] gap-10 border-t pt-10">
           {/* Compact score card */}
-          <div className="flex items-center justify-center gap-7 rounded-3xl border bg-card px-7 py-6">
+          <div className="flex items-center justify-center gap-10 rounded-3xl border bg-card px-10 py-9">
             <div className="relative flex h-36 w-36 shrink-0 items-center justify-center">
               <svg viewBox="0 0 128 128" className="h-36 w-36 -rotate-90">
                 <defs>
@@ -203,7 +202,7 @@ export function SummaryScreen({
           </div>
 
           {/* Highlighted checklist card */}
-          <div className="flex items-center gap-6 rounded-3xl border-2 border-accent/40 bg-accent/10 px-8 py-6 shadow-lg">
+          <div className="flex items-center gap-10 rounded-3xl border-2 border-accent/40 bg-accent/10 px-10 py-9 shadow-lg">
             <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
               <Shield className="h-8 w-8" />
             </div>
@@ -226,7 +225,7 @@ export function SummaryScreen({
         </section>
 
         {/* 4. Restart remains secondary */}
-        <footer className="flex items-center justify-between border-t pt-5 pb-4">
+        <footer className="flex items-center justify-between border-t pt-10 pb-6">
           <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground/60">
             LMU Munich · Usable Security Research
           </p>
@@ -246,7 +245,7 @@ export function SummaryScreen({
         <Dialog open={isChecklistOpen} onOpenChange={setIsChecklistOpen}>
           <DialogContent className="max-h-[92vh] max-w-6xl overflow-y-auto">
             <DialogHeader>
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent/15 text-accent">
+              <div className="mx-auto flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-secondary text-xl font-bold">
                 <Shield className="h-7 w-7" />
               </div>
 
