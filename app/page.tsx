@@ -228,12 +228,12 @@ export default function TrustCheckApp() {
     <main className="min-h-screen bg-background">
       {/* Dev shortcut to preview the end screen directly */}
       {currentScreen !== "summary" && currentScreen !== "intro" && (
-        <button
-          onClick={handleSkipToSummary}
-          className="fixed bottom-4 right-4 z-50 rounded-full border border-border bg-card/80 px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur transition-colors hover:bg-card hover:text-foreground"
-        >
-          Skip to results
-        </button>
+       <button
+  onClick={handleSkipToSummary}
+  className="fixed bottom-8 right-8 z-50 rounded-2xl border border-border bg-card/90 px-8 py-5 text-xl font-semibold text-muted-foreground shadow-xl backdrop-blur transition-colors hover:bg-card hover:text-foreground"
+>
+  Skip to results
+</button>
       )}
 
       {/* Screen transitions */}

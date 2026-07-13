@@ -251,24 +251,61 @@ export function VideoExperience({
   }, [isVideoEnded, scenario.id, sessionId, trackVideoReplay])
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-between p-4 overflow-hidden">
+    <div className="h-screen w-screen overflow-hidden px-4 pt-2 pb-2">
+      <div className="mx-auto flex h-full w-full max-w-3xl flex-col items-center justify-start gap-24">
       {/* Header */}
-      <div className="text-center pt-1 shrink-0">
-        <h1 className="text-xl sm:text-2xl font-medium text-balance">
+      <div className="text-center pt-24 shrink-0">
+        <h1 className="text-xl sm:text-5xl font-medium text-balance">
           {phase === "video"
             ? "Watch the clip carefully."
             : "How trustworthy is this?"}
         </h1>
         {phase === "interaction" && (
-          <p className="text-sm text-muted-foreground mt-1">Use the slider below.</p>
+          <p className="text-xl text-muted-foreground mt-1">Use the slider below.</p>
         )}
       </div>
+            {/* Interaction phase controls */}
+      {phase === "interaction" && (
+        <div className="mt-3 w-full max-w-xl space-y-2 pb-0.5 shrink-0">
+          {/* Slider with gradient */}
+          <div className="relative px-2">
+            <div className="absolute inset-x-2 h-2 rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-red-500 top-1/2 -translate-y-1/2" />
+            <Slider
+              value={sliderValue}
+              onValueChange={(v) => { setSliderValue(v); sliderRef.current = v[0] }}
+              max={100}
+              step={1}
+              className="relative trust-slider"
+            />
+          </div>
+
+          {/* Slider labels */}
+          <div className="flex justify-between text-xs sm:text-lg px-2">
+            <span className="text-emerald-500 font-medium">Very trustworthy</span>
+            <span className="text-amber-400 font-medium">Not sure</span>
+            <span className="text-red-500 font-medium">Not trustworthy</span>
+          </div>
+
+          {/* Submit button */}
+          <div className="flex justify-center pt-1 w-full">
+            <Button
+              onClick={handleSubmit}
+              size="lg"
+                      className="w-full text-2xl py-8 rounded-xl bg-emerald-600 hover:bg-emerald-700"
+            >
+              Submit <ChevronRight className="w-8 h-8 ml-2" />
+            </Button>
+          </div>
+
+         
+        </div>
+      )}
 
       {/* Phone Mockup with Video */}
-      <div className="flex-1 flex items-center justify-center py-3 min-h-0 w-full">
-        <div className="relative h-full flex items-center justify-center">
+      <div className="w-full flex items-start justify-center py-0 min-h-0">
+        <div className="relative h-[74vh] min-h-[460px] max-h-[1000px] flex items-center justify-center">
           {/* Phone frame */}
-          <div className="relative h-full max-h-[760px] aspect-[9/16] max-w-full bg-zinc-900 rounded-[2rem] border-[3px] border-zinc-700 shadow-2xl overflow-hidden">
+          <div className="relative h-full max-h-[1000px] aspect-[9/16] max-w-full bg-zinc-900 rounded-[2rem] border-[3px] border-zinc-700 shadow-2xl overflow-hidden">
             {/* Video content area */}
             <div className={`absolute inset-0 ${scenario.videoSrc ? "bg-black" : `bg-gradient-to-br ${scenario.thumbnailColor}`}`} onClick={handleVideoClick}>
               {scenario.videoSrc && (
@@ -543,56 +580,11 @@ export function VideoExperience({
         </div>
       </div>
 
-      {/* Interaction phase controls */}
-      {phase === "interaction" && (
-        <div className="w-full max-w-xl space-y-3 pb-1 shrink-0">
-          {/* Slider with gradient */}
-          <div className="relative px-2">
-            <div className="absolute inset-x-2 h-2 rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-red-500 top-1/2 -translate-y-1/2" />
-            <Slider
-              value={sliderValue}
-              onValueChange={(v) => { setSliderValue(v); sliderRef.current = v[0] }}
-              max={100}
-              step={1}
-              className="relative trust-slider"
-            />
-          </div>
 
-          {/* Slider labels */}
-          <div className="flex justify-between text-xs sm:text-sm px-2">
-            <span className="text-emerald-500 font-medium">Very trustworthy</span>
-            <span className="text-amber-400 font-medium">Not sure</span>
-            <span className="text-red-500 font-medium">Not trustworthy</span>
-          </div>
-
-          {/* Submit button */}
-          <div className="flex justify-end pt-1 w-full">
-            <Button
-              onClick={handleSubmit}
-              size="lg"
-              className="bg-emerald-600 hover:bg-emerald-700 text-white px-7 py-5 text-base rounded-xl"
-            >
-              Submit <ChevronRight className="w-5 h-5 ml-1" />
-            </Button>
-          </div>
-
-          {/* Progress dots */}
-          <div className="flex justify-center gap-2">
-            {Array.from({ length: totalScenarios }).map((_, i) => (
-              <div
-                key={i}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  i < currentIndex ? "bg-emerald-500" : i === currentIndex ? "bg-white" : "bg-zinc-700"
-                }`}
-              />
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Video phase bottom */}
       {phase === "video" && (
-        <div className="pb-3 space-y-2 text-center shrink-0">
+        <div className="pb-1.5 space-y-1.5 text-center shrink-0">
           <p className="text-sm text-muted-foreground animate-pulse">Watch carefully before judging...</p>
           <div className="flex justify-center gap-2">
             {Array.from({ length: totalScenarios }).map((_, i) => (
@@ -604,8 +596,22 @@ export function VideoExperience({
               />
             ))}
           </div>
+          
         </div>
+        
       )}
+      </div>
+       {/* Progress dots */}
+          <div className="flex justify-center gap-2">
+            {Array.from({ length: totalScenarios }).map((_, i) => (
+              <div
+                key={i}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  i < currentIndex ? "bg-emerald-500" : i === currentIndex ? "bg-white" : "bg-zinc-700"
+                }`}
+              />
+            ))}
+          </div>
     </div>
   )
 }
