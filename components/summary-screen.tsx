@@ -87,7 +87,7 @@ export function SummaryScreen({
             </h1>
 
             <p className="mx-auto mt-3 max-w-3xl text-2l leading-relaxed text-muted-foreground">
-              Here is how you assessed each video.
+              Here is how you assessed each video. Keep in mind that a good score doesn't mean you're safe and stay aware!
             </p>
           </div>
 
@@ -232,11 +232,6 @@ export function SummaryScreen({
               <h2 className="text-2xl font-bold">
                 One last thing before you go
               </h2>
-
-              <p className="mt-1 text-lg leading-snug text-muted-foreground">
-                Open the checklist and remember these steps when you encounter
-                suspicious content online.
-              </p>
             </div>
 
             <Button
