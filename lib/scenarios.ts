@@ -132,7 +132,7 @@ export const scenarios: Scenario[] = [
     description: 'The mainstream media won\'t show you THIS! Share before they delete it! 🇩🇪 #Widerstand',
     hint: 'Where is the original source or official police statement?',
     hintTiming: 5,
-    videoSrc: '/Videos/Cola.mp4',
+    videoSrc: '/Videos/Cola2.mp4',
     videoPlaceholder: 'Far-right political agitation video',
     thumbnailColor: 'from-amber-900 to-orange-800',
     recommendedTrust: 'low',
