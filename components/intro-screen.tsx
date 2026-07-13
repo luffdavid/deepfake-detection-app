@@ -5,9 +5,15 @@ import { Play, Shield, Eye } from "lucide-react"
 
 interface IntroScreenProps {
   onStart: () => void
+  isVideosReady?: boolean
+  loadingProgress?: number
 }
 
-export function IntroScreen({ onStart }: IntroScreenProps) {
+export function IntroScreen({
+  onStart,
+  isVideosReady = false,
+  loadingProgress = 0,
+}: IntroScreenProps) {
   return (
     <div className="relative h-screen w-screen flex flex-col items-center justify-center overflow-hidden">
       {/* Background effect */}
@@ -42,14 +48,32 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
           Test your ability to detect deepfakes and misinformation.
         </p>
 
+        {/* Loading progress indicator */}
+        {!isVideosReady && (
+          <div className="mb-8 w-full max-w-xs">
+            <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full bg-gradient-to-r from-accent to-accent/50 transition-all duration-300 ease-out"
+                style={{ width: `${loadingProgress}%` }}
+              />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {loadingProgress < 100
+                ? `Loading videos... ${Math.round(loadingProgress)}%`
+                : "Videos ready!"}
+            </p>
+          </div>
+        )}
+
         {/* Start button */}
         <Button
           onClick={onStart}
+          disabled={!isVideosReady}
           size="lg"
-          className="text-xl px-12 py-8 rounded-2xl animate-pulse-glow hover:scale-105 transition-transform duration-300"
+          className="text-xl px-12 py-8 rounded-2xl animate-pulse-glow hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Play className="w-6 h-6 mr-3" />
-          Start Experience
+          {isVideosReady ? "Start Experience" : "Loading Videos..."}
         </Button>
 
         {/* Info badge */}
