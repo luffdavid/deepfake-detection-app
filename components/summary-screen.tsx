@@ -77,16 +77,16 @@ export function SummaryScreen({
 
         {/* 1. Review first */}
         <section>
-          <div className="mb-4 text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+          <div className="mb-6 text-center">
+            <p className="text-lg font-bold uppercase tracking-[0.22em] text-accent">
               Experience complete
             </p>
 
-            <h1 className="mt-1 text-4xl font-bold">
+            <h1 className="mt-2 text-6xl font-extrabold leading-tight">
               Review your decisions
             </h1>
 
-            <p className="mx-auto mt-1 max-w-2xl text-lg text-muted-foreground">
+            <p className="mx-auto mt-3 max-w-3xl text-2l leading-relaxed text-muted-foreground">
               Here is how you assessed each video.
             </p>
           </div>
@@ -251,8 +251,8 @@ export function SummaryScreen({
         </section>
 
         {/* 4. Restart remains secondary */}
-        <footer className="flex items-center justify-between pb-2">
-          <p className="text-[11px] uppercase tracking-widest text-muted-foreground/50">
+        <footer className="flex items-center justify-between border-t pt-5 pb-4">
+          <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground/60">
             LMU Munich · Usable Security Research
           </p>
 
@@ -260,12 +260,12 @@ export function SummaryScreen({
             onClick={onRestart}
             variant="outline"
             size="lg"
-            className="h-14 rounded-full px-10 text-lg"
+            className="h-20 min-w-[300px] rounded-full px-12 text-2xl font-bold"
           >
-            <RotateCcw className="mr-2 h-5 w-5" />
+            <RotateCcw className="mr-3 h-7 w-7" />
             Start again
           </Button>
-        </footer>   
+        </footer> 
 
         {/* Checklist popup */}
         <Dialog open={isChecklistOpen} onOpenChange={setIsChecklistOpen}>
