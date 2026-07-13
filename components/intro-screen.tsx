@@ -82,8 +82,8 @@ export function IntroScreen({
           <span className="text-sm tracking-wide uppercase">5 Scenarios • Interactive Trust Rating</span>
         </div>
 
-        {/* Download script button */}
-        <div className="mt-8">
+        {/* Download script buttons */}
+        <div className="mt-8 flex items-center justify-center gap-3">
           <a href="/Start-Deepfake-Studie.bat" download>
             <Button
               variant="outline"
@@ -92,6 +92,17 @@ export function IntroScreen({
             >
               <Download className="w-3.5 h-3.5 mr-2" />
               Download Script
+            </Button>
+          </a>
+
+          <a href="/explorer-starten.bat" download>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              <Download className="w-3.5 h-3.5 mr-2" />
+              Download Explorer Script
             </Button>
           </a>
         </div>
