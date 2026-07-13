@@ -68,86 +68,87 @@ export function SummaryScreen({
 
   return (
     <div className="h-screen w-full overflow-y-auto">
-<div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-10 py-12">       
-  {/* 1 — Score + per-scenario result icons */}
-<header className="flex flex-col items-center text-center">
-<h1 className="text-xl sm:text-5xl font-medium text-balance">Experience Complete</h1>
-  <div className="relative mt-8 flex h-40 w-40 items-center justify-center">
-    <svg viewBox="0 0 128 128" className="h-40 w-40 -rotate-90">
-      <defs>
-        <linearGradient id="scoreGradient" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#fb7185" />
-          <stop offset="50%" stopColor="#fbbf24" />
-          <stop offset="100%" stopColor="#34d399" />
-        </linearGradient>
-      </defs>
-      <circle cx="64" cy="64" r={RADIUS} fill="none" strokeWidth="8" className="stroke-border" />
-      <circle
-        cx="64"
-        cy="64"
-        r={RADIUS}
-        fill="none"
-        stroke="url(#scoreGradient)"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeDasharray={CIRCUMFERENCE}
-        strokeDashoffset={animatedOffset}
-        className="transition-[stroke-dashoffset] duration-1000 ease-out motion-reduce:transition-none"
-      />
-    </svg>
-    <div className="absolute flex flex-col items-center">
-      <span className="bg-gradient-to-br from-rose-400 via-amber-400 to-emerald-400 bg-clip-text text-4xl font-extrabold leading-none text-transparent">
-        {percentage}%
-      </span>
-      <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-        Accuracy
-      </span>
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-10 py-14">  
+    <header className="flex flex-col items-center text-center">
+    <h1 className="text-balance text-5xl font-bold leading-tight sm:text-6xl">
+      Experience Complete
+    </h1>
+    <div className="relative mt-10 flex h-64 w-64 items-center justify-center">
+      <svg viewBox="0 0 128 128" className="h-64 w-64 -rotate-90">
+        <defs>
+          <linearGradient id="scoreGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#fb7185" />
+            <stop offset="50%" stopColor="#fbbf24" />
+            <stop offset="100%" stopColor="#34d399" />
+          </linearGradient>
+        </defs>
+        <circle cx="64" cy="64" r={RADIUS} fill="none" strokeWidth="8" className="stroke-border" />
+        <circle
+          cx="64"
+          cy="64"
+          r={RADIUS}
+          fill="none"
+          stroke="url(#scoreGradient)"
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeDasharray={CIRCUMFERENCE}
+          strokeDashoffset={animatedOffset}
+          className="transition-[stroke-dashoffset] duration-1000 ease-out motion-reduce:transition-none"
+        />
+      </svg>
+      <div className="absolute flex flex-col items-center">
+        <span className="bg-gradient-to-br from-rose-400 via-amber-400 to-emerald-400 bg-clip-text text-7xl font-extrabold leading-none text-transparent">          
+          {percentage}%
+        </span>
+        <span className="mt-3 text-base font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          Accuracy
+        </span>
+      </div>
     </div>
-  </div>
 
-  <p className="mt-5 text-base text-muted-foreground">
-    You judged{" "}
-    <span className="font-semibold text-foreground">
-      {correctCount} of {totalScenarios}
-    </span>{" "}
-    scenarios correctly
-  </p>
+<p className="mt-7 text-2xl font-medium text-muted-foreground">      
+  You judged{" "}
+      <span className="font-semibold text-foreground">
+        {correctCount} of {totalScenarios}
+      </span>{" "}
+      scenarios correctly
+    </p>
 
-  <ul className="mt-6 flex flex-wrap items-center justify-center gap-3">
-    {scenarios.map((scenario, i) => {
-      const result = resultFor(scenario.id)
-      const isCorrect = result?.isCorrect
-      return (
-        <li key={scenario.id}>
-          <div
-            aria-label={`Scenario ${i + 1}: ${isCorrect ? "correct" : "incorrect"}`}
-            className={`flex h-11 w-11 items-center justify-center rounded-xl border ${
-              isCorrect
-                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                : "border-red-500/30 bg-red-500/10 text-red-400"
-            }`}
-          >
-            {isCorrect ? <Check className="h-5 w-5" /> : <X className="h-5 w-5" />}
-          </div>
-        </li>
-      )
-    })}
-  </ul>
-</header>
+    <ul className="mt-6 flex flex-wrap items-center justify-center gap-4">
+      {scenarios.map((scenario, i) => {
+        const result = resultFor(scenario.id)
+        const isCorrect = result?.isCorrect
+        return (
+          <li key={scenario.id}>
+            <div
+              aria-label={`Scenario ${i + 1}: ${isCorrect ? "correct" : "incorrect"}`}
+              className={`flex h-16 w-16 items-center justify-center rounded-xl border ${
+                isCorrect
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                  : "border-red-500/30 bg-red-500/10 text-red-400"
+              }`}
+            >
+              {isCorrect ? <Check className="h-8 w-8" /> : <X className="h-8 w-8" />}
+            </div>
+          </li>
+        )
+      })}
+    </ul>
+  </header>
 
 {/* 2 — Per-clip review carousel */}
 <section>
-  <div className="mb-6 text-center">
-    <h2 className="text-2xl font-semibold sm:text-3xl">
+  <div className="mb-10 text-center">
+    <h2 className="text-4xl font-semibold sm:text-3xl">
       Review each clip
     </h2>
 
-    <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+    <p className="mx-auto mt-4 max-w-3xl text-xl leading-relaxed text-muted-foreground">
       Swipe through every video you saw to review the result and understand
       how the content tried to convince you.
     </p>
 
-    <p className="mt-2 text-xs font-medium uppercase tracking-widest text-muted-foreground/60">
+    <p className="mt-4 text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">      
       Swipe left or right
     </p>
   </div>
@@ -157,17 +158,27 @@ export function SummaryScreen({
       opts={{
         align: "start",
         dragFree: false,
-        containScroll: "trimSnaps",
+        containScroll: false,
       }}
-      className="w-full touch-pan-y"
+      className="w-full touch-pan-y overflow-hidden"
     >
-    <CarouselContent>
+    <CarouselContent className="-ml-6">
       {scenarios.map((scenario, i) => {
         const result = resultFor(scenario.id)
+        const isActive = selected === i
 
         return (
-          <CarouselItem key={scenario.id}>
-            <div className="min-h-0">
+          <CarouselItem 
+            key={scenario.id}
+            className="basis-[88%] pl-6 md:basis-[82%] lg:basis-[76%]"  
+          >
+            <div
+              className={`min-h-0 transition-all duration-300 ${
+                isActive
+                  ? "scale-100 opacity-100"
+                  : "scale-[0.96] opacity-60"
+              }`}
+            >
               <ScenarioReviewSlide
                 scenario={scenario}
                 index={i}
