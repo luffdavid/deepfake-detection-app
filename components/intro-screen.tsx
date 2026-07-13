@@ -54,8 +54,8 @@ export function IntroScreen({
             <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full bg-gradient-to-r from-accent to-accent/50 transition-all duration-300 ease-out"
-                style={{ width: `${loadingProgress}%` }}
-              />
+                style={{ width: `${loadingProgress}%` }}              
+                />
             </div>
             <p className="text-sm text-muted-foreground">
               {loadingProgress < 100
