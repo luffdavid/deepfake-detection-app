@@ -1,10 +1,12 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { Scenario, TrustLevel } from "@/lib/scenarios"
+import {
+  securityChecklist,
+  type Scenario,
+  type TrustLevel,
+} from "@/lib/scenarios"
 import { Button } from "@/components/ui/button"
-
-import { securityChecklist, getTrustLevelLabel } from "@/lib/scenarios"
 
 import {
   Dialog,
@@ -16,8 +18,6 @@ import {
 
 import {
   RotateCcw,
-  Check,
-  X,
   Shield,
   Search,
   BadgeCheck,
@@ -93,14 +93,13 @@ export function SummaryScreen({
 
           <div className="flex flex-col gap-6">
             {scenarios.map((scenario, index) => {
-              const result = resultFor(scenario.id)
               const authentic = !scenario.isFake
 
               return (
                 <div
                   key={scenario.id}
-                  className="grid min-h-[145px] grid-cols-[auto_minmax(0,1fr)_minmax(250px,auto)] items-center gap-9 rounded-3xl border bg-card px-10 py-7"
-                >
+                    className="grid min-h-[145px] grid-cols-[auto_1fr] items-center gap-8 rounded-3xl border bg-card px-10 py-7"                
+                  >
                   {/* Scenario number */}
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary text-lg font-bold">
                     {index + 1}
@@ -128,31 +127,6 @@ export function SummaryScreen({
                       {scenario.realWorldAction}
                     </p>
                   </div>
-
-                  {/* User result */}
-                  <div
-                    className={`flex min-w-[190px] flex-col items-center justify-center gap-1 rounded-xl px-4 py-3 text-center ${
-                      result?.isCorrect
-                        ? "bg-emerald-500/10 text-emerald-400"
-                        : "bg-amber-500/10 text-amber-400"
-                    }`}
-                  >
-                  <div className="flex items-center gap-2 text-base font-semibold">
-                    {result?.isCorrect ? (
-                      <Check className="h-5 w-5 shrink-0" />
-                    ) : (
-                      <X className="h-5 w-5 shrink-0" />
-                    )}
-
-                    Your rating
-                  </div>
-
-                  <span className="text-lg font-bold">
-                    {result
-                      ? getTrustLevelLabel(result.userTrust)
-                      : "No rating"}
-                  </span>
-                </div>
                 </div>
               )
             })}
