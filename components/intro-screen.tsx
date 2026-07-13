@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Play, Shield, Eye } from "lucide-react"
+import { Play, Shield, Eye, Download } from "lucide-react"
 
 interface IntroScreenProps {
   onStart: () => void
@@ -81,10 +81,24 @@ export function IntroScreen({
           <Eye className="w-5 h-5" />
           <span className="text-sm tracking-wide uppercase">5 Scenarios • Interactive Trust Rating</span>
         </div>
+
+        {/* Download script button */}
+        <div className="mt-8">
+          <a href="/Start-Deepfake-Studie.bat" download>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              <Download className="w-3.5 h-3.5 mr-2" />
+              Download Script
+            </Button>
+          </a>
+        </div>
       </div>
 
       {/* Bottom branding */}
-      <div className="absolute bottom-8 left-0 right-0 text-center">
+      <div className="absolute bottom-6 left-0 right-0 text-center">
         <p className="text-xs text-muted-foreground/60 tracking-widest uppercase">
           LMU Munich • Usable Security Research
         </p>
