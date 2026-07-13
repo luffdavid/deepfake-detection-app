@@ -1,196 +1,169 @@
 "use client"
 
-import { 
-  Scenario, 
-  TrustLevel, 
-  isCorrectAssessment, 
-  getTrustLevelLabel, 
-  getTrustLevelColorClass, 
-  getTrustLevelValue, 
-  securityChecklist, 
-} from "@/lib/scenarios"
-
-import { Button } from "@/components/ui/button"
-
+import type { Scenario, TrustLevel } from "@/lib/scenarios"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-
-import { 
-  CheckCircle2, 
-  XCircle, 
-  ArrowRight, 
+  getTrustLevelColorClass,
+  getTrustLevelLabel,
+  getTrustLevelValue,
+  isCorrectAssessment,
+} from "@/lib/scenarios"
+import { Button } from "@/components/ui/button"
+import {
+  ArrowRight,
+  CheckCircle2,
   Lightbulb,
-  ClipboardCheck,
-  Search,
-  BadgeCheck,
-  Newspaper,
-  Heart,
-  Brain,
+  SlidersHorizontal,
+  XCircle,
 } from "lucide-react"
-
-const iconMap = {
-  search: Search,
-  "badge-check": BadgeCheck,
-  newspaper: Newspaper,
-  heart: Heart,
-  brain: Brain,
-}
 
 interface FeedbackScreenProps {
   scenario: Scenario
   userTrust: TrustLevel
+  isLastScenario?: boolean
   onContinue: () => void
 }
 
-export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScreenProps) {
+export function FeedbackScreen({
+  scenario,
+  userTrust,
+  isLastScenario = false,
+  onContinue,
+}: FeedbackScreenProps) {
   const isCorrect = isCorrectAssessment(userTrust, scenario.recommendedTrust)
   const recommendedSliderValue = getTrustLevelValue(scenario.recommendedTrust)
 
   return (
-    <div className="relative min-h-screen h-screen w-screen flex flex-col items-center justify-center p-8 overflow-hidden">
-      <div className="absolute right-6 top-6 z-20 flex items-center gap-4">
-        <p className="hidden text-2xl text-slate-400 sm:block ">Need help?</p>
-
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              className="border-cyan-400/50 bg-cyan-400/10 text-cyan-100 hover:bg-cyan-400/20 text-2xl px-5 py-5"
+    <div className="min-h-screen w-full overflow-y-auto p-4 sm:p-6 lg:h-screen lg:overflow-hidden lg:p-8">
+      <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-4 lg:h-full">
+        <header
+          className={`shrink-0 rounded-3xl border p-5 text-center sm:p-6 ${
+            isCorrect
+              ? "border-emerald-500/40 bg-emerald-500/10"
+              : "border-red-500/40 bg-red-500/10"
+          }`}
+        >
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-5">
+            <div
+              className={`inline-flex shrink-0 rounded-full p-3 ${
+                isCorrect ? "bg-emerald-500/20" : "bg-red-500/20"
+              }`}
             >
-            <ClipboardCheck className="mr-2.5 h-5 w-5" />
-            Open checklist
-            </Button>
-          </DialogTrigger>
-
-          <DialogContent className="border-cyan-500/30 bg-slate-950 text-white sm:max-w-3xl">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2.5 text-3xl text-cyan-100">
-                <ClipboardCheck className="h-7 w-7" />
-                Security Checklist
-              </DialogTitle>
-
-              <DialogDescription className="text-slate-300 text-base">
-                Use this checklist when deciding whether online content is trustworthy.
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="mt-5 space-y-4">
-              {securityChecklist.map((item) => {
-                const Icon = iconMap[item.icon as keyof typeof iconMap]
-
-                return (
-                  <div
-                    key={item.id}
-                    className="flex gap-5 rounded-xl border border-slate-700/70 bg-slate-900/70 p-5"
-                  >
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-300">
-                      <Icon className="h-6 w-6" />
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-semibold text-slate-100">
-                        {item.title}
-                      </h3>
-                      <p className="mt-1.5 text-base text-slate-300">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-                )
-              })}
+              {isCorrect ? (
+                <CheckCircle2 className="h-12 w-12 text-emerald-500 sm:h-14 sm:w-14" />
+              ) : (
+                <XCircle className="h-12 w-12 text-red-500 sm:h-14 sm:w-14" />
+              )}
             </div>
-          </DialogContent>
-        </Dialog>
-      </div>
 
-      <div className="w-full max-w-3xl space-y-7 animate-scale-in">
-
-        {/* User's choice badge */}
-        <div className="text-center">
-          <p className="text-2xl text-muted-foreground mb-3">Your choice:</p>
-          <span
-            className={`inline-block px-6 py-2.5 rounded-full text-lg font-semibold border ${
-              getTrustLevelColorClass(userTrust)
-            }`}
-          >
-            {getTrustLevelLabel(userTrust)}
-          </span>
-        </div>
-
-        {/* Result header */}
-        <div className="text-center space-y-4">
-          <div
-            className={`inline-flex p-5 rounded-full ${
-              isCorrect ? "bg-emerald-500/20" : "bg-red-500/20"
-            }`}
-          >
-            {isCorrect ? (
-              <CheckCircle2 className="w-18 h-18 text-emerald-500" />
-            ) : (
-              <XCircle className="w-18 h-18 text-red-500" />
-            )}
-          </div>
-          <h1 className="text-5xl md:text-6xl font-bold">
-            {isCorrect ? scenario.feedbackCorrect : scenario.feedbackIncorrect}
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            This content was{" "}
-            <span className={scenario.isFake ? "text-red-500 font-bold" : "text-emerald-500 font-bold"}>
-              {scenario.isFake ? "FAKE" : "AUTHENTIC"}
-            </span>
-          </p>
-        </div>
-
-        {/* Educational takeaway */}
-        <div className="p-6 glass-card border border-emerald-500/30 rounded-xl animate-slide-up" style={{ animationDelay: "0.2s" }}>
-          <div className="flex gap-4">
-            <div className="shrink-0">
-              <div className="p-2.5 rounded-xl bg-emerald-500/20">
-                <Lightbulb className="w-6 h-6 text-emerald-400" />
-              </div>
-            </div>
-            <div>
-              <h3 className="font-semibold text-xl mb-1.5">Key Takeaway</h3>
-              <p className="text-xl text-muted-foreground leading-relaxed">
-                {scenario.educationalTakeaway}
+            <div className="sm:text-left">
+              <h1 className="text-3xl font-bold leading-tight sm:text-4xl">
+                {isCorrect ? scenario.feedbackCorrect : scenario.feedbackIncorrect}
+              </h1>
+              <p className="mt-1 text-base text-muted-foreground sm:text-lg">
+                This content was{" "}
+                <span
+                  className={
+                    scenario.isFake
+                      ? "font-bold text-red-500"
+                      : "font-bold text-emerald-500"
+                  }
+                >
+                  {scenario.isFake ? "FAKE" : "AUTHENTIC"}
+                </span>
               </p>
             </div>
           </div>
+        </header>
+
+        <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(22rem,0.8fr)]">
+          <section className="min-h-64 overflow-hidden rounded-3xl border bg-black lg:min-h-0">
+            {scenario.videoSrc ? (
+              <video
+                className="aspect-video h-full w-full object-contain"
+                src={scenario.videoSrc}
+                controls
+                playsInline
+                preload="metadata"
+              />
+            ) : (
+              <div
+                className={`aspect-video h-full w-full bg-gradient-to-br ${scenario.thumbnailColor}`}
+                role="img"
+                aria-label={scenario.videoPlaceholder}
+              />
+            )}
+          </section>
+
+          <aside className="flex min-h-0 flex-col gap-4">
+            <section className="rounded-3xl border bg-card p-5 sm:p-6">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="rounded-xl bg-accent/10 p-2.5 text-accent">
+                  <SlidersHorizontal className="h-5 w-5" />
+                </div>
+                <h2 className="text-xl font-bold">Your assessment</h2>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <span className="text-sm text-muted-foreground">Your choice</span>
+                <span
+                  className={`rounded-full border px-4 py-1.5 text-sm font-semibold ${getTrustLevelColorClass(
+                    userTrust
+                  )}`}
+                >
+                  {getTrustLevelLabel(userTrust)}
+                </span>
+              </div>
+
+              <div className="mt-5 border-t pt-5">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <span className="text-sm text-muted-foreground">Recommended</span>
+                  <span
+                    className={`rounded-full border px-4 py-1.5 text-sm font-semibold ${getTrustLevelColorClass(
+                      scenario.recommendedTrust
+                    )}`}
+                  >
+                    {getTrustLevelLabel(scenario.recommendedTrust)}
+                  </span>
+                </div>
+
+                <div className="relative px-2" aria-hidden="true">
+                  <div className="h-2.5 rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-red-500" />
+                  <div
+                    className="absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full border-2 border-background bg-white shadow"
+                    style={{ left: `calc(${recommendedSliderValue}% - 10px)` }}
+                  />
+                </div>
+                <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+                  <span>Trustworthy</span>
+                  <span>Not sure</span>
+                  <span>Not trustworthy</span>
+                </div>
+              </div>
+            </section>
+
+            <section className="flex-1 rounded-3xl border border-emerald-500/30 bg-card p-5 sm:p-6">
+              <div className="flex gap-4">
+                <div className="h-fit shrink-0 rounded-xl bg-emerald-500/15 p-2.5">
+                  <Lightbulb className="h-6 w-6 text-emerald-400" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Key takeaway</h2>
+                  <p className="mt-2 text-base leading-relaxed text-muted-foreground">
+                    {scenario.educationalTakeaway}
+                  </p>
+                </div>
+              </div>
+            </section>
+          </aside>
         </div>
 
-        {/* Recommended trust level */}
-        <div className="animate-slide-up" style={{ animationDelay: "0.35s" }}>
-          <p className="text-lg text-muted-foreground mb-4">Recommended:</p>
-          <div className="relative px-2">
-            {/* Gradient track */}
-            <div className="h-3 rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-red-500" />
-            {/* Thumb indicator */}
-            <div
-              className="absolute top-1/2 -translate-y-1/2 w-7 h-7 rounded-full border-2 border-white shadow-lg bg-white"
-              style={{ left: `calc(${recommendedSliderValue}% - 14px)` }}
-            />
-          </div>
-          <div className="flex justify-between text-sm sm:text-base px-2 mt-2">
-            <span className="text-emerald-500">Very trustworthy</span>
-            <span className="text-amber-400">Not sure</span>
-            <span className="text-red-500">Not trustworthy</span>
-          </div>
-        </div>
-
-        {/* Continue button */}
         <Button
           onClick={onContinue}
           size="lg"
-          className="w-full text-2xl py-8 rounded-xl bg-emerald-600 hover:bg-emerald-700"
+          className="h-14 w-full shrink-0 rounded-2xl bg-emerald-600 text-lg hover:bg-emerald-700 sm:text-xl"
         >
-          Next scenario
-          <ArrowRight className="w-7 h-7 ml-2.5" />
+          {isLastScenario ? "See results" : "Next scenario"}
+          <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
       </div>
     </div>

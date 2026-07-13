@@ -14,16 +14,8 @@ import {
   ArrowLeft,
   ArrowRight,
   RotateCcw,
-  Shield,
   Check,
   X,
-  Search,
-  BadgeCheck,
-  Newspaper,
-  Heart,
-  Brain,
-  ChevronUp,
-  ChevronDown,
 } from "lucide-react"
 
 interface UserResult {
@@ -37,47 +29,16 @@ interface SummaryScreenProps {
   results: UserResult[]
   correctCount: number
   totalScenarios: number
+  onShowChecklist: () => void
   onRestart: () => void
 }
-
-const takeaways = [
-  {
-    icon: Search,
-    title: "Verify the source",
-    description: "Trace content back to the original, named account or outlet before you believe or share it.",
-  },
-  {
-    icon: BadgeCheck,
-    title: "Look for verification badges",
-    description: "Official accounts on major platforms display verification marks — absence is a warning sign.",
-  },
-  {
-    icon: Newspaper,
-    title: "Check trusted news outlets",
-    description: "Cross-reference breaking news with established media. A single clip is never enough.",
-  },
-  {
-    icon: Heart,
-    title: "Question emotional manipulation",
-    description: "Content that triggers fear, outrage or pity is often designed to bypass your critical thinking.",
-  },
-  {
-    icon: Brain,
-    title: "Verify context and plausibility",
-    description: "Ask whether the claim makes sense given what you already know, and what might be left out.",
-  },
-  {
-    icon: Shield,
-    title: "Use official channels",
-    description: "For health, money or safety, act only through official websites and authorities you reach yourself.",
-  },
-]
 
 export function SummaryScreen({
   scenarios,
   results,
   correctCount,
   totalScenarios,
+  onShowChecklist,
   onRestart,
 }: SummaryScreenProps) {
   const [api, setApi] = useState<CarouselApi>()
@@ -95,7 +56,6 @@ export function SummaryScreen({
 
   const resultFor = (scenarioId: string) => results.find((r) => r.scenarioId === scenarioId)
   const percentage = totalScenarios > 0 ? Math.round((correctCount / totalScenarios) * 100) : 0
-  const [isExpanded, setIsExpanded] = useState(false)
   const RADIUS = 54
   const CIRCUMFERENCE = 2 * Math.PI * RADIUS
   const [animatedOffset, setAnimatedOffset] = useState(CIRCUMFERENCE)
@@ -108,8 +68,8 @@ export function SummaryScreen({
 
   return (
     <div className="h-screen w-full overflow-y-auto">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-6 py-12">
-       {/* 1 — Score + per-scenario result icons */}
+<div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-10 py-12">       
+  {/* 1 — Score + per-scenario result icons */}
 <header className="flex flex-col items-center text-center">
   <h1 className="text-balance text-3xl font-semibold leading-tight sm:text-4xl">Experience Complete</h1>
 
@@ -176,133 +136,123 @@ export function SummaryScreen({
   </ul>
 </header>
 
-       {/* 2 — Per-clip review carousel (expandable) */}
+{/* 2 — Per-clip review carousel */}
 <section>
-  <button
-    type="button"
-    onClick={() => setIsExpanded((prev) => !prev)}
-    className="flex w-full items-center justify-between rounded-xl border border-border bg-card px-4 py-3 text-left transition-colors hover:bg-secondary/50"
-    aria-expanded={isExpanded}
-    aria-controls="clip-review-carousel"
-  >
-    <div>
-      <h2 className="text-base font-semibold sm:text-xl">Review each clip</h2>
-      <p className="mt-0.5 text-sm text-muted-foreground">
-        {isExpanded
-          ? "Swipe through every video you saw to understand how it tried to convince you."
-          : "Tap to see the detailed breakdown for each clip again."}
-      </p>
+  <div className="mb-6 text-center">
+    <h2 className="text-2xl font-semibold sm:text-3xl">
+      Review each clip
+    </h2>
+
+    <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+      Swipe through every video you saw to review the result and understand
+      how the content tried to convince you.
+    </p>
+
+    <p className="mt-2 text-xs font-medium uppercase tracking-widest text-muted-foreground/60">
+      Swipe left or right
+    </p>
+  </div>
+
+    <Carousel
+      setApi={setApi}
+      opts={{
+        align: "start",
+        dragFree: false,
+        containScroll: "trimSnaps",
+      }}
+      className="w-full touch-pan-y"
+    >
+    <CarouselContent>
+      {scenarios.map((scenario, i) => {
+        const result = resultFor(scenario.id)
+
+        return (
+          <CarouselItem key={scenario.id}>
+            <div className="min-h-0">
+              <ScenarioReviewSlide
+                scenario={scenario}
+                index={i}
+                total={scenarios.length}
+                userTrust={result?.userTrust}
+                isCorrect={result?.isCorrect}
+              />
+            </div>
+          </CarouselItem>
+        )
+      })}
+    </CarouselContent>
+  </Carousel>
+
+  <div className="mt-4 flex items-center justify-between gap-4">
+    <Button
+      variant="outline"
+      size="icon"
+      className="h-9 w-9 rounded-full"
+      onClick={() => api?.scrollPrev()}
+      disabled={selected === 0}
+      aria-label="Previous clip"
+    >
+      <ArrowLeft className="h-4 w-4" />
+    </Button>
+
+    <div
+      className="flex items-center gap-2"
+      role="tablist"
+      aria-label="Clip reviews"
+    >
+      {scenarios.map((scenario, i) => (
+        <button
+          key={scenario.id}
+          onClick={() => api?.scrollTo(i)}
+          aria-label={`Go to clip ${i + 1}`}
+          aria-selected={selected === i}
+          role="tab"
+          className={`h-1.5 rounded-full transition-all ${
+            selected === i
+              ? "w-6 bg-accent"
+              : "w-1.5 bg-border hover:bg-muted-foreground/50"
+          }`}
+        />
+      ))}
     </div>
-    {isExpanded ? (
-      <ChevronUp className="h-5 w-5 shrink-0 text-muted-foreground" />
-    ) : (
-      <ChevronDown className="h-5 w-5 shrink-0 text-muted-foreground" />
-    )}
-  </button>
 
-  <div
-    id="clip-review-carousel"
-    className={`overflow-hidden transition-all duration-300 ${
-      isExpanded ? "mt-4 max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
-    }`}
-  >
-    <Carousel setApi={setApi} opts={{ align: "center" }} className="w-full">
-      <CarouselContent>
-        {scenarios.map((scenario, i) => {
-          const result = resultFor(scenario.id)
-          return (
-            <CarouselItem key={scenario.id}>
-              <div className="h-[460px]">
-                <ScenarioReviewSlide
-                  scenario={scenario}
-                  index={i}
-                  total={scenarios.length}
-                  userTrust={result?.userTrust}
-                  isCorrect={result?.isCorrect}
-                />
-              </div>
-            </CarouselItem>
-          )
-        })}
-      </CarouselContent>
-    </Carousel>
-
-    <div className="mt-4 flex items-center justify-between gap-4">
-      <Button
-        variant="outline"
-        size="icon"
-        className="h-9 w-9 rounded-full"
-        onClick={() => api?.scrollPrev()}
-        disabled={selected === 0}
-        aria-label="Previous clip"
-      >
-        <ArrowLeft className="h-4 w-4" />
-      </Button>
-
-      <div className="flex items-center gap-2" role="tablist" aria-label="Clip reviews">
-        {scenarios.map((scenario, i) => (
-          <button
-            key={scenario.id}
-            onClick={() => api?.scrollTo(i)}
-            aria-label={`Go to clip ${i + 1}`}
-            aria-selected={selected === i}
-            role="tab"
-            className={`h-1.5 rounded-full transition-all ${
-              selected === i ? "w-6 bg-accent" : "w-1.5 bg-border hover:bg-muted-foreground/50"
-            }`}
-          />
-        ))}
-      </div>
-
-      <Button
-        variant="outline"
-        size="icon"
-        className="h-9 w-9 rounded-full"
-        onClick={() => api?.scrollNext()}
-        disabled={selected === scenarios.length - 1}
-        aria-label="Next clip"
-      >
-        <ArrowRight className="h-4 w-4" />
-      </Button>
-    </div>
+    <Button
+      variant="outline"
+      size="icon"
+      className="h-9 w-9 rounded-full"
+      onClick={() => api?.scrollNext()}
+      disabled={selected === scenarios.length - 1}
+      aria-label="Next clip"
+    >
+      <ArrowRight className="h-4 w-4" />
+    </Button>
   </div>
 </section>
   
 
- {/* 3 — Key takeaways from deepfakes */}
-<section className="rounded-3xl bg-secondary/40 px-6 py-10 sm:px-10">
-  <div className="mb-8 text-center">
-    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Before you go</p>
-    <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Key takeaways from deepfakes</h2>
-    <p className="mx-auto mt-3 max-w-xl text-pretty text-sm leading-relaxed text-muted-foreground">
-      A good score here does not mean you are safe in real life — these clips were hard to judge for a reason,
-      and even experts are routinely fooled. Build these habits instead of trusting your instincts.
-    </p>
-  </div>
 
-  <ul className="grid gap-px overflow-hidden rounded-2xl bg-border sm:grid-cols-2">
-    {takeaways.map((item) => {
-      const Icon = item.icon
-      return (
-        <li key={item.title} className="relative overflow-hidden bg-card p-6">
-          <Icon
-  className="pointer-events-none absolute -right-3 -top-3 h-24 w-24 text-green-500/20"
-  strokeWidth={1}
-/>
-          <h3 className="relative text-base font-bold text-foreground">{item.title}</h3>
-          <p className="relative mt-1.5 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
-        </li>
-      )
-    })}
-  </ul>
-</section>
 
         {/* 4 — Start again */}
-        <footer className="flex flex-col items-center gap-3">
-          <Button onClick={onRestart} size="lg" className="rounded-full px-8">
+        <footer className="flex flex-col items-center gap-4">
+          <Button
+            onClick={onShowChecklist}
+            size="lg"
+            className="h-14 rounded-full px-10 text-lg"
+          >
+            Show final checklist
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+
+          <Button
+            onClick={onRestart}
+            variant="ghost"
+            size="lg"
+            className="rounded-full px-8"
+          >
             <RotateCcw className="mr-2 h-4 w-4" />
             Start again
           </Button>
+
           <p className="text-center text-[11px] uppercase tracking-widest text-muted-foreground/50">
             LMU Munich · Usable Security Research
           </p>
