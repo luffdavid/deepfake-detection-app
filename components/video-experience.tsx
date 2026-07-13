@@ -223,7 +223,7 @@ export function VideoExperience({
     const text = commentInput.trim()
     if (!text) return
     setComments((prev) => [
-      { user: "you", text, likes: 0, time: "gerade eben" },
+      { user: "you", text, likes: 0, time: "just now" },
       ...prev,
     ])
     setCommentInput("")
@@ -252,9 +252,9 @@ export function VideoExperience({
 
   return (
     <div className="h-screen w-screen overflow-hidden px-4 pt-2 pb-2">
-      <div className="mx-auto flex h-full w-full max-w-3xl flex-col items-center justify-start gap-24">
+      <div className="mx-auto flex h-full w-full max-w-5xl flex-col items-center justify-start gap-6">
       {/* Header */}
-      <div className="text-center pt-24 shrink-0">
+      <div className="text-center pt-28 shrink-0">
         <h1 className="text-xl sm:text-5xl font-medium text-balance">
           {phase === "video"
             ? "Watch the clip carefully."
@@ -302,10 +302,11 @@ export function VideoExperience({
       )}
 
       {/* Phone Mockup with Video */}
-      <div className="w-full flex items-start justify-center py-0 min-h-0">
-        <div className="relative h-[74vh] min-h-[460px] max-h-[1000px] flex items-center justify-center">
+      <div className="w-full min-h-0 flex-1 py-0">
+        <div className="flex h-full w-full flex-col items-center">
+          <div className="relative flex h-full w-full items-center justify-center">
           {/* Phone frame */}
-          <div className="relative h-full max-h-[1000px] aspect-[9/16] max-w-full bg-zinc-900 rounded-[2rem] border-[3px] border-zinc-700 shadow-2xl overflow-hidden">
+          <div className="relative h-full max-h-[1400px] aspect-[9/16] max-w-full bg-zinc-900 rounded-[2rem] border-[3px] border-zinc-700 shadow-2xl overflow-hidden">
             {/* Video content area */}
             <div className={`absolute inset-0 ${scenario.videoSrc ? "bg-black" : `bg-gradient-to-br ${scenario.thumbnailColor}`}`} onClick={handleVideoClick}>
               {scenario.videoSrc && (
@@ -338,22 +339,22 @@ export function VideoExperience({
               )}
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
 
-              <div className="absolute top-0 left-0 right-0 z-20 flex items-center gap-2 px-2.5 pt-2.5">
-                <ChevronLeft className="w-5 h-5 text-white shrink-0" />
-                <div className="flex-1 flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur-sm px-2.5 h-7">
-                  <Search className="w-3.5 h-3.5 text-white/70 shrink-0" />
-                  <span className="flex-1 truncate text-[11px] text-white/70">Finde ähnliche Inhalte</span>
-                  <span className="text-[11px] font-medium text-white">Suchen</span>
+              <div className="absolute top-0 left-0 right-0 z-20 flex items-center gap-4 px-5 pt-5">
+                <ChevronLeft className="h-9 w-9 shrink-0 text-white" />
+                <div className="flex h-14 flex-1 items-center gap-3 rounded-full bg-white/15 px-4.5 backdrop-blur-sm">
+                  <Search className="h-7 w-7 shrink-0 text-white/70" />
+                  <span className="flex-1 truncate text-lg text-white/70">Finde ähnliche Inhalte</span>
+                  <span className="text-lg font-medium text-white">Suchen</span>
                 </div>
               </div>
 
-              <div className="absolute right-1.5 bottom-[13%] z-10 flex flex-col items-center gap-3.5">
+              <div className="absolute right-4 bottom-[13%] z-10 flex flex-col items-center gap-6.5">
                 <div className="relative mb-1">
-                  <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-zinc-600">
+                  <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-zinc-600">
                     {scenario.profileImage ? (
                       <img src={scenario.profileImage} alt="" className="h-full w-full object-cover" />
                     ) : (
-                      <User className="h-5 w-5 text-white/80" />
+                      <User className="h-8 w-8 text-white/80" />
                     )}
                   </div>
                   {!following && (
@@ -363,10 +364,10 @@ export function VideoExperience({
                           setFollowing(true)
                         }
                       }
-                      className="absolute -bottom-1.5 left-1/2 flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full bg-red-500 text-white"
+                      className="absolute -bottom-2 left-1/2 flex h-7 w-7 -translate-x-1/2 items-center justify-center rounded-full bg-red-500 text-white"
                       aria-label="Folgen"
                     >
-                      <span className="text-xs leading-none">+</span>
+                      <span className="text-lg leading-none">+</span>
                     </button>
                   )}
                 </div>
@@ -380,8 +381,8 @@ export function VideoExperience({
                   className="flex flex-col items-center transition-transform active:scale-90"
                   aria-label="Gefällt mir"
                 >
-                  <Heart className={`w-6 h-6 ${liked ? "fill-red-500 text-red-500" : "fill-white text-white"}`} />
-                  <span className="mt-0.5 text-[10px] font-medium text-white">{formatCount(likeBase + (liked ? 1 : 0))}</span>
+                  <Heart className={`h-12 w-12 ${liked ? "fill-red-500 text-red-500" : "fill-white text-white"}`} />
+                  <span className="mt-1 text-base font-semibold text-white">{formatCount(likeBase + (liked ? 1 : 0))}</span>
                 </button>
 
                 <button
@@ -391,10 +392,10 @@ export function VideoExperience({
                     }
                   }
                   className="flex flex-col items-center transition-transform active:scale-90"
-                  aria-label="Kommentare"
+                  aria-label="COMMENTS"
                 >
-                  <MessageCircle className="w-6 h-6 fill-white text-white" />
-                  <span className="mt-0.5 text-[10px] font-medium text-white">{formatCount(commentCount)}</span>
+                  <MessageCircle className="h-12 w-12 fill-white text-white" />
+                  <span className="mt-1 text-base font-semibold text-white">{formatCount(commentCount)}</span>
                 </button>
 
                 <button
@@ -406,47 +407,47 @@ export function VideoExperience({
                   className="flex flex-col items-center transition-transform active:scale-90"
                   aria-label="Speichern"
                 >
-                  <Bookmark className={`w-6 h-6 ${saved ? "fill-amber-400 text-amber-400" : "fill-white text-white"}`} />
-                  <span className="mt-0.5 text-[10px] font-medium text-white">{formatCount(saveBase + (saved ? 1 : 0))}</span>
+                  <Bookmark className={`h-12 w-12 ${saved ? "fill-amber-400 text-amber-400" : "fill-white text-white"}`} />
+                  <span className="mt-1 text-base font-semibold text-white">{formatCount(saveBase + (saved ? 1 : 0))}</span>
                 </button>
 
                 <button
                   className="flex flex-col items-center transition-transform active:scale-90"
                   aria-label="Teilen"
                 >
-                  <Share2 className="w-6 h-6 fill-white text-white" />
-                  <span className="mt-0.5 text-[10px] font-medium text-white">{formatCount(shareBase)}</span>
+                  <Share2 className="h-12 w-12 fill-white text-white" />
+                  <span className="mt-1 text-base font-semibold text-white">{formatCount(shareBase)}</span>
                 </button>
 
-                <div className="mt-1 h-8 w-8 overflow-hidden rounded-full border-2 border-zinc-800 bg-zinc-700">
+                <div className="mt-1 h-14 w-14 overflow-hidden rounded-full border-2 border-zinc-800 bg-zinc-700">
                   {scenario.profileImage ? (
                     <img src={scenario.profileImage} alt="" className="h-full w-full object-cover" />
                   ) : (
-                    <User className="h-full w-full p-1.5 text-white/80" />
+                    <User className="h-full w-full p-3 text-white/80" />
                   )}
                 </div>
               </div>
 
               {/* Bottom info */}
-              <div className="absolute bottom-12 left-3 right-16 z-10">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/70 bg-zinc-600">
+              <div className="absolute bottom-18 left-6 right-28 z-10">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/70 bg-zinc-600">
                     {scenario.profileImage ? (
                       <img src={scenario.profileImage} alt="" className="h-full w-full object-cover" />
                     ) : (
-                      <User className="h-4 w-4 text-white/80" />
+                      <User className="h-7 w-7 text-white/80" />
                     )}
                   </div>
-                  <span className="text-white font-semibold text-sm">{accountName}</span>
+                  <span className="text-xl font-semibold text-white">{accountName}</span>
                   {scenario.isVerified && (
-                    <svg className="h-3.5 w-3.5 text-sky-400" viewBox="0 0 24 24" fill="currentColor">
+                    <svg className="h-6 w-6 text-sky-400" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 2l2.4 1.8 3-.3 1 2.8 2.6 1.5-.9 2.9.9 2.9-2.6 1.5-1 2.8-3-.3L12 22l-2.4-1.8-3 .3-1-2.8L3 16.5l.9-2.9L3 10.7l2.6-1.5 1-2.8 3 .3L12 2z" />
                       <path d="M10.6 14.6l-2.2-2.2 1.1-1.1 1.1 1.1 3-3 1.1 1.1-4.1 4.1z" fill="#fff" />
                     </svg>
                   )}
-                  <span className="text-white/60 text-xs">· {postDate}</span>
+                  <span className="text-lg text-white/60">· {postDate}</span>
                 </div>
-                <p className="mt-1.5 text-xs leading-snug text-white">
+                <p className="mt-3 text-lg leading-snug text-white">
                   <span className="line-clamp-2">{caption}</span>
                   {scenario.hashtags && <span className="text-white/90"> {scenario.hashtags}</span>}
                   <span className="ml-1 text-white/60">mehr</span>
@@ -460,28 +461,28 @@ export function VideoExperience({
                     setShowComments(true)
                   }
                 }
-                className="absolute bottom-0 left-0 right-0 z-10 flex h-10 items-center gap-2 border-t border-white/10 bg-black/70 px-3"
+                className="absolute bottom-0 left-0 right-0 z-10 flex h-16 items-center gap-3.5 border-t border-white/10 bg-black/70 px-4.5"
               >
-                <span className="flex-1 text-left text-xs text-white/50">Kommentar hinzufügen ...</span>
-                <ImageIcon className="h-4 w-4 text-white/60" />
-                <Smile className="h-4 w-4 text-white/60" />
-                <AtSign className="h-4 w-4 text-white/60" />
+                <span className="flex-1 text-left text-lg text-white/50">Kommentar hinzufügen ...</span>
+                <ImageIcon className="h-7 w-7 text-white/60" />
+                <Smile className="h-7 w-7 text-white/60" />
+                <AtSign className="h-7 w-7 text-white/60" />
               </button>
 
               {/* Auto hint comment overlay */}
               {showHint && !showComments && (
-                <div className="absolute bottom-12 left-2 right-12 z-30 animate-live-comment">
-                  <div className="rounded-xl border border-white/30 bg-black/62 px-2.5 py-2 shadow-xl backdrop-blur-md">
-                    <p className="mb-1 text-[10px] font-medium uppercase tracking-wide text-white/75">Kommentare</p>
-                    <div className="flex items-start gap-2">
-                      <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-white/45 bg-gradient-to-br from-zinc-300 to-zinc-500 text-[9px] font-bold text-zinc-900">
+                <div className="absolute bottom-16 left-4 right-16 z-30 animate-live-comment">
+                  <div className="rounded-xl border border-white/30 bg-black/62 px-4 py-3.5 shadow-xl backdrop-blur-md">
+                    <p className="mb-2 text-base font-medium uppercase tracking-wide text-white/75">Kommentare</p>
+                    <div className="flex items-start gap-2.5">
+                      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/45 bg-gradient-to-br from-zinc-300 to-zinc-500 text-sm font-bold text-zinc-900">
                         UB
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[11px] leading-none text-white/80">
-                          <span className="font-semibold text-white/95">{commentUser}</span> • gerade eben
+                        <p className="text-base leading-none text-white/80">
+                          <span className="font-semibold text-white/95">{commentUser}</span> • just now
                         </p>
-                        <p className="mt-1 text-xs leading-snug text-white/95">{scenario.hint}</p>
+                        <p className="mt-2 text-lg leading-snug text-white/95">{scenario.hint}</p>
                       </div>
                     </div>
                   </div>
@@ -497,55 +498,55 @@ export function VideoExperience({
                         setShowComments(false)
                       }
                     } />
-                  <div className="animate-comments-up relative flex max-h-[72%] flex-col rounded-t-2xl bg-zinc-900">
-                    <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-                      <span className="text-sm font-semibold text-white">{formatCount(commentCount)} Kommentare</span>
+                  <div className="animate-comments-up relative flex max-h-[80%] flex-col rounded-t-2xl bg-zinc-900">
+                    <div className="flex items-center justify-between border-b border-white/10 px-5 py-4.5">
+                      <span className="text-xl font-semibold text-white">{formatCount(commentCount)} Kommentare</span>
                       <button onClick={(e) => { 
                             e.stopPropagation()
                             setShowComments(false)
                           } 
                         }
                         aria-label="Schließen">
-                        <X className="h-5 w-5 text-white/70" />
+                        <X className="h-8 w-8 text-white/70" />
                       </button>
                     </div>
-                    <div className="flex-1 space-y-4 overflow-y-auto px-4 py-3">
-                      <div className="flex items-start gap-2.5">
-                        <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-zinc-300 to-zinc-500 text-[10px] font-bold text-zinc-900">
+                    <div className="flex-1 space-y-6 overflow-hidden px-5 py-4.5">
+                      <div className="flex items-start gap-3.5">
+                        <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-zinc-300 to-zinc-500 text-base font-bold text-zinc-900">
                           UB
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-[11px] text-white/60">
-                            <span className="font-semibold text-white/90">{commentUser}</span> · gerade eben
+                          <p className="text-base text-white/60">
+                            <span className="font-semibold text-white/90">{commentUser}</span> · just now
                           </p>
-                          <p className="mt-0.5 text-xs leading-snug text-white/95">{scenario.hint}</p>
+                          <p className="mt-2 text-lg leading-snug text-white/95">{scenario.hint}</p>
                         </div>
                         <div className="flex flex-col items-center pt-0.5">
-                          <Heart className="h-3.5 w-3.5 text-white/50" />
-                          <span className="text-[10px] text-white/50">{hintLikes}</span>
+                          <Heart className="h-6 w-6 text-white/50" />
+                          <span className="text-base text-white/50">{hintLikes}</span>
                         </div>
                       </div>
                       {comments.map((c, i) => (
-                        <div key={i} className="flex items-start gap-2.5">
-                          <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${c.user === "you" ? "bg-emerald-600" : "bg-zinc-700"}`}>
-                            <User className="h-4 w-4 text-white/70" />
+                        <div key={i} className="flex items-start gap-3.5">
+                          <div className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${c.user === "you" ? "bg-emerald-600" : "bg-zinc-700"}`}>
+                            <User className="h-6 w-6 text-white/70" />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-[11px] text-white/60">
+                            <p className="text-base text-white/60">
                               <span className="font-semibold text-white/90">{c.user === "you" ? "Du" : c.user}</span> · {c.time}
                             </p>
-                            <p className="mt-0.5 text-xs leading-snug text-white/95">{c.text}</p>
+                            <p className="mt-2 text-lg leading-snug text-white/95">{c.text}</p>
                           </div>
                           <div className="flex flex-col items-center pt-0.5">
-                            <Heart className="h-3.5 w-3.5 text-white/50" />
-                            <span className="text-[10px] text-white/50">{c.likes}</span>
+                            <Heart className="h-6 w-6 text-white/50" />
+                            <span className="text-base text-white/50">{c.likes}</span>
                           </div>
                         </div>
                       ))}
                     </div>
-                    <div className="flex items-center gap-2 border-t border-white/10 px-3 py-2.5">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-zinc-700">
-                        <User className="h-4 w-4 text-white/70" />
+                    <div className="flex items-center gap-3.5 border-t border-white/10 px-4.5 py-4">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-zinc-700">
+                        <User className="h-7 w-7 text-white/70" />
                       </div>
                       <input
                         value={commentInput}
@@ -554,12 +555,12 @@ export function VideoExperience({
                           if (e.key === "Enter") handleAddComment()
                         }}
                         placeholder="Kommentar hinzufügen ..."
-                        className="flex-1 rounded-full bg-zinc-800 px-3 py-1.5 text-xs text-white placeholder:text-white/40 outline-none focus:ring-1 focus:ring-emerald-500"
+                        className="flex-1 rounded-full bg-zinc-800 px-4.5 py-3 text-lg text-white placeholder:text-white/40 outline-none focus:ring-1 focus:ring-emerald-500"
                       />
                       <button
                         onClick={handleAddComment}
                         disabled={!commentInput.trim()}
-                        className="text-xs font-semibold text-emerald-400 disabled:text-white/30"
+                        className="text-lg font-semibold text-emerald-400 disabled:text-white/30"
                       >
                         Posten
                       </button>
@@ -570,12 +571,25 @@ export function VideoExperience({
             </div>
 
             {/* Video progress bar */}
-            <div className="absolute bottom-10 left-0 right-0 z-30 h-[3px] bg-white/20">
+            <div className="absolute bottom-16 left-0 right-0 z-30 h-2 bg-white/20">
               <div
                 className="h-full bg-white"
                 style={{ width: `${videoProgress}%`, transition: "width 0.1s linear" }}
               />
             </div>
+          </div>
+          </div>
+
+          {/* Progress dots */}
+          <div className="mt-2 flex justify-center gap-2">
+            {Array.from({ length: totalScenarios }).map((_, i) => (
+              <div
+                key={i}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  i < currentIndex ? "bg-emerald-500" : i === currentIndex ? "bg-white" : "bg-zinc-700"
+                }`}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -586,32 +600,10 @@ export function VideoExperience({
       {phase === "video" && (
         <div className="pb-1.5 space-y-1.5 text-center shrink-0">
           <p className="text-sm text-muted-foreground animate-pulse">Watch carefully before judging...</p>
-          <div className="flex justify-center gap-2">
-            {Array.from({ length: totalScenarios }).map((_, i) => (
-              <div
-                key={i}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  i < currentIndex ? "bg-emerald-500" : i === currentIndex ? "bg-white" : "bg-zinc-700"
-                }`}
-              />
-            ))}
-          </div>
-          
         </div>
         
       )}
       </div>
-       {/* Progress dots */}
-          <div className="flex justify-center gap-2">
-            {Array.from({ length: totalScenarios }).map((_, i) => (
-              <div
-                key={i}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  i < currentIndex ? "bg-emerald-500" : i === currentIndex ? "bg-white" : "bg-zinc-700"
-                }`}
-              />
-            ))}
-          </div>
     </div>
   )
 }

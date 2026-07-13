@@ -71,8 +71,7 @@ export function SummaryScreen({
 <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-10 py-12">       
   {/* 1 — Score + per-scenario result icons */}
 <header className="flex flex-col items-center text-center">
-  <h1 className="text-balance text-3xl font-semibold leading-tight sm:text-4xl">Experience Complete</h1>
-
+<h1 className="text-xl sm:text-5xl font-medium text-balance">Experience Complete</h1>
   <div className="relative mt-8 flex h-40 w-40 items-center justify-center">
     <svg viewBox="0 0 128 128" className="h-40 w-40 -rotate-90">
       <defs>

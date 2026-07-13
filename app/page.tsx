@@ -233,12 +233,12 @@ export default function TrustCheckApp() {
   const correctCount = results.filter((r) => r.isCorrect).length
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="h-screen w-screen overflow-hidden bg-background">
       {/* Dev shortcut to preview the end screen directly */}
       {currentScreen !== "summary" && currentScreen !== "intro" && (
        <button
   onClick={handleSkipToSummary}
-  className="fixed bottom-8 right-8 z-50 rounded-2xl border border-border bg-card/90 px-8 py-5 text-xl font-semibold text-muted-foreground shadow-xl backdrop-blur transition-colors hover:bg-card hover:text-foreground"
+  className="fixed bottom-1 right-1 z-50 rounded-2xl border border-border bg-card/90 px-8 py-5 text-xl font-semibold text-muted-foreground shadow-xl backdrop-blur transition-colors hover:bg-card hover:text-foreground"
 >
   Skip to results
 </button>
