@@ -5,7 +5,6 @@ import { IntroScreen } from "@/components/intro-screen"
 import { VideoExperience } from "@/components/video-experience"
 import { FeedbackScreen } from "@/components/feedback-screen"
 import { SummaryScreen } from "@/components/summary-screen"
-import { FinalChecklistScreen } from "@/components/final-checklist-screen"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -20,7 +19,7 @@ import { useSessionTracking } from "@/hooks/use-session-tracking"
 import { useAnalytics } from "@/hooks/use-analytics"
 import { Clock3 } from "lucide-react"
 
-type Screen = "intro" | "video" | "feedback" | "summary" | "checklist"
+type Screen = "intro" | "video" | "feedback" | "summary" 
 
 interface UserResult {
   scenarioId: string
@@ -35,13 +34,6 @@ export default function TrustCheckApp() {
   const [results, setResults] = useState<UserResult[]>([])
   const [videosReady, setVideosReady] = useState(false)
   const [loadingProgress, setLoadingProgress] = useState(0)
-  const handleShowChecklist = () => {
-    setCurrentScreen("checklist")
-  }
-
-  const handleBackToSummary = () => {
-    setCurrentScreen("summary")
-  }
 
   // Session tracking and analytics
   const {
@@ -301,21 +293,6 @@ export default function TrustCheckApp() {
             results={results}
             correctCount={correctCount}
             totalScenarios={scenarios.length}
-            onShowChecklist={handleShowChecklist}
-            onRestart={handleRestart}
-          />
-        )}
-      </div>
-
-      <div
-        className={`transition-opacity duration-500 ${
-          currentScreen === "checklist"
-            ? "opacity-100"
-            : "opacity-0 absolute inset-0 pointer-events-none"
-        }`}
-      >
-        {currentScreen === "checklist" && (
-          <FinalChecklistScreen
             onRestart={handleRestart}
           />
         )}
