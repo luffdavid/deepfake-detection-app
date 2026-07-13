@@ -101,10 +101,10 @@ export function SummaryScreen({
               return (
                 <div
                   key={scenario.id}
-                  className="grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-2xl border bg-card px-5 py-4"
+                  className="grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-2xl border bg-card px-5 py-7"
                 >
                   {/* Scenario number */}
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-base font-bold">
+                  <div className="flex h-12 w-12 text-lg items-center justify-center rounded-full bg-secondary text-base font-bold">
                     {index + 1}
                   </div>
 
@@ -126,14 +126,14 @@ export function SummaryScreen({
                       </span>
                     </div>
 
-                    <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">
+                    <p className="mt-1 line-clamp-2 text-base leading-relaxed text-muted-foreground">
                       {scenario.realWorldAction}
                     </p>
                   </div>
 
                   {/* User result */}
                   <div
-                    className={`flex min-w-[190px] items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold ${
+                    className={`flex min-w-[190px] items-center justify-center gap-2 rounded-xl px-6 py-4 text-sm font-semibold ${
                       result?.isCorrect
                         ? "bg-emerald-500/10 text-emerald-400"
                         : "bg-amber-500/10 text-amber-400"
@@ -262,13 +262,13 @@ export function SummaryScreen({
 
         {/* Checklist popup */}
         <Dialog open={isChecklistOpen} onOpenChange={setIsChecklistOpen}>
-          <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto">
+          <DialogContent className="max-h-[92vh] max-w-6xl overflow-y-auto">
             <DialogHeader>
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent/15 text-accent">
                 <Shield className="h-7 w-7" />
               </div>
 
-              <DialogTitle className="text-center text-3xl">
+              <DialogTitle className="text-center text-4xl font-bold">
                 Your deepfake checklist
               </DialogTitle>
 
@@ -277,7 +277,7 @@ export function SummaryScreen({
               </DialogDescription>
             </DialogHeader>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="mt-8 grid gap-6 sm:grid-cols-2">
               {securityChecklist.map((item) => {
                 const Icon =
                   iconMap[item.icon as keyof typeof iconMap] ?? Shield
@@ -285,15 +285,15 @@ export function SummaryScreen({
                 return (
                   <div
                     key={item.id}
-                    className="flex items-start gap-3 rounded-xl bg-secondary/60 p-4"
+                    className="flex items-start gap-5 rounded-2xl bg-secondary/60 p-6"
                   >
-                    <div className="shrink-0 rounded-lg bg-accent/15 p-2 text-accent">
-                      <Icon className="h-5 w-5" />
+                    <div className="shrink-0 rounded-lg bg-accent/15 p-3 text-accent">
+                      <Icon className="h-7 w-7" />
                     </div>
 
                     <div>
-                      <h3 className="font-semibold">{item.title}</h3>
-                      <p className="mt-1 text-sm leading-snug text-muted-foreground">
+                      <h3 className="text-xl font-bold">{item.title}</h3>
+                      <p className="mt-1 text-base leading-relaxed leading-snug text-muted-foreground">
                         {item.description}
                       </p>
                     </div>
@@ -305,7 +305,7 @@ export function SummaryScreen({
             <Button
               onClick={() => setIsChecklistOpen(false)}
               size="lg"
-              className="mt-5 h-14 w-full rounded-xl text-lg"
+              className="mt-8 h-16 w-full text-xl font-semibold"
             >
               Got it
             </Button>
