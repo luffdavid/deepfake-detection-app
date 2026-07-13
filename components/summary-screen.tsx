@@ -243,23 +243,23 @@ export function SummaryScreen({
 
 
         {/* 4 — Start again */}
-        <footer className="flex flex-col items-center gap-4">
+        <footer className="flex flex-col items-center gap-6">
           <Button
             onClick={onShowChecklist}
             size="lg"
-            className="h-14 rounded-full px-10 text-lg"
+            className="h-20 min-w-[340px] rounded-full px-14 text-2xl font-semibold"
           >
             Show final checklist
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <ArrowRight className="ml-3 h-7 w-7" />
           </Button>
 
           <Button
             onClick={onRestart}
-            variant="ghost"
+            variant="outline"
             size="lg"
-            className="rounded-full px-8"
+            className="h-20 min-w-[340px] rounded-full px-14 text-2xl font-semibold"
           >
-            <RotateCcw className="mr-2 h-4 w-4" />
+            <RotateCcw className="mr-3 h-7 w-7" />
             Start again
           </Button>
 

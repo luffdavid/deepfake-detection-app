@@ -316,7 +316,6 @@ export default function TrustCheckApp() {
       >
         {currentScreen === "checklist" && (
           <FinalChecklistScreen
-            onBack={handleBackToSummary}
             onRestart={handleRestart}
           />
         )}

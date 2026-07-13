@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button"
 import { securityChecklist } from "@/lib/scenarios"
 import {
-  ArrowLeft,
   RotateCcw,
   Search,
   BadgeCheck,
@@ -14,7 +13,6 @@ import {
 } from "lucide-react"
 
 interface FinalChecklistScreenProps {
-  onBack: () => void
   onRestart: () => void
 }
 
@@ -28,7 +26,6 @@ const iconMap = {
 }
 
 export function FinalChecklistScreen({
-  onBack,
   onRestart,
 }: FinalChecklistScreenProps) {
   return (
@@ -83,16 +80,6 @@ export function FinalChecklistScreen({
         </ul>
 
         <footer className="mt-auto flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Button
-            onClick={onBack}
-            variant="outline"
-            size="lg"
-            className="rounded-full px-8"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to results
-          </Button>
-
           <Button
             onClick={onRestart}
             size="lg"
