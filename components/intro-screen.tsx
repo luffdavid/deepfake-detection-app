@@ -46,9 +46,9 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
         <Button
           onClick={onStart}
           size="lg"
-          className="text-xl px-12 py-8 rounded-2xl animate-pulse-glow hover:scale-105 transition-transform duration-300"
+          className="text-2xl px-14 py-10 rounded-2xl animate-pulse-glow hover:scale-105 transition-transform duration-300"
         >
-          <Play className="w-6 h-6 mr-3" />
+          <Play className="w-8 h-8 mr-3.5" />
           Start Experience
         </Button>
 
