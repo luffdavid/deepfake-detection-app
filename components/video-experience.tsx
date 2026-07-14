@@ -345,9 +345,9 @@ export function VideoExperience({
       {phase === "video" && (
       <div className="w-full min-h-0 flex-1 py-0">
         <div className="flex h-full w-full flex-col items-center">
-          <div className="relative flex h-full w-full items-start justify-center">
+          <div className="relative flex w-full items-start justify-center">
           {/* Phone frame */}
-          <div className="relative h-full max-h-[1400px] aspect-[9/16] max-w-full bg-zinc-900 rounded-[2rem] border-[3px] border-zinc-700 shadow-2xl overflow-hidden">
+          <div className="relative h-[min(72vh,calc(100vh-12rem))] sm:h-[min(74vh,calc(100vh-14rem))] aspect-[9/16] max-w-full bg-zinc-900 rounded-[2rem] border-[3px] border-zinc-700 shadow-2xl overflow-hidden">
             {/* Video content area */}
             <div
               className={`absolute inset-0 transition-all duration-200 ${isVideoCompleteModalOpen ? "scale-[0.985] blur-sm" : "scale-100 blur-0"} ${scenario.videoSrc ? "bg-black" : `bg-gradient-to-br ${scenario.thumbnailColor}`}`}
