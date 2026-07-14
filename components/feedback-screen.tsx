@@ -25,7 +25,6 @@ import {
   CheckCircle2, 
   XCircle, 
   ArrowRight, 
-  Lightbulb,
   ClipboardCheck,
   Search,
   BadgeCheck,
@@ -51,6 +50,7 @@ interface FeedbackScreenProps {
 export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScreenProps) {
   const isCorrect = isCorrectAssessment(userTrust, scenario.recommendedTrust)
   const recommendedSliderValue = getTrustLevelValue(scenario.recommendedTrust)
+  const authentic = !scenario.isFake
 
   return (
     <div className="relative flex h-screen min-h-screen w-screen flex-col items-center justify-center overflow-hidden p-10">
@@ -109,13 +109,13 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
         </Dialog>
       </div>
 
-      <div className="w-full max-w-4xl space-y-9 animate-scale-in">
+      <div className="w-full max-w-4xl space-y-7 animate-scale-in">
 
         {/* User's choice badge */}
         <div className="text-center">
-          <p className="mb-4 text-3xl text-muted-foreground">Your choice:</p>
+          <p className="mb-3 text-2xl text-muted-foreground">Your choice:</p>
           <span
-            className={`inline-block rounded-full border px-8 py-3.5 text-2xl font-semibold ${
+            className={`inline-block rounded-full border px-7 py-3 text-xl font-semibold ${
               getTrustLevelColorClass(userTrust)
             }`}
           >
@@ -124,22 +124,22 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
         </div>
 
         {/* Result header */}
-        <div className="space-y-5 text-center">
+        <div className="space-y-4 text-center">
           <div
             className={`inline-flex rounded-full p-6 ${
               isCorrect ? "bg-emerald-500/20" : "bg-red-500/20"
             }`}
           >
             {isCorrect ? (
-              <CheckCircle2 className="h-24 w-24 text-emerald-500" />
+              <CheckCircle2 className="h-20 w-20 text-emerald-500" />
             ) : (
-              <XCircle className="h-24 w-24 text-red-500" />
+              <XCircle className="h-20 w-20 text-red-500" />
             )}
           </div>
-          <h1 className="text-6xl font-bold md:text-7xl">
+          <h1 className="text-5xl font-bold md:text-6xl">
             {isCorrect ? scenario.feedbackCorrect : scenario.feedbackIncorrect}
           </h1>
-          <p className="text-4xl text-muted-foreground">
+          <p className="text-3xl text-muted-foreground">
             This content was{" "}
             <span className={scenario.isFake ? "text-red-500 font-bold" : "text-emerald-500 font-bold"}>
               {scenario.isFake ? "FAKE" : "AUTHENTIC"}
@@ -147,21 +147,38 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
           </p>
         </div>
 
-        {/* Educational takeaway */}
-        <div className="glass-card animate-slide-up rounded-xl border border-emerald-500/30 p-10" style={{ animationDelay: "0.2s" }}>
-          <div className="flex gap-6">
-            <div className="shrink-0">
-              <div className="rounded-xl bg-emerald-500/20 p-4">
-                <Lightbulb className="h-10 w-10 text-emerald-400" />
-              </div>
-            </div>
-            <div>
-              <h3 className="mb-2.5 text-3xl font-semibold">Key Takeaway</h3>
-              <p className="text-[1.9rem] leading-relaxed text-muted-foreground">
-                {scenario.educationalTakeaway}
-              </p>
-            </div>
+        {/* Detailed review */}
+        <div className="glass-card animate-slide-up space-y-4 rounded-xl border border-border/60 p-6" style={{ animationDelay: "0.2s" }}>
+          <div className="rounded-xl border border-border/60 bg-background/30 p-5">
+            <h3 className="mb-2 text-2xl font-semibold text-foreground">
+              {authentic ? "Why it was credible" : "Why it was convincing"}
+            </h3>
+            <p className="text-xl leading-relaxed text-muted-foreground">{scenario.whyConvincing}</p>
           </div>
+
+          <div className="rounded-xl border border-border/60 bg-background/30 p-5">
+            <h3 className="mb-3 text-2xl font-semibold text-foreground">
+              {authentic ? "Trust signals to recognise" : "Signals that mattered"}
+            </h3>
+            <ul className="grid gap-2.5 sm:grid-cols-2">
+              {scenario.cues.map((cue) => (
+                <li key={cue} className="flex items-start gap-3 text-xl text-muted-foreground">
+                  <span
+                    aria-hidden="true"
+                    className={`mt-3 h-2.5 w-2.5 shrink-0 rounded-full ${
+                      authentic ? "bg-emerald-400" : "bg-rose-400"
+                    }`}
+                  />
+                  <span className="leading-snug">{cue}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+         {/*  <div className="rounded-xl border border-emerald-500/35 bg-emerald-500/10 p-5">
+            <p className="mb-1.5 text-sm font-bold uppercase tracking-wider text-emerald-400">In the real world</p>
+            <p className="text-xl leading-relaxed text-foreground/90">{scenario.educationalTakeaway}</p>
+          </div> */}
         </div>
 
         {/* Recommended trust level */}
@@ -169,7 +186,7 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
           <p className="mb-5 text-2xl text-muted-foreground">Recommended:</p>
           <div className="relative px-3">
             {/* Gradient track */}
-            <div className="h-4 rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-red-500" />
+            <div className="h-4 rounded-full bg-linear-to-r from-emerald-500 via-amber-400 to-red-500" />
             {/* Thumb indicator */}
             <div
               className="absolute top-1/2 h-9 w-9 -translate-y-1/2 rounded-full border-2 border-white bg-white shadow-lg"
