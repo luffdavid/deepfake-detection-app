@@ -253,7 +253,10 @@ export function SummaryScreen({
 
         {/* Checklist popup */}
         <Dialog open={isChecklistOpen} onOpenChange={setIsChecklistOpen}>
-          <DialogContent className="max-h-[92vh] max-w-6xl overflow-y-auto">
+          <DialogContent
+            overlayClassName="bg-black/55 backdrop-blur-md"
+            className="max-h-[92vh] w-[96vw]! sm:w-[92vw]! lg:w-[75vw]! max-w-none! sm:max-w-none! overflow-y-auto"
+          >
             <DialogHeader>
               <div className="mx-auto flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-secondary text-xl font-bold">
                 <Shield className="h-7 w-7" />
