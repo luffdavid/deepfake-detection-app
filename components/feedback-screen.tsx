@@ -31,6 +31,7 @@ import {
   Newspaper,
   Heart,
   Brain,
+  Shield,
 } from "lucide-react"
 
 const iconMap = {
@@ -61,7 +62,7 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
           <DialogTrigger asChild>
             <Button
               variant="outline"
-              className="border-cyan-400/50 bg-cyan-400/10 px-6 py-6 text-3xl text-cyan-100 hover:bg-cyan-400/20"
+              className="border-emerald-400/60 bg-emerald-500/10 px-6 py-6 text-3xl text-emerald-300 hover:bg-emerald-500/20 hover:text-emerald-200"
             >
             <ClipboardCheck className="mr-3 h-8 w-8" />
             Open checklist
@@ -82,26 +83,33 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
 
             <div className="mt-8 space-y-6">
               {securityChecklist.map((item) => {
-                const Icon = iconMap[item.icon as keyof typeof iconMap]
+                const Icon =
+                  iconMap[item.icon as keyof typeof iconMap] ?? Shield
 
                 return (
-                  <div
-                    key={item.id}
-                    className="flex gap-8 rounded-2xl border border-slate-700/70 bg-slate-900/70 p-8"
+                  <li
+                    key={item.title}
+                    className="relative overflow-hidden rounded-3xl border bg-card p-8"
                   >
-                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-300">
-                      <Icon className="h-11 w-11" />
-                    </div>
+                    <Icon
+                      className="pointer-events-none absolute -right-4 -top-4 h-28 w-28 text-green-500/15"
+                      strokeWidth={1}
+                    />
 
-                    <div>
-                      <h3 className="text-3xl font-semibold text-slate-100">
+                    <div className="relative">
+                      <div className="mb-5 inline-flex rounded-2xl bg-emerald-500/10 p-4">
+                        <Icon className="h-8 w-8 text-emerald-400" />
+                      </div>
+
+                      <h2 className="text-xl font-bold">
                         {item.title}
-                      </h3>
-                      <p className="mt-3 text-2xl text-slate-300">
+                      </h2>
+
+                      <p className="mt-3 text-base leading-relaxed text-muted-foreground">
                         {item.description}
                       </p>
                     </div>
-                  </div>
+                  </li>
                 )
               })}
             </div>
