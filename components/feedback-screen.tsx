@@ -25,6 +25,7 @@ import {
   CheckCircle2, 
   XCircle, 
   ArrowRight, 
+  Lightbulb,
   ClipboardCheck,
   Search,
   BadgeCheck,
@@ -40,6 +41,7 @@ const iconMap = {
   newspaper: Newspaper,
   heart: Heart,
   brain: Brain,
+  shield: Shield,
 }
 
 interface FeedbackScreenProps {
@@ -69,19 +71,23 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
             </Button>
           </DialogTrigger>
 
-          <DialogContent className="border-cyan-500/30 bg-slate-950 text-white sm:max-w-5xl">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-4 text-5xl text-cyan-100">
-                <ClipboardCheck className="h-10 w-10" />
-                Security Checklist
+          <DialogContent className="max-h-[90vh] overflow-y-auto border-border bg-background text-foreground sm:max-w-5xl">            
+            <DialogHeader className="text-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Need help?
+              </p>
+
+              <DialogTitle className="mt-3 text-center text-4xl font-bold tracking-tight">
+                Deepfake checklist
               </DialogTitle>
 
-              <DialogDescription className="text-2xl text-slate-300">
-                Use this checklist when deciding whether online content is trustworthy.
+              <DialogDescription className="mx-auto mt-4 max-w-2xl text-center text-base leading-relaxed text-muted-foreground">
+                Use these steps whenever you encounter suspicious, emotional, or urgent
+                online content.
               </DialogDescription>
             </DialogHeader>
 
-            <div className="mt-8 space-y-6">
+            <ul className="mt-8 grid gap-6 sm:grid-cols-2">
               {securityChecklist.map((item) => {
                 const Icon =
                   iconMap[item.icon as keyof typeof iconMap] ?? Shield
@@ -112,7 +118,7 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
                   </li>
                 )
               })}
-            </div>
+            </ul>
           </DialogContent>
         </Dialog>
       </div>
