@@ -7,6 +7,7 @@ import {
   type TrustLevel,
 } from "@/lib/scenarios"
 import { Button } from "@/components/ui/button"
+import { useAnalytics } from "@/hooks/use-analytics"
 
 import {
   Dialog,
@@ -38,6 +39,7 @@ interface SummaryScreenProps {
   results: UserResult[]
   correctCount: number
   totalScenarios: number
+  sessionId: string | null
   onRestart: () => void
 }
 
@@ -55,10 +57,12 @@ export function SummaryScreen({
   results,
   correctCount,
   totalScenarios,
+  sessionId,
   onRestart,
 }: SummaryScreenProps) {
 
   const [isChecklistOpen, setIsChecklistOpen] = useState(false)
+  const { trackEvent } = useAnalytics()
   const resultFor = (scenarioId: string) => results.find((r) => r.scenarioId === scenarioId)
   const percentage = totalScenarios > 0 ? Math.round((correctCount / totalScenarios) * 100) : 0
   const RADIUS = 54
@@ -70,6 +74,12 @@ export function SummaryScreen({
   const timeout = setTimeout(() => setAnimatedOffset(target), 150)
   return () => clearTimeout(timeout)
 }, [percentage])
+
+    useEffect(() => {
+      if (!isChecklistOpen) return
+
+      trackEvent('checklist_viewed', { source: 'summary_dialog' }, sessionId || undefined)
+    }, [isChecklistOpen, sessionId, trackEvent])
 
   return (
     <div className="h-screen w-full overflow-y-auto">
@@ -97,7 +107,7 @@ export function SummaryScreen({
               return (
                 <div
                   key={scenario.id}
-                    className="grid min-h-[120px] grid-cols-[auto_1fr] items-center gap-8 rounded-3xl border bg-card px-10 py-6"                
+                    className="grid min-h-30 grid-cols-[auto_1fr] items-center gap-8 rounded-3xl border bg-card px-10 py-6"
                   >
                   {/* Scenario number */}
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary text-lg font-bold">
@@ -234,7 +244,7 @@ export function SummaryScreen({
             onClick={onRestart}
             variant="outline"
             size="lg"
-            className="h-16 min-w-[240px] rounded-full px-12 text-xl font-bold"
+            className="h-16 min-w-60 rounded-full px-12 text-xl font-bold"
           >
             <RotateCcw className="mr-3 h-7 w-7" />
             Start again

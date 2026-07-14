@@ -44,7 +44,7 @@ export default function TrustCheckApp() {
     continueSession,
     startNewSession,
   } = useSessionTracking({ isTrackingEnabled: currentScreen !== "intro" })
-  const { trackSessionCompleted } = useAnalytics()
+  const { trackSessionCompleted, trackSkipToResults } = useAnalytics()
   
   // Ref to track if we've already fired session_completed for this session
   // This prevents duplicate events from React Strict Mode or state updates
@@ -219,8 +219,11 @@ export default function TrustCheckApp() {
 
   // Dev shortcut: jump straight to the end screen with sample results
   const handleSkipToSummary = useCallback(() => {
+    if (sessionId) {
+      trackSkipToResults(sessionId, currentScenarioIndex)
+    }
     setCurrentScreen("summary")
-  }, [])
+  }, [sessionId, currentScenarioIndex, trackSkipToResults])
 
   const correctCount = results.filter((r) => r.isCorrect).length
 
@@ -293,6 +296,7 @@ export default function TrustCheckApp() {
             results={results}
             correctCount={correctCount}
             totalScenarios={scenarios.length}
+            sessionId={sessionId}
             onRestart={handleRestart}
           />
         )}

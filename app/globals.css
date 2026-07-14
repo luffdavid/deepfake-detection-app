@@ -137,8 +137,9 @@
   html,
   body {
     height: 100%;
-    overflow: hidden;
-    overscroll-behavior: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
   }
   body {
     @apply bg-background text-foreground;
