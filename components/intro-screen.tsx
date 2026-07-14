@@ -45,7 +45,7 @@ export function IntroScreen({
         <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
           Rate how trustworthy each video feels.
           <br />
-          Test your ability to detect deepfakes and misinformation.
+          Test your ability to detect AI-generated content, deepfakes, and misinformation.
         </p>
 
         {/* Loading progress indicator */}

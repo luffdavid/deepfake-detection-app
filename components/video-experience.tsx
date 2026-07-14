@@ -283,7 +283,7 @@ export function VideoExperience({
       {phase === "video" && (
         <div className="shrink-0 pt-10 text-center sm:pt-12">
           <h1 className="text-xl font-medium text-balance sm:text-5xl">
-            Watch the video carefully and rate afterwards how trustworthy it was.
+            Watch the video carefully. Afterwards, rate how trustworthy it feels.
           </h1>
           <p className="mt-3 text-base text-muted-foreground sm:text-xl">
             Focus on details before making your judgment.

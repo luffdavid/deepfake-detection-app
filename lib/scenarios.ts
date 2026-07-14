@@ -45,7 +45,7 @@ export const scenarios: Scenario[] = [
     feedbackIncorrect: 'Think again.',
     educationalTakeaway: 'Professional production quality and urgent tone do not make a story true. Always verify breaking health news through official sources (RKI, official health agencies) before reacting or sharing.',
     whyConvincing:
-      'It borrows the look and authority of a real newsroom — a familiar logo, lower-thirds, and an anchor-style delivery. A deadly outbreak triggers fear, and fear makes people act and share before they verify.',
+      'It borrows the look and authority of a real newsroom: a familiar logo, lower-thirds, and an anchor-style delivery. A deadly outbreak triggers fear, and fear makes people act and share before they verify.',
     cues: [
       'Mimicked public-broadcaster branding',
       'Account was not verified',
@@ -75,9 +75,9 @@ export const scenarios: Scenario[] = [
     recommendedTrust: 'low',
     feedbackCorrect: 'You are absolutely right!',
     feedbackIncorrect: 'Think again.',
-    educationalTakeaway: 'If a stranger on TikTok is showing you their Gains and offering you guaranteed profits, they are selling the dream, not the result. Legitimate investments always carry risk and are regulated. Never hand over money or personal data based on a social media video.',
+    educationalTakeaway: 'If a stranger on TikTok is showing you their gains and offering you guaranteed profits, they are selling the dream, not the result. Legitimate investments always carry risk and are regulated. Never hand over money or personal data based on a social media video.',
     whyConvincing:
-      'Polished dashboards, screenshots of "profits", and a supportive comment manufacture social proof. The promise of guaranteed returns is engineered to override caution.',
+      'Polished dashboards, screenshots of "profits", and supportive comments manufacture social proof. The promise of guaranteed returns is engineered to override caution.',
     cues: [
       '"Guaranteed profit" promise',
       'Pressure to DM a keyword',
@@ -116,7 +116,7 @@ export const scenarios: Scenario[] = [
       'No verifiable organisation details',
       '"Every second counts" urgency',
     ],
-    realWorldAction: 'Donate only through a charity\u2019s official website that you reach yourself — never through a QR code or link inside a video.',
+    realWorldAction: 'Donate only through a charity\u2019s official website that you reach yourself, never through a QR code or link inside a video.',
     source: 'hwb_ev',
     isVerified: false,
     isFake: true,
@@ -179,7 +179,7 @@ export const scenarios: Scenario[] = [
       'Specific, checkable claims',
       'Reported consistently elsewhere',
     ],
-    realWorldAction: 'Recognising real trust signals matters as much as spotting fakes — but still cross-check important news across more than one source.',
+    realWorldAction: 'Recognising real trust signals matters as much as spotting fakes, but still cross-check important news across more than one source.',
     source: 'Tagesschau',
     isVerified: true,
     isFake: false,
@@ -194,34 +194,39 @@ export const scenarios: Scenario[] = [
 
 export const securityChecklist = [
   {
-    id: 'verify-sources',
-    title: 'Verify Sources',
-    description: 'Always check if the content comes from the original, official source',
-    icon: 'search',
+    id: "verify-sources",
+    title: "Check the Source",
+    description:
+      "Check the account or website where you found the video. Is it the original source, an official repost, or an unrelated account sharing someone else’s content?",
+    icon: "search",
   },
   {
-    id: 'check-badges',
-    title: 'Look for Verification Badges',
-    description: 'Official accounts on major platforms display verification marks',
-    icon: 'badge-check',
+    id: "check-badges",
+    title: "Look for Verification Badges",
+    description:
+      "Official accounts on major platforms often display verification marks, such as a checkmark next to the account name. Also check that the username matches the real organization or person.",
+    icon: "badge-check",
   },
   {
-    id: 'trusted-outlets',
-    title: 'Check Trusted News Outlets',
-    description: 'Cross-reference breaking news with established media organizations',
-    icon: 'newspaper',
+    id: "trusted-outlets",
+    title: "Check Trusted News Outlets",
+    description:
+      "Cross-reference major claims with established media organizations or official authorities. For example, a serious incident in Munich should also appear on trusted news sites, police channels, or city websites.",
+    icon: "newspaper",
   },
   {
-    id: 'emotional-manipulation',
-    title: 'Question Emotional Manipulation',
-    description: 'Content that triggers strong emotions may be designed to bypass critical thinking',
-    icon: 'heart',
+    id: "emotional-manipulation",
+    title: "Pause Before Reacting",
+    description:
+      "Be cautious when content creates fear, anger, shock, or urgency. Messages such as “Share this now” may pressure you to react before checking the facts.",
+    icon: "heart",
   },
   {
-    id: 'context-plausibility',
-    title: 'Verify Context and Plausibility',
-    description: 'Consider if the content makes sense given what you know about the world',
-    icon: 'brain',
+    id: "context-plausibility",
+    title: "Think Logically",
+    description:
+      "Ask whether what you are seeing is realistically possible, regardless of who posted it. For example, would Marienplatz suddenly be completely flooded, or could a cat realistically perform that stunt?",
+    icon: "brain",
   },
 ]
 
