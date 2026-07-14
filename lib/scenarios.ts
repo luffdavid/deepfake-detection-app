@@ -60,7 +60,7 @@ export const scenarios: Scenario[] = [
     likes: '12,847',
     comments: '3,291',
     shares: '8,102',
-    hashtags: '#tagesschau #münchen #hantavirus',
+    hashtags: '#tagesschau #munich #hantavirus',
   },
   {
     id: 'trading-video2',
@@ -129,7 +129,7 @@ export const scenarios: Scenario[] = [
   {
     id: 'product-recall-video4',
     title: 'Product recall',
-    description: 'The mainstream media won\'t show you THIS! Share before they delete it! 🇩🇪 #Widerstand',
+    description: 'The mainstream media won\'t show you THIS! Share before they delete it! 🇩🇪 #resistance',
     hint: 'Where is the original source or official police statement?',
     hintTiming: 5,
     videoSrc: 'https://e3a3fivchcoxup9b.public.blob.vercel-storage.com/Cola2.mp4',
@@ -156,12 +156,12 @@ export const scenarios: Scenario[] = [
     likes: '42,891',
     comments: '8,234',
     shares: '15,672',
-    hashtags: '#politik #afd #deutschland',
+    hashtags: '#politics #afd #germany',
   },
   {
     id: 'tagesschau-video5',
-    title: 'Tagesschau: Bundestag verabschiedet neues Gesetz',
-    description: 'Der Bundestag hat heute mit breiter Mehrheit das neue Gesetz beschlossen. Mehr dazu in den tagesthemen.',
+    title: 'Tagesschau: Bundestag passes new law',
+    description: 'The Bundestag passed the new law today with a broad majority. More details in the evening news.',
     hint: 'This seems trustworthy because the source is identifiable...',
     hintTiming: 5,
     videoSrc: 'https://e3a3fivchcoxup9b.public.blob.vercel-storage.com/real.mp4',

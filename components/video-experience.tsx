@@ -495,7 +495,7 @@ export function VideoExperience({
                 <p className="mt-3 text-lg leading-snug text-white">
                   <span className="line-clamp-2">{caption}</span>
                   {scenario.hashtags && <span className="text-white/90"> {scenario.hashtags}</span>}
-                  <span className="ml-1 text-white/60">mehr</span>
+                  <span className="ml-1 text-white/60">more</span>
                 </p>
               </div>
 
@@ -508,7 +508,7 @@ export function VideoExperience({
                 }
                 className="absolute bottom-0 left-0 right-0 z-10 flex h-16 items-center gap-3.5 border-t border-white/10 bg-black/70 px-4.5"
               >
-                <span className="flex-1 text-left text-lg text-white/50">Kommentar hinzufügen ...</span>
+                <span className="flex-1 text-left text-lg text-white/50">Add comment ...</span>
                 <ImageIcon className="h-7 w-7 text-white/60" />
                 <Smile className="h-7 w-7 text-white/60" />
                 <AtSign className="h-7 w-7 text-white/60" />
@@ -518,7 +518,7 @@ export function VideoExperience({
               {showHint && !showComments && (
                 <div className="absolute bottom-16 left-4 right-16 z-30 animate-live-comment">
                   <div className="rounded-xl border border-white/30 bg-black/62 px-4 py-3.5 shadow-xl backdrop-blur-md">
-                    <p className="mb-2 text-base font-medium uppercase tracking-wide text-white/75">Kommentare</p>
+                    <p className="mb-2 text-base font-medium uppercase tracking-wide text-white/75">Comments</p>
                     <div className="flex items-start gap-2.5">
                       <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/45 bg-gradient-to-br from-zinc-300 to-zinc-500 text-sm font-bold text-zinc-900">
                         UB
@@ -545,13 +545,13 @@ export function VideoExperience({
                     } />
                   <div className="animate-comments-up relative flex max-h-[80%] flex-col rounded-t-2xl bg-zinc-900">
                     <div className="flex items-center justify-between border-b border-white/10 px-5 py-4.5">
-                      <span className="text-xl font-semibold text-white">{formatCount(commentCount)} Kommentare</span>
+                      <span className="text-xl font-semibold text-white">{formatCount(commentCount)} Comments</span>
                       <button onClick={(e) => { 
                             e.stopPropagation()
                             setShowComments(false)
                           } 
                         }
-                        aria-label="Schließen">
+                        aria-label="Close">
                         <X className="h-8 w-8 text-white/70" />
                       </button>
                     </div>
@@ -578,7 +578,7 @@ export function VideoExperience({
                           </div>
                           <div className="min-w-0 flex-1">
                             <p className="text-base text-white/60">
-                              <span className="font-semibold text-white/90">{c.user === "you" ? "Du" : c.user}</span> · {c.time}
+                              <span className="font-semibold text-white/90">{c.user === "you" ? "You" : c.user}</span> · {c.time}
                             </p>
                             <p className="mt-2 text-lg leading-snug text-white/95">{c.text}</p>
                           </div>
@@ -599,7 +599,7 @@ export function VideoExperience({
                         onKeyDown={(e) => {
                           if (e.key === "Enter") handleAddComment()
                         }}
-                        placeholder="Kommentar hinzufügen ..."
+                        placeholder="Add comment ..."
                         className="flex-1 rounded-full bg-zinc-800 px-4.5 py-3 text-lg text-white placeholder:text-white/40 outline-none focus:ring-1 focus:ring-emerald-500"
                       />
                       <button
@@ -607,7 +607,7 @@ export function VideoExperience({
                         disabled={!commentInput.trim()}
                         className="text-lg font-semibold text-emerald-400 disabled:text-white/30"
                       >
-                        Posten
+                        Post
                       </button>
                     </div>
                   </div>
