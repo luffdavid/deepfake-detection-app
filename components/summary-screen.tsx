@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useEffect, useState } from "react"
 import {
   securityChecklist,
@@ -107,11 +108,22 @@ export function SummaryScreen({
               return (
                 <div
                   key={scenario.id}
-                    className="grid min-h-30 grid-cols-[auto_1fr] items-center gap-8 rounded-3xl border bg-card px-10 py-6"
+                    className="grid grid-cols-[auto_auto_1fr] items-center gap-6 rounded-3xl border bg-card px-10 py-6"
                   >
                   {/* Scenario number */}
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary text-lg font-bold">
                     {index + 1}
+                  </div>
+
+                  {/* Portrait video screenshot preview */}
+                  <div className="relative h-40 w-24 shrink-0 overflow-hidden rounded-xl border border-border/70 bg-secondary/30">
+                    <Image
+                      src={`/Videoscreenshots/Video${index + 1}.png`}
+                      alt={`Screenshot for video ${index + 1}`}
+                      fill
+                      sizes="96px"
+                      className="object-cover object-center"
+                    />
                   </div>
 
                   {/* Condensed review information */}
