@@ -72,7 +72,7 @@ export function IntroScreen({
           size="lg"
           className="text-4xl md:text-3xl px-20 py-12 rounded-3xl animate-pulse-glow hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Play className="w-8 h-8 mr-4" />
+        <Play className="w-32 h-32 mr-4" />
           {isVideosReady ? "Start Experience" : "Loading Videos..."}
         </Button>
 

@@ -3,6 +3,14 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { Scenario, getSliderTrustLevel, TrustLevel, isCorrectAssessment } from "@/lib/scenarios"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Slider } from "@/components/ui/slider"
 import { useAnalytics } from "@/hooks/use-analytics"
 import {
@@ -21,7 +29,6 @@ import {
   Play,
 } from "lucide-react"
 
-const VIDEO_DURATION = 0   // seconds before the interaction controls appear
 const HINT_DELAY = 10
 
 function generateRandomCommentUser(): string {
@@ -146,6 +153,7 @@ export function VideoExperience({
   const [commentInput, setCommentInput] = useState("")
   const [isVideoEnded, setIsVideoEnded] = useState(false)
   const [isVideoPlaying, setIsVideoPlaying] = useState(true)
+  const [isVideoCompleteModalOpen, setIsVideoCompleteModalOpen] = useState(false)
   const submittedRef = useRef(false)
   const sliderRef = useRef(50) // immer aktueller Slider-Wert
 
@@ -166,13 +174,6 @@ export function VideoExperience({
     if (!video || !video.duration || Number.isNaN(video.duration)) return
     setVideoProgress((video.currentTime / video.duration) * 100)
   }, [])
-
-  // Phase 1: show the interaction controls after a short delay, video keeps playing
-  useEffect(() => {
-    if (phase !== "video") return
-    const timeout = setTimeout(() => setPhase("interaction"), VIDEO_DURATION * 1000)
-    return () => clearTimeout(timeout)
-  }, [phase])
 
   // Show hint after a short delay, but do not auto-submit
   useEffect(() => {
@@ -200,6 +201,7 @@ export function VideoExperience({
     setCommentInput("")
     setIsVideoEnded(false)
     setIsVideoPlaying(true)
+    setIsVideoCompleteModalOpen(false)
     submittedRef.current = false
   }, [scenario.id])
 
@@ -240,8 +242,10 @@ export function VideoExperience({
           trackVideoReplay(sessionId, scenario.id)
         }
       }
-      
+
+      setIsVideoCompleteModalOpen(false)
       setIsVideoEnded(false) // hide overlay before/while replaying
+      setPhase("video")
       video.play()
       setIsVideoPlaying(true)
     } else {
@@ -250,65 +254,105 @@ export function VideoExperience({
     }
   }, [isVideoEnded, scenario.id, sessionId, trackVideoReplay])
 
+  const handleReplayVideo = useCallback(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    if (sessionId) {
+      trackVideoReplay(sessionId, scenario.id)
+    }
+
+    video.currentTime = 0
+    setVideoProgress(0)
+    setIsVideoEnded(false)
+    setIsVideoPlaying(true)
+    setIsVideoCompleteModalOpen(false)
+    setPhase("video")
+    video.play()
+  }, [scenario.id, sessionId, trackVideoReplay])
+
+  const handleOpenRating = useCallback(() => {
+    setIsVideoCompleteModalOpen(false)
+    setPhase("interaction")
+  }, [])
+
   return (
     <div className="h-screen w-screen overflow-hidden px-4 pt-2 pb-2">
-      <div className="mx-auto flex h-full w-full max-w-5xl flex-col items-center justify-start gap-6">
+      <div className="mx-auto flex h-full w-full max-w-5xl flex-col items-center justify-start gap-4">
       {/* Header */}
-      <div className="text-center pt-28 shrink-0">
-        <h1 className="text-xl sm:text-5xl font-medium text-balance">
-          {phase === "video"
-            ? "Watch the clip carefully."
-            : "How trustworthy is this?"}
-        </h1>
-        {phase === "interaction" && (
-          <p className="text-xl text-muted-foreground mt-1">Use the slider below.</p>
-        )}
-      </div>
-            {/* Interaction phase controls */}
+      {phase === "video" && (
+        <div className="shrink-0 pt-10 text-center sm:pt-12">
+          <h1 className="text-xl font-medium text-balance sm:text-5xl">
+            Watch the video carefully and rate afterwards how trustworthy it was.
+          </h1>
+          <p className="mt-3 text-base text-muted-foreground sm:text-xl">
+            Focus on details before making your judgment.
+          </p>
+        </div>
+      )}
+
+      {/* Interaction phase controls */}
       {phase === "interaction" && (
-        <div className="mt-3 w-full max-w-xl space-y-2 pb-0.5 shrink-0">
-          {/* Slider with gradient */}
-          <div className="relative px-2">
-            <div className="absolute inset-x-2 h-2 rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-red-500 top-1/2 -translate-y-1/2" />
-            <Slider
-              value={sliderValue}
-              onValueChange={(v) => { setSliderValue(v); sliderRef.current = v[0] }}
-              max={100}
-              step={1}
-              className="relative trust-slider"
-            />
-          </div>
+        <div className="flex w-full flex-1 items-center justify-center py-6 sm:py-8">
+          <div className="flex w-full max-w-3xl flex-col items-center justify-center gap-6 sm:gap-8">
+            <div className="space-y-3 px-4 text-center sm:space-y-4">
+              <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-5xl">
+                How trustworthy was this?
+              </h1>
+              <p className="text-base leading-relaxed text-muted-foreground sm:text-xl">
+                Move the slider, then submit your rating.
+              </p>
+            </div>
 
-          {/* Slider labels */}
-          <div className="flex justify-between text-xs sm:text-lg px-2">
-            <span className="text-emerald-500 font-medium">Very trustworthy</span>
-            <span className="text-amber-400 font-medium">Not sure</span>
-            <span className="text-red-500 font-medium">Not trustworthy</span>
-          </div>
+            <div className="w-full rounded-[2rem] border border-border/80 bg-card/75 p-6 shadow-xl backdrop-blur sm:p-10">
+              <div className="space-y-7 sm:space-y-8">
+                {/* Slider with gradient */}
+                <div className="relative px-1 py-3 sm:px-2 sm:py-4">
+                  <div className="absolute top-1/2 inset-x-1 h-3 -translate-y-1/2 rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-red-500 sm:inset-x-2 sm:h-4" />
+                  <Slider
+                    value={sliderValue}
+                    onValueChange={(v) => { setSliderValue(v); sliderRef.current = v[0] }}
+                    max={100}
+                    step={1}
+                    className="relative trust-slider [&_[data-slot=slider-thumb]]:size-7 [&_[data-slot=slider-thumb]]:border-4 sm:[&_[data-slot=slider-thumb]]:size-8 [&_[data-slot=slider-track]]:h-3 sm:[&_[data-slot=slider-track]]:h-4"
+                  />
+                </div>
 
-          {/* Submit button */}
-          <div className="flex justify-center pt-1 w-full">
-            <Button
-              onClick={handleSubmit}
-              size="lg"
-                      className="w-full text-2xl py-8 rounded-xl bg-emerald-600 hover:bg-emerald-700"
-            >
-              Submit <ChevronRight className="w-8 h-8 ml-2" />
-            </Button>
-          </div>
+                {/* Slider labels */}
+                <div className="grid grid-cols-3 gap-2 px-1 text-center text-sm font-medium sm:px-2 sm:text-xl">
+                  <span className="text-emerald-500">Very trustworthy</span>
+                  <span className="text-amber-400">Not sure</span>
+                  <span className="text-red-500">Not trustworthy</span>
+                </div>
 
-         
+                {/* Submit button */}
+                <div className="w-full pt-1 sm:pt-2">
+                  <Button
+                    onClick={handleSubmit}
+                    size="lg"
+                    className="h-14 w-full rounded-2xl bg-emerald-600 text-xl font-semibold hover:bg-emerald-700 sm:h-16 sm:text-2xl"
+                  >
+                    Submit <ChevronRight className="ml-2 h-6 w-6 sm:h-7 sm:w-7" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
       {/* Phone Mockup with Video */}
+      {phase === "video" && (
       <div className="w-full min-h-0 flex-1 py-0">
         <div className="flex h-full w-full flex-col items-center">
-          <div className="relative flex h-full w-full items-center justify-center">
+          <div className="relative flex h-full w-full items-start justify-center">
           {/* Phone frame */}
           <div className="relative h-full max-h-[1400px] aspect-[9/16] max-w-full bg-zinc-900 rounded-[2rem] border-[3px] border-zinc-700 shadow-2xl overflow-hidden">
             {/* Video content area */}
-            <div className={`absolute inset-0 ${scenario.videoSrc ? "bg-black" : `bg-gradient-to-br ${scenario.thumbnailColor}`}`} onClick={handleVideoClick}>
+            <div
+              className={`absolute inset-0 transition-all duration-200 ${isVideoCompleteModalOpen ? "scale-[0.985] blur-sm" : "scale-100 blur-0"} ${scenario.videoSrc ? "bg-black" : `bg-gradient-to-br ${scenario.thumbnailColor}`}`}
+              onClick={handleVideoClick}
+            >
               {scenario.videoSrc && (
                 <video
                   ref={videoRef}
@@ -323,6 +367,7 @@ export function VideoExperience({
                   onEnded={() => {
                     setIsVideoEnded(true)
                     setIsVideoPlaying(false)
+                    setIsVideoCompleteModalOpen(true)
                   }}
                 />
               )}
@@ -343,8 +388,8 @@ export function VideoExperience({
                 <ChevronLeft className="h-9 w-9 shrink-0 text-white" />
                 <div className="flex h-14 flex-1 items-center gap-3 rounded-full bg-white/15 px-4.5 backdrop-blur-sm">
                   <Search className="h-7 w-7 shrink-0 text-white/70" />
-                  <span className="flex-1 truncate text-lg text-white/70">Finde ähnliche Inhalte</span>
-                  <span className="text-lg font-medium text-white">Suchen</span>
+                  <span className="flex-1 truncate text-lg text-white/70">Find similar content</span>
+                  <span className="text-lg font-medium text-white">Search</span>
                 </div>
               </div>
 
@@ -365,7 +410,7 @@ export function VideoExperience({
                         }
                       }
                       className="absolute -bottom-2 left-1/2 flex h-7 w-7 -translate-x-1/2 items-center justify-center rounded-full bg-red-500 text-white"
-                      aria-label="Folgen"
+                      aria-label="Follow"
                     >
                       <span className="text-lg leading-none">+</span>
                     </button>
@@ -379,7 +424,7 @@ export function VideoExperience({
                     }
                   }
                   className="flex flex-col items-center transition-transform active:scale-90"
-                  aria-label="Gefällt mir"
+                  aria-label="Like"
                 >
                   <Heart className={`h-12 w-12 ${liked ? "fill-red-500 text-red-500" : "fill-white text-white"}`} />
                   <span className="mt-1 text-base font-semibold text-white">{formatCount(likeBase + (liked ? 1 : 0))}</span>
@@ -392,7 +437,7 @@ export function VideoExperience({
                     }
                   }
                   className="flex flex-col items-center transition-transform active:scale-90"
-                  aria-label="COMMENTS"
+                  aria-label="Comments"
                 >
                   <MessageCircle className="h-12 w-12 fill-white text-white" />
                   <span className="mt-1 text-base font-semibold text-white">{formatCount(commentCount)}</span>
@@ -405,7 +450,7 @@ export function VideoExperience({
                     }
                   }
                   className="flex flex-col items-center transition-transform active:scale-90"
-                  aria-label="Speichern"
+                  aria-label="Save"
                 >
                   <Bookmark className={`h-12 w-12 ${saved ? "fill-amber-400 text-amber-400" : "fill-white text-white"}`} />
                   <span className="mt-1 text-base font-semibold text-white">{formatCount(saveBase + (saved ? 1 : 0))}</span>
@@ -413,7 +458,7 @@ export function VideoExperience({
 
                 <button
                   className="flex flex-col items-center transition-transform active:scale-90"
-                  aria-label="Teilen"
+                  aria-label="Share"
                 >
                   <Share2 className="h-12 w-12 fill-white text-white" />
                   <span className="mt-1 text-base font-semibold text-white">{formatCount(shareBase)}</span>
@@ -593,16 +638,40 @@ export function VideoExperience({
           </div>
         </div>
       </div>
-
-
-
-      {/* Video phase bottom */}
-      {phase === "video" && (
-        <div className="pb-1.5 space-y-1.5 text-center shrink-0">
-          <p className="text-sm text-muted-foreground animate-pulse">Watch carefully before judging...</p>
-        </div>
-        
       )}
+      <Dialog open={isVideoCompleteModalOpen} onOpenChange={setIsVideoCompleteModalOpen}>
+        <DialogContent
+          className="border-emerald-500/20 bg-slate-950 p-7 text-white sm:max-w-lg sm:p-8"
+          showCloseButton={false}
+          onEscapeKeyDown={(event) => event.preventDefault()}
+          onInteractOutside={(event) => event.preventDefault()}
+        >
+          <DialogHeader className="items-center text-center sm:items-center sm:text-center">
+            <DialogTitle className="text-2xl text-white sm:text-3xl">Ready to rate how trustworthy the video was?</DialogTitle>
+            <DialogDescription className="max-w-md text-base leading-relaxed text-slate-300">
+              If you need to watch the video again before rating, you can replay it. Otherwise, click "Rate now" to submit your trust rating.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="sm:grid sm:grid-cols-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="h-12 border-slate-700 bg-slate-900 text-base text-slate-100 hover:bg-slate-800 hover:text-white"
+              onClick={handleReplayVideo}
+            >
+              Replay
+            </Button>
+            <Button
+              type="button"
+              className="h-12 bg-emerald-600 text-base text-white hover:bg-emerald-700"
+              onClick={handleOpenRating}
+            >
+              Rate now
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       </div>
     </div>
   )
