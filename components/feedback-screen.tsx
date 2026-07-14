@@ -7,10 +7,11 @@ import {
   getTrustLevelLabel, 
   getTrustLevelColorClass, 
   getTrustLevelValue, 
-  securityChecklist, 
+  securityChecklist
 } from "@/lib/scenarios"
 
 import { Button } from "@/components/ui/button"
+import { useState } from "react"
 
 import {
   Dialog,
@@ -18,14 +19,12 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 
 import { 
   CheckCircle2, 
   XCircle, 
   ArrowRight, 
-  Lightbulb,
   ClipboardCheck,
   Search,
   BadgeCheck,
@@ -54,71 +53,75 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
   const isCorrect = isCorrectAssessment(userTrust, scenario.recommendedTrust)
   const recommendedSliderValue = getTrustLevelValue(scenario.recommendedTrust)
   const authentic = !scenario.isFake
+  const [isChecklistOpen, setIsChecklistOpen] = useState(false)
 
   return (
     <div className="relative flex h-screen min-h-screen w-screen flex-col items-center justify-center overflow-hidden p-10">
       <div className="absolute right-8 top-8 z-20 flex items-center gap-5">
         <p className="hidden text-4xl text-slate-400 sm:block">Need help?</p>
 
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              className="border-emerald-400/60 bg-emerald-500/10 px-6 py-6 text-3xl text-emerald-300 hover:bg-emerald-500/20 hover:text-emerald-200"
-            >
-            <ClipboardCheck className="mr-3 h-8 w-8" />
-            Open checklist
-            </Button>
-          </DialogTrigger>
+        <Button
+          onClick={() => setIsChecklistOpen(true)}
+          variant="outline"
+          className="border-emerald-400/50 bg-emerald-400/10 px-6 py-6 text-3xl text-emerald-100 hover:bg-emerald-400/20"
+        >
+          <ClipboardCheck className="mr-3 h-8 w-8" />
+          Open checklist
+        </Button>
 
-          <DialogContent className="max-h-[90vh] overflow-y-auto border-border bg-background text-foreground sm:max-w-5xl">            
-            <DialogHeader className="text-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Need help?
-              </p>
+        {/* Checklist popup */}
+        <Dialog open={isChecklistOpen} onOpenChange={setIsChecklistOpen}>
+          <DialogContent
+            overlayClassName="bg-black/55 backdrop-blur-md"
+            className="max-h-[92vh] w-[96vw]! max-w-none! overflow-y-auto sm:w-[92vw]! sm:max-w-none! lg:w-[75vw]!"
+          >
+            <DialogHeader>
+              <div className="mx-auto flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-secondary text-xl font-bold">
+                <Shield className="h-7 w-7" />
+              </div>
 
-              <DialogTitle className="mt-3 text-center text-4xl font-bold tracking-tight">
-                Deepfake checklist
+              <DialogTitle className="text-center text-4xl font-bold">
+                Your deepfake checklist
               </DialogTitle>
 
-              <DialogDescription className="mx-auto mt-4 max-w-2xl text-center text-base leading-relaxed text-muted-foreground">
-                Use these steps whenever you encounter suspicious, emotional, or urgent
-                online content.
+              <DialogDescription className="text-center text-base">
+                Use these steps before trusting or sharing suspicious content.
               </DialogDescription>
             </DialogHeader>
 
-            <ul className="mt-8 grid gap-6 sm:grid-cols-2">
+            <div className="mt-8 grid gap-6 sm:grid-cols-2">
               {securityChecklist.map((item) => {
                 const Icon =
                   iconMap[item.icon as keyof typeof iconMap] ?? Shield
 
                 return (
-                  <li
-                    key={item.title}
-                    className="relative overflow-hidden rounded-3xl border bg-card p-8"
+                  <div
+                    key={item.id}
+                    className="flex items-start gap-5 rounded-2xl bg-secondary/60 p-6"
                   >
-                    <Icon
-                      className="pointer-events-none absolute -right-4 -top-4 h-28 w-28 text-green-500/15"
-                      strokeWidth={1}
-                    />
+                    <div className="shrink-0 rounded-lg bg-accent/15 p-3 text-accent">
+                      <Icon className="h-7 w-7" />
+                    </div>
 
-                    <div className="relative">
-                      <div className="mb-5 inline-flex rounded-2xl bg-emerald-500/10 p-4">
-                        <Icon className="h-8 w-8 text-emerald-400" />
-                      </div>
+                    <div>
+                      <h3 className="text-xl font-bold">{item.title}</h3>
 
-                      <h2 className="text-xl font-bold">
-                        {item.title}
-                      </h2>
-
-                      <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+                      <p className="mt-1 text-base leading-relaxed text-muted-foreground">
                         {item.description}
                       </p>
                     </div>
-                  </li>
+                  </div>
                 )
               })}
-            </ul>
+            </div>
+
+            <Button
+              onClick={() => setIsChecklistOpen(false)}
+              size="lg"
+              className="mt-8 h-16 w-full text-xl font-semibold"
+            >
+              Got it
+            </Button>
           </DialogContent>
         </Dialog>
       </div>
