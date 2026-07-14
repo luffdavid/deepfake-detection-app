@@ -70,9 +70,9 @@ export function IntroScreen({
           onClick={onStart}
           disabled={!isVideosReady}
           size="lg"
-          className="text-xl px-12 py-8 rounded-2xl animate-pulse-glow hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="text-4xl md:text-3xl px-20 py-12 rounded-3xl animate-pulse-glow hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Play className="w-6 h-6 mr-3" />
+          <Play className="w-8 h-8 mr-4" />
           {isVideosReady ? "Start Experience" : "Loading Videos..."}
         </Button>
 
@@ -80,31 +80,6 @@ export function IntroScreen({
         <div className="mt-16 flex items-center justify-center gap-3 text-muted-foreground">
           <Eye className="w-5 h-5" />
           <span className="text-sm tracking-wide uppercase">5 Scenarios • Interactive Trust Rating</span>
-        </div>
-
-        {/* Download script buttons */}
-        <div className="mt-8 flex items-center justify-center gap-3">
-          <a href="/Start-Deepfake-Studie.bat" download>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-xs text-muted-foreground hover:text-foreground"
-            >
-              <Download className="w-3.5 h-3.5 mr-2" />
-              Download Script
-            </Button>
-          </a>
-
-          <a href="/explorer-starten.bat" download>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-xs text-muted-foreground hover:text-foreground"
-            >
-              <Download className="w-3.5 h-3.5 mr-2" />
-              Download Explorer Script
-            </Button>
-          </a>
         </div>
       </div>
 
