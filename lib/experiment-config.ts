@@ -171,14 +171,6 @@ export const EXPERIMENT_PAGES: ExperimentPage[] = [
     // straight from the intro into the first video.
     nextRoute: firstScenarioRoute,
   },
-  {
-    pageId: 'calibration',
-    pageVersion: PAGE_VERSION,
-    route: CALIBRATION_ROUTE,
-    kind: 'calibration',
-    trackIds: CALIBRATION_TRACK_IDS,
-    nextRoute: firstScenarioRoute,
-  },
   ...experimentScenarioPages,
   {
     pageId: 'complete',
