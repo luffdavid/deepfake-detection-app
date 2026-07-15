@@ -70,6 +70,7 @@ interface FakeComment {
   text: string
   likes: number
   time: string
+  liked?: boolean
 }
 
 const SCENARIO_EXPERT_COMMENT_SETS: Record<string, FakeComment[]> = {
@@ -210,6 +211,7 @@ export function VideoExperience({
   const [showHint, setShowHint] = useState(false)
   const [commentUser, setCommentUser] = useState(generateRandomCommentUser)
   const [hintLikes, setHintLikes] = useState(() => Math.floor(Math.random() * 50))
+  const [hintLiked, setHintLiked] = useState(false)
   const [postDate, setPostDate] = useState(generateRandomDate)
   const [comments, setComments] = useState<FakeComment[]>(() =>
     getCommentsForScenario(scenario.id),
@@ -262,6 +264,7 @@ export function VideoExperience({
     setShowHint(false)
     setCommentUser(generateRandomCommentUser())
     setHintLikes(Math.floor(Math.random() * 50))
+    setHintLiked(false)
     setPostDate(generateRandomDate())
     setComments(getCommentsForScenario(scenario.id))
     setLiked(false)
@@ -708,10 +711,19 @@ export function VideoExperience({
                           </p>
                           <p className="mt-2 text-lg leading-snug text-white/95">{scenario.hint}</p>
                         </div>
-                        <div className="flex flex-col items-center pt-0.5">
-                          <Heart className="h-6 w-6 text-white/50" />
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setHintLikes((likes) => likes + (hintLiked ? -1 : 1))
+                            setHintLiked((wasLiked) => !wasLiked)
+                          }}
+                          className="flex flex-col items-center pt-0.5"
+                          aria-label={hintLiked ? "Unlike comment" : "Like comment"}
+                        >
+                          <Heart className={`h-6 w-6 ${hintLiked ? "fill-red-500 text-red-500" : "text-white/50"}`} />
                           <span className="text-base text-white/50">{hintLikes}</span>
-                        </div>
+                        </button>
                       </div>
                       {comments.map((c, i) => (
                         <div key={i} className="flex items-start gap-3.5">
@@ -724,10 +736,28 @@ export function VideoExperience({
                             </p>
                             <p className="mt-2 text-lg leading-snug text-white/95">{c.text}</p>
                           </div>
-                          <div className="flex flex-col items-center pt-0.5">
-                            <Heart className="h-6 w-6 text-white/50" />
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setComments((currentComments) =>
+                                currentComments.map((comment, commentIndex) =>
+                                  commentIndex === i
+                                    ? {
+                                        ...comment,
+                                        liked: !comment.liked,
+                                        likes: comment.likes + (comment.liked ? -1 : 1),
+                                      }
+                                    : comment,
+                                ),
+                              )
+                            }}
+                            className="flex flex-col items-center pt-0.5"
+                            aria-label={c.liked ? "Unlike comment" : "Like comment"}
+                          >
+                            <Heart className={`h-6 w-6 ${c.liked ? "fill-red-500 text-red-500" : "text-white/50"}`} />
                             <span className="text-base text-white/50">{c.likes}</span>
-                          </div>
+                          </button>
                         </div>
                       ))}
                     </div>
