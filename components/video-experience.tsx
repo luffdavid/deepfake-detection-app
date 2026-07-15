@@ -34,32 +34,32 @@ const HINT_DELAY = 10
 
 function generateRandomCommentUser(): string {
   const prefixes = [
-    "real",
-    "news",
-    "safe",
-    "watch",
-    "trust",
-    "fact",
-    "media",
-    "check",
-    "true",
-    "urban",
     "daily",
-    "voice",
+    "real",
+    "urban",
+    "late",
+    "chill",
+    "watch",
+    "media",
+    "honest",
+    "quick",
+    "street",
+    "vibe",
+    "focus",
   ]
   const suffixes = [
-    "fox",
-    "pilot",
-    "viewer",
-    "radar",
-    "scope",
-    "nexus",
-    "spark",
-    "byte",
-    "echo",
-    "atlas",
-    "lane",
-    "focus",
+    "mike",
+    "lena",
+    "noah",
+    "emma",
+    "alex",
+    "tay",
+    "sam",
+    "leo",
+    "nina",
+    "max",
+    "kai",
+    "jules",
   ]
 
   const prefix = prefixes[Math.floor(Math.random() * prefixes.length)]
@@ -73,21 +73,6 @@ function generateRandomDate(): string {
   return `2026-06-${String(day).padStart(2, "0")}`
 }
 
-const FAKE_COMMENT_TEXTS = [
-  "Wait, is this actually real?? 😳",
-  "No way this is true...",
-  "My cousin works in media and says this checks out 👀",
-  "Sharing this with everyone right now!!",
-  "Something feels off about this tbh",
-  "Source? I can't find this anywhere else",
-  "This has to be fake right?",
-  "Why is nobody else talking about this?!",
-  "Finally someone says it 🙌",
-  "I don't believe a word of this",
-  "The way they edited this is wild",
-  "Stay safe out there everyone 🙏",
-]
-
 interface FakeComment {
   user: string
   text: string
@@ -95,21 +80,109 @@ interface FakeComment {
   time: string
 }
 
-function generateFakeComments(): FakeComment[] {
-  const pool = [...FAKE_COMMENT_TEXTS]
-  const result: FakeComment[] = []
-  const count = 5
-  for (let i = 0; i < count && pool.length > 0; i++) {
+const SCENARIO_EXPERT_COMMENT_SETS: Record<string, FakeComment[]> = {
+  "hantavirus-video1": [
+    { user: "factpulse", text: "The edit looks very polished, which is exactly why it feels believable.", likes: 842, time: "2h" },
+    { user: "cityfeed_muc", text: "The panic tone is what throws me off here.", likes: 611, time: "4h" },
+    { user: "newswatcher_de", text: "The voiceover sounds a little too clean and scripted.", likes: 953, time: "3h" },
+    { user: "safeclicks", text: "Anything that pushes urgency this hard makes me pause.", likes: 487, time: "5h" },
+    { user: "clipnotes", text: "Fear + urgency is a classic combo for viral bait.", likes: 396, time: "6h" },
+  ],
+  "trading-video2": [
+    { user: "marketmind", text: "Whenever someone says it's guaranteed, I instantly check out.", likes: 1162, time: "1h" },
+    { user: "chartcheck", text: "Looks flashy, but the whole thing feels like performance.", likes: 889, time: "2h" },
+    { user: "riskradar", text: "Profit screenshots are the easiest thing to fake.", likes: 734, time: "3h" },
+    { user: "scamwatch", text: "The DM funnel pattern is way too familiar.", likes: 1024, time: "2h" },
+    { user: "invest_basics", text: "Real investing never sounds this easy.", likes: 678, time: "4h" },
+  ],
+  "donationappeal-video3": [
+    { user: "charitycheck", text: "This is emotionally intense, I almost tapped right away.", likes: 944, time: "2h" },
+    { user: "kindsoul_s", text: "I almost donated immediately, then took a second look.", likes: 636, time: "3h" },
+    { user: "watchcare", text: "It really pushes you to decide fast.", likes: 812, time: "2h" },
+    { user: "civiccheck", text: "Sad content, but it also feels very staged.", likes: 705, time: "4h" },
+    { user: "trustverify", text: "Heart first, then brain. Always.", likes: 522, time: "5h" },
+  ],
+  "product-recall-video4": [
+    { user: "consumerwatch", text: "This tone is pure panic and feels like ragebait.", likes: 1034, time: "1h" },
+    { user: "foodsafety_facts", text: "\"Share now\" is always a weird signal to me.", likes: 744, time: "2h" },
+    { user: "newsliteracy_lab", text: "It creates stress instead of giving clear info.", likes: 916, time: "3h" },
+    { user: "regina_muc", text: "I usually skip panic clips like this now.", likes: 582, time: "4h" },
+    { user: "factfinder_koeln", text: "Lots of drama, not much substance.", likes: 471, time: "5h" },
+  ],
+  "tagesschau-video5": [
+    { user: "policywatch", text: "Finally a calm clip that just explains the update.", likes: 731, time: "2h" },
+    { user: "annika_news", text: "The tone alone makes this feel more trustworthy.", likes: 918, time: "3h" },
+    { user: "verifyfirst", text: "Clear, short, no drama. Love that.", likes: 702, time: "2h" },
+    { user: "bundespolitik_live", text: "Feels good to watch something that is not overhyped.", likes: 648, time: "4h" },
+    { user: "media_literacy_mia", text: "More news clips should sound like this.", likes: 533, time: "5h" },
+  ],
+}
+
+const SCENARIO_TIKTOK_COMMENT_SETS: Record<string, FakeComment[]> = {
+  "hantavirus-video1": [
+    { user: "lisa_247", text: "ok this actually got me for a second", likes: 1735, time: "1h" },
+    { user: "mucgirl", text: "i legit thought this was a real tv segment", likes: 2241, time: "2h" },
+    { user: "itsnoah", text: "why does this feel so stressful to watch", likes: 1302, time: "3h" },
+    { user: "jana_live", text: "this is exactly the type of clip people reshare too fast", likes: 1691, time: "2h" },
+  ],
+  "trading-video2": [
+    { user: "moneyboy_tim", text: "the second i hear \"easy money\" i am out", likes: 2558, time: "1h" },
+    { user: "nina.crypto", text: "comment section feels botted ngl", likes: 1783, time: "2h" },
+    { user: "justemre", text: "dm for details is always the same play", likes: 2110, time: "2h" },
+    { user: "laurafinance", text: "looks cool but feels zero percent legit", likes: 1629, time: "4h" },
+  ],
+  "donationappeal-video3": [
+    { user: "sofie_help", text: "i was literally two seconds away from donating", likes: 1972, time: "1h" },
+    { user: "momo23", text: "this is edited to hit you right in the feelings", likes: 1331, time: "3h" },
+    { user: "karo_talks", text: "these clips make you tap before you think", likes: 1718, time: "2h" },
+    { user: "tobi_real", text: "\"every second counts\" puts so much pressure on you", likes: 1494, time: "4h" },
+  ],
+  "product-recall-video4": [
+    { user: "lea_snacks", text: "i am so tired of panic clips like this", likes: 2148, time: "1h" },
+    { user: "davidcheckt", text: "\"share before they delete\" is such a trigger line", likes: 2391, time: "2h" },
+    { user: "miro_berlin", text: "this feels more like outrage content than info", likes: 1677, time: "3h" },
+    { user: "sarah_ju", text: "these days this style makes me instantly suspicious", likes: 1288, time: "4h" },
+  ],
+  "tagesschau-video5": [
+    { user: "paula_news", text: "finally a clip without dramatic music", likes: 1675, time: "2h" },
+    { user: "nils_ho", text: "this is how i like news: calm and clear", likes: 1962, time: "3h" },
+    { user: "miafacts", text: "instantly feels way more trustworthy", likes: 1517, time: "2h" },
+    { user: "jonas_muc", text: "more videos like this, less panic content please", likes: 1111, time: "5h" },
+  ],
+}
+
+function pickRandomItems<T>(items: T[], count: number): T[] {
+  const pool = [...items]
+  const result: T[] = []
+
+  while (result.length < count && pool.length > 0) {
     const idx = Math.floor(Math.random() * pool.length)
-    const text = pool.splice(idx, 1)[0]
-    result.push({
-      user: generateRandomCommentUser(),
-      text,
-      likes: Math.floor(Math.random() * 2400),
-      time: `${Math.floor(Math.random() * 22) + 1}h`,
-    })
+    const [item] = pool.splice(idx, 1)
+    result.push(item)
   }
+
   return result
+}
+
+function shuffleItems<T>(items: T[]): T[] {
+  const shuffled = [...items]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
+
+function getCommentsForScenario(scenarioId: string): FakeComment[] {
+  const expertComments = SCENARIO_EXPERT_COMMENT_SETS[scenarioId]
+  const tiktokComments = SCENARIO_TIKTOK_COMMENT_SETS[scenarioId]
+
+  if (!expertComments && !tiktokComments) return []
+
+  const selectedExpert = expertComments ? pickRandomItems(expertComments, 2) : []
+  const selectedTiktok = tiktokComments ? pickRandomItems(tiktokComments, 3) : []
+
+  return shuffleItems([...selectedExpert, ...selectedTiktok])
 }
 
 function parseCount(value?: string): number {
@@ -146,7 +219,9 @@ export function VideoExperience({
   const [commentUser, setCommentUser] = useState(generateRandomCommentUser)
   const [hintLikes, setHintLikes] = useState(() => Math.floor(Math.random() * 50))
   const [postDate, setPostDate] = useState(generateRandomDate)
-  const [comments, setComments] = useState<FakeComment[]>(generateFakeComments)
+  const [comments, setComments] = useState<FakeComment[]>(() =>
+    getCommentsForScenario(scenario.id),
+  )
   const [liked, setLiked] = useState(false)
   const [saved, setSaved] = useState(false)
   const [following, setFollowing] = useState(false)
@@ -195,7 +270,7 @@ export function VideoExperience({
     setCommentUser(generateRandomCommentUser())
     setHintLikes(Math.floor(Math.random() * 50))
     setPostDate(generateRandomDate())
-    setComments(generateFakeComments())
+    setComments(getCommentsForScenario(scenario.id))
     setLiked(false)
     setSaved(false)
     setFollowing(false)
