@@ -28,11 +28,19 @@ import {
   ArrowRight, 
   ClipboardCheck,
   Search,
+  MessageSquare,
   BadgeCheck,
+  BadgeX,
   Newspaper,
   Heart,
   Brain,
   Shield,
+  QrCode,
+  AlertTriangle,
+  Link2Off,
+  Building2,
+  ScanSearch,
+  FileSearch,
 } from "lucide-react"
 
 const iconMap = {
@@ -48,6 +56,37 @@ interface FeedbackScreenProps {
   scenario: Scenario
   userTrust: TrustLevel
   onContinue: () => void
+}
+
+function getCueIcon(cue: string) {
+  const cueIconMap: Record<string, typeof Shield> = {
+    "Mimicked public-broadcaster branding": Newspaper,
+    "Account was not verified": BadgeX,
+    "Fear and urgency framing": Heart,
+    "No link to an official health authority": Link2Off,
+
+    '"Guaranteed profit" promise': AlertTriangle,
+    "Pressure to DM a keyword": MessageSquare,
+    "Anonymous, unregulated account": Shield,
+    "Screenshots that cannot be verified": ScanSearch,
+
+    "Strong emotional pressure": Heart,
+    "QR-code payment": QrCode,
+    "No verifiable organisation details": Building2,
+    '"Every second counts" urgency': AlertTriangle,
+
+    "No official recall notice": FileSearch,
+    "No batch numbers or product details": Search,
+    "Alarmist framing": AlertTriangle,
+    "Missing source attribution": Link2Off,
+
+    "Verified, named news institution": BadgeCheck,
+    "Calm, neutral reporting tone": Brain,
+    "Specific, checkable claims": Search,
+    "Reported consistently elsewhere": Newspaper,
+  }
+
+  return cueIconMap[cue] ?? Shield
 }
 
 export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScreenProps) {
@@ -180,17 +219,25 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
               {authentic ? "Trust signals to recognise" : "Signals that mattered"}
             </h3>
             <ul className="grid gap-2.5 sm:grid-cols-2">
-              {scenario.cues.map((cue) => (
+              {scenario.cues.map((cue) => {
+                const CueIcon = getCueIcon(cue)
+
+                return (
                 <li key={cue} className="flex items-start gap-3 text-xl text-muted-foreground">
                   <span
                     aria-hidden="true"
-                    className={`mt-3 h-2.5 w-2.5 shrink-0 rounded-full ${
-                      authentic ? "bg-emerald-400" : "bg-rose-400"
+                    className={`mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${
+                      authentic
+                        ? "bg-emerald-500/15 text-emerald-400"
+                        : "bg-rose-500/15 text-rose-400"
                     }`}
-                  />
+                  >
+                    <CueIcon className="h-4.5 w-4.5" />
+                  </span>
                   <span className="leading-snug">{cue}</span>
                 </li>
-              ))}
+                )
+              })}
             </ul>
           </div>
 

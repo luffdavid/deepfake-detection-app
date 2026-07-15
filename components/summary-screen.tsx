@@ -72,6 +72,19 @@ export function SummaryScreen({
   const [animatedOffset, setAnimatedOffset] = useState(CIRCUMFERENCE)
 
   useEffect(() => {
+    const previousBodyOverflow = document.body.style.overflow
+    const previousHtmlOverflow = document.documentElement.style.overflow
+
+    document.body.style.overflow = "hidden"
+    document.documentElement.style.overflow = "hidden"
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow
+      document.documentElement.style.overflow = previousHtmlOverflow
+    }
+  }, [])
+
+  useEffect(() => {
   const target = CIRCUMFERENCE - (percentage / 100) * CIRCUMFERENCE
   const timeout = setTimeout(() => setAnimatedOffset(target), 150)
   return () => clearTimeout(timeout)
@@ -84,7 +97,7 @@ export function SummaryScreen({
     }, [isChecklistOpen, sessionId, trackEvent])
 
   return (
-    <div className="h-screen w-full overflow-y-auto">
+    <div className="h-screen w-full overflow-hidden">
       <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-8 px-12 py-10">
         {/* 1. Review first */}
         <section>
@@ -145,7 +158,7 @@ export function SummaryScreen({
                       </span>
                     </div>
 
-                    <p className="mt-6 max-w-5xl text-xl leading-relaxed text-muted-foreground">
+                    <p className="mt-1 max-w-5xl text-xl leading-relaxed text-muted-foreground">
                       {scenario.realWorldAction}
                     </p>
                   </div>
