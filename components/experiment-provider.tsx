@@ -160,9 +160,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             </div>
             <DialogTitle className="text-2xl text-white">Are you still there?</DialogTitle>
             <DialogDescription className="max-w-sm text-sm leading-relaxed text-slate-300">
-              Your session will end soon due to inactivity. If you are still using the application, select
-              {" "}<span className="font-semibold text-white">Continue</span>. Otherwise, a new session will start
-              automatically in {countdownSeconds} seconds.
+              Your session will end soon due to inactivity.
             </DialogDescription>
           </DialogHeader>
 

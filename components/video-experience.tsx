@@ -3,14 +3,6 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { Scenario, getSliderTrustLevel, TrustLevel, isCorrectAssessment } from "@/lib/scenarios"
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import { Slider } from "@/components/ui/slider"
 import { TRACK_IDS } from "@/lib/track-ids"
 import { useAnalytics } from "@/hooks/use-analytics"
@@ -229,10 +221,10 @@ export function VideoExperience({
   const [commentInput, setCommentInput] = useState("")
   const [isVideoEnded, setIsVideoEnded] = useState(false)
   const [isVideoPlaying, setIsVideoPlaying] = useState(true)
-  const [isVideoCompleteModalOpen, setIsVideoCompleteModalOpen] = useState(false)
   const [hasVideoPlayedOnce, setHasVideoPlayedOnce] = useState(false)
   const submittedRef = useRef(false)
   const sliderRef = useRef(50) // immer aktueller Slider-Wert
+  const pendingReplayRef = useRef(false)
 
   const videoRef = useRef<HTMLVideoElement>(null)
 
@@ -278,7 +270,6 @@ export function VideoExperience({
     setCommentInput("")
     setIsVideoEnded(false)
     setIsVideoPlaying(true)
-    setIsVideoCompleteModalOpen(false)
     submittedRef.current = false
   }, [scenario.id])
 
@@ -320,7 +311,6 @@ export function VideoExperience({
         }
       }
 
-      setIsVideoCompleteModalOpen(false)
       setIsVideoEnded(false) // hide overlay before/while replaying
       setPhase("video")
       video.play()
@@ -332,26 +322,26 @@ export function VideoExperience({
   }, [isVideoEnded, scenario.id, sessionId, trackVideoReplay])
 
   const handleReplayVideo = useCallback(() => {
-    const video = videoRef.current
-    if (!video) return
-
     if (sessionId) {
       trackVideoReplay(sessionId, scenario.id)
     }
 
-    video.currentTime = 0
     setVideoProgress(0)
     setIsVideoEnded(false)
     setIsVideoPlaying(true)
-    setIsVideoCompleteModalOpen(false)
+    pendingReplayRef.current = true
     setPhase("video")
-    video.play()
   }, [scenario.id, sessionId, trackVideoReplay])
 
-  const handleOpenRating = useCallback(() => {
-    setIsVideoCompleteModalOpen(false)
-    setPhase("interaction")
-  }, [])
+  // Play video after it remounts when returning from interaction phase
+  useEffect(() => {
+    if (phase !== "video" || !pendingReplayRef.current) return
+    const video = videoRef.current
+    if (!video) return
+    pendingReplayRef.current = false
+    video.currentTime = 0
+    video.play()
+  }, [phase])
 
   const handleSkipVideo = useCallback(() => {
     const video = videoRef.current
@@ -361,7 +351,6 @@ export function VideoExperience({
     }
 
     setIsVideoPlaying(false)
-    setIsVideoCompleteModalOpen(false)
     setPhase("interaction")
   }, [])
 
@@ -454,6 +443,17 @@ export function VideoExperience({
                   >
                     Submit <ChevronRight className="ml-2 h-6 w-6 sm:h-7 sm:w-7" />
                   </Button>
+
+                  <div className="mt-4 flex justify-start">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleReplayVideo}
+                      className="h-11 rounded-xl px-4 text-sm font-medium sm:h-12 sm:px-5 sm:text-base"
+                    >
+                      Back to video
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -471,7 +471,7 @@ export function VideoExperience({
             {/* Video content area */}
             <div
               data-track-id={TRACK_IDS.scenarioVideo}
-              className={`absolute inset-0 transition-all duration-200 ${isVideoCompleteModalOpen ? "scale-[0.985] blur-sm" : "scale-100 blur-0"} ${scenario.videoSrc ? "bg-black" : `bg-gradient-to-br ${scenario.thumbnailColor}`}`}
+              className={`absolute inset-0 transition-all duration-200 scale-100 blur-0 ${scenario.videoSrc ? "bg-black" : `bg-gradient-to-br ${scenario.thumbnailColor}`}`}
               onClick={handleVideoClick}
             >
               {scenario.videoSrc && (
@@ -488,8 +488,8 @@ export function VideoExperience({
                   onEnded={() => {
                     setIsVideoEnded(true)
                     setIsVideoPlaying(false)
-                    setIsVideoCompleteModalOpen(true)
                     setHasVideoPlayedOnce(true)
+                    setPhase("interaction")
                   }}
                 />
               )}
@@ -788,39 +788,6 @@ export function VideoExperience({
         </div>
       </div>
       )}
-      <Dialog open={isVideoCompleteModalOpen} onOpenChange={setIsVideoCompleteModalOpen}>
-        <DialogContent
-          className="border-emerald-500/20 bg-slate-950 p-7 text-white sm:max-w-lg sm:p-8"
-          showCloseButton={false}
-          onEscapeKeyDown={(event) => event.preventDefault()}
-          onInteractOutside={(event) => event.preventDefault()}
-        >
-          <DialogHeader className="items-center text-center sm:items-center sm:text-center">
-            <DialogTitle className="text-2xl text-white sm:text-3xl">Ready to rate how trustworthy the video was?</DialogTitle>
-            <DialogDescription className="max-w-md text-base leading-relaxed text-slate-300">
-              If you need to watch the video again before rating, you can replay it. Otherwise, click "Rate now" to submit your trust rating.
-            </DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter className="sm:grid sm:grid-cols-2">
-            <Button
-              type="button"
-              variant="outline"
-              className="h-12 border-slate-700 bg-slate-900 text-base text-slate-100 hover:bg-slate-800 hover:text-white"
-              onClick={handleReplayVideo}
-            >
-              Replay
-            </Button>
-            <Button
-              type="button"
-              className="h-12 bg-emerald-600 text-base text-white hover:bg-emerald-700"
-              onClick={handleOpenRating}
-            >
-              Rate now
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
       </div>
     </div>
   )
