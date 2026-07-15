@@ -4,6 +4,8 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 import {
   securityChecklist,
+  getTrustLevelLabel,
+  getTrustLevelColorClass,
   type Scenario,
   type TrustLevel,
 } from "@/lib/scenarios"
@@ -118,6 +120,7 @@ export function SummaryScreen({
           <div className="flex flex-col gap-5" data-track-id={TRACK_IDS.summaryReviewList}>
             {scenarios.map((scenario, index) => {
               const authentic = !scenario.isFake
+              const result = resultFor(scenario.id)
 
               return (
                 <div
@@ -156,6 +159,20 @@ export function SummaryScreen({
                       >
                         {authentic ? "Authentic" : "Manipulated"}
                       </span>
+
+                      {result ? (
+                        <span
+                          className={`inline-flex rounded-full border px-4 py-1.5 text-sm font-semibold ${getTrustLevelColorClass(
+                            result.userTrust
+                          )}`}
+                        >
+                          Your rating: {getTrustLevelLabel(result.userTrust)}
+                        </span>
+                      ) : (
+                        <span className="inline-flex rounded-full border border-zinc-500/40 bg-zinc-500/15 px-4 py-1.5 text-sm font-semibold text-zinc-400">
+                          Not rated
+                        </span>
+                      )}
                     </div>
 
                     <p className="mt-1 max-w-5xl text-xl leading-relaxed text-muted-foreground">
