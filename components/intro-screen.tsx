@@ -57,7 +57,7 @@ export function IntroScreen({
 
         {/* Loading progress indicator */}
         {!isVideosReady && (
-          <div data-track-id={TRACK_IDS.introLoadingBar} className="mb-8 w-full max-w-xs">
+          <div data-track-id={TRACK_IDS.introLoadingBar} className="mx-auto mb-8 w-full max-w-xs">
             <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full bg-gradient-to-r from-accent to-accent/50 transition-all duration-300 ease-out"
