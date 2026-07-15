@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Slider } from "@/components/ui/slider"
+import { TRACK_IDS } from "@/lib/track-ids"
 import { useAnalytics } from "@/hooks/use-analytics"
 import {
   Heart,
@@ -282,7 +283,10 @@ export function VideoExperience({
       {/* Header */}
       {phase === "video" && (
         <div className="shrink-0 pt-10 text-center sm:pt-12">
-          <h1 className="text-xl font-medium text-balance sm:text-5xl">
+          <h1
+            data-track-id={TRACK_IDS.scenarioHeading}
+            className="text-xl font-medium text-balance sm:text-5xl"
+          >
             Watch the video carefully. Afterwards, rate how trustworthy it feels.
           </h1>
           <p className="mt-3 text-base text-muted-foreground sm:text-xl">
@@ -296,7 +300,10 @@ export function VideoExperience({
         <div className="flex w-full flex-1 items-center justify-center py-6 sm:py-8">
           <div className="flex w-full max-w-3xl flex-col items-center justify-center gap-6 sm:gap-8">
             <div className="space-y-3 px-4 text-center sm:space-y-4">
-              <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-5xl">
+              <h1
+                data-track-id={TRACK_IDS.scenarioHeading}
+                className="text-3xl font-semibold tracking-tight text-balance sm:text-5xl"
+              >
                 How trustworthy was this?
               </h1>
               <p className="text-base leading-relaxed text-muted-foreground sm:text-xl">
@@ -307,7 +314,10 @@ export function VideoExperience({
             <div className="w-full rounded-[2rem] border border-border/80 bg-card/75 p-6 shadow-xl backdrop-blur sm:p-10">
               <div className="space-y-7 sm:space-y-8">
                 {/* Slider with gradient */}
-                <div className="relative px-1 py-3 sm:px-2 sm:py-4">
+                <div
+                  data-track-id={TRACK_IDS.ratingSlider}
+                  className="relative px-1 py-3 sm:px-2 sm:py-4"
+                >
                   <div className="absolute top-1/2 inset-x-1 h-3 -translate-y-1/2 rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-red-500 sm:inset-x-2 sm:h-4" />
                   <Slider
                     value={sliderValue}
@@ -316,10 +326,31 @@ export function VideoExperience({
                     step={1}
                     className="relative trust-slider [&_[data-slot=slider-thumb]]:size-7 [&_[data-slot=slider-thumb]]:border-4 sm:[&_[data-slot=slider-thumb]]:size-8 [&_[data-slot=slider-track]]:h-3 sm:[&_[data-slot=slider-track]]:h-4"
                   />
+                  {/* Logically separated AOI markers (invisible, non-interactive,
+                      percentage-based so they stay valid at any resolution). */}
+                  <div
+                    data-track-id={TRACK_IDS.ratingSliderTrackLeft}
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-y-0 left-0 w-1/2"
+                  />
+                  <div
+                    data-track-id={TRACK_IDS.ratingSliderTrackRight}
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-y-0 right-0 w-1/2"
+                  />
+                  <div
+                    data-track-id={TRACK_IDS.ratingSliderThumb}
+                    aria-hidden="true"
+                    style={{ left: `${sliderValue[0]}%` }}
+                    className="pointer-events-none absolute top-1/2 h-7 w-7 -translate-x-1/2 -translate-y-1/2 sm:h-8 sm:w-8"
+                  />
                 </div>
 
                 {/* Slider labels */}
-                <div className="grid grid-cols-3 gap-2 px-1 text-center text-sm font-medium sm:px-2 sm:text-xl">
+                <div
+                  data-track-id={TRACK_IDS.ratingSliderLabels}
+                  className="grid grid-cols-3 gap-2 px-1 text-center text-sm font-medium sm:px-2 sm:text-xl"
+                >
                   <span className="text-emerald-500">Very trustworthy</span>
                   <span className="text-amber-400">Not sure</span>
                   <span className="text-red-500">Not trustworthy</span>
@@ -328,6 +359,7 @@ export function VideoExperience({
                 {/* Submit button */}
                 <div className="w-full pt-1 sm:pt-2">
                   <Button
+                    data-track-id={TRACK_IDS.ratingSubmitButton}
                     onClick={handleSubmit}
                     size="lg"
                     className="h-14 w-full rounded-2xl bg-emerald-600 text-xl font-semibold hover:bg-emerald-700 sm:h-16 sm:text-2xl"
@@ -350,6 +382,7 @@ export function VideoExperience({
           <div className="relative h-[min(72vh,calc(100vh-12rem))] sm:h-[min(74vh,calc(100vh-14rem))] aspect-[9/16] max-w-full bg-zinc-900 rounded-[2rem] border-[3px] border-zinc-700 shadow-2xl overflow-hidden">
             {/* Video content area */}
             <div
+              data-track-id={TRACK_IDS.scenarioVideo}
               className={`absolute inset-0 transition-all duration-200 ${isVideoCompleteModalOpen ? "scale-[0.985] blur-sm" : "scale-100 blur-0"} ${scenario.videoSrc ? "bg-black" : `bg-gradient-to-br ${scenario.thumbnailColor}`}`}
               onClick={handleVideoClick}
             >
@@ -373,6 +406,7 @@ export function VideoExperience({
               )}
               {!isVideoPlaying && (
                 <button
+                  data-track-id={TRACK_IDS.scenarioReplayButton}
                   type="button"
                   className="absolute inset-0 z-20 flex items-center justify-center bg-black/40"
                   aria-label="Replay video"
@@ -386,7 +420,10 @@ export function VideoExperience({
 
               <div className="absolute top-0 left-0 right-0 z-20 flex items-center gap-4 px-5 pt-5">
                 <ChevronLeft className="h-9 w-9 shrink-0 text-white" />
-                <div className="flex h-14 flex-1 items-center gap-3 rounded-full bg-white/15 px-4.5 backdrop-blur-sm">
+                <div
+                  data-track-id={TRACK_IDS.scenarioSearchBar}
+                  className="flex h-14 flex-1 items-center gap-3 rounded-full bg-white/15 px-4.5 backdrop-blur-sm"
+                >
                   <Search className="h-7 w-7 shrink-0 text-white/70" />
                   <span className="flex-1 truncate text-lg text-white/70">Find similar content</span>
                   <span className="text-lg font-medium text-white">Search</span>
@@ -394,7 +431,7 @@ export function VideoExperience({
               </div>
 
               <div className="absolute right-4 bottom-[13%] z-10 flex flex-col items-center gap-6.5">
-                <div className="relative mb-1">
+                <div data-track-id={TRACK_IDS.scenarioProfile} className="relative mb-1">
                   <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-zinc-600">
                     {scenario.profileImage ? (
                       <img src={scenario.profileImage} alt="" className="h-full w-full object-cover" />
@@ -404,6 +441,7 @@ export function VideoExperience({
                   </div>
                   {!following && (
                     <button
+                      data-track-id={TRACK_IDS.scenarioFollowButton}
                       onClick={(e) => {
                           e.stopPropagation()
                           setFollowing(true)
@@ -418,6 +456,7 @@ export function VideoExperience({
                 </div>
 
                 <button
+                  data-track-id={TRACK_IDS.scenarioLikeButton}
                   onClick={(e) => {
                       e.stopPropagation()
                       setLiked((v) => !v)
@@ -431,6 +470,7 @@ export function VideoExperience({
                 </button>
 
                 <button
+                  data-track-id={TRACK_IDS.scenarioCommentButton}
                   onClick={(e) => {
                       e.stopPropagation()
                       setShowComments(true)
@@ -444,6 +484,7 @@ export function VideoExperience({
                 </button>
 
                 <button
+                  data-track-id={TRACK_IDS.scenarioSaveButton}
                   onClick={(e) => {
                       e.stopPropagation()
                       setSaved((v) => !v)
@@ -457,6 +498,7 @@ export function VideoExperience({
                 </button>
 
                 <button
+                  data-track-id={TRACK_IDS.scenarioShareButton}
                   className="flex flex-col items-center transition-transform active:scale-90"
                   aria-label="Share"
                 >
@@ -474,7 +516,7 @@ export function VideoExperience({
               </div>
 
               {/* Bottom info */}
-              <div className="absolute bottom-18 left-6 right-28 z-10">
+              <div data-track-id={TRACK_IDS.scenarioCaption} className="absolute bottom-18 left-6 right-28 z-10">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/70 bg-zinc-600">
                     {scenario.profileImage ? (
@@ -501,6 +543,7 @@ export function VideoExperience({
 
               {/* Comment input bar */}
               <button
+                data-track-id={TRACK_IDS.scenarioCommentInput}
                 onClick={(e) => {
                     e.stopPropagation()
                     setShowComments(true)
@@ -516,7 +559,10 @@ export function VideoExperience({
 
               {/* Auto hint comment overlay */}
               {showHint && !showComments && (
-                <div className="absolute bottom-16 left-4 right-16 z-30 animate-live-comment">
+                <div
+                  data-track-id={TRACK_IDS.scenarioHint}
+                  className="absolute bottom-16 left-4 right-16 z-30 animate-live-comment"
+                >
                   <div className="rounded-xl border border-white/30 bg-black/62 px-4 py-3.5 shadow-xl backdrop-blur-md">
                     <p className="mb-2 text-base font-medium uppercase tracking-wide text-white/75">Comments</p>
                     <div className="flex items-start gap-2.5">
@@ -626,7 +672,7 @@ export function VideoExperience({
           </div>
 
           {/* Progress dots */}
-          <div className="mt-2 flex justify-center gap-2">
+          <div data-track-id={TRACK_IDS.scenarioProgress} className="mt-2 flex justify-center gap-2">
             {Array.from({ length: totalScenarios }).map((_, i) => (
               <div
                 key={i}

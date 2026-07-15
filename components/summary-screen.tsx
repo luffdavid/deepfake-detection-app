@@ -8,6 +8,7 @@ import {
   type TrustLevel,
 } from "@/lib/scenarios"
 import { Button } from "@/components/ui/button"
+import { TRACK_IDS } from "@/lib/track-ids"
 import { useAnalytics } from "@/hooks/use-analytics"
 
 import {
@@ -101,7 +102,7 @@ export function SummaryScreen({
             </p>
           </div>
 
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5" data-track-id={TRACK_IDS.summaryReviewList}>
             {scenarios.map((scenario, index) => {
               const authentic = !scenario.isFake
 
@@ -157,7 +158,7 @@ export function SummaryScreen({
         {/* 2. Score and checklist side by side */}
         <section className="grid grid-cols-[0.8fr_1.2fr] gap-10 border-t pt-10">
           {/* Compact score card */}
-          <div className="flex items-center justify-center gap-10 rounded-3xl border bg-card px-10 py-9">
+          <div className="flex items-center justify-center gap-10 rounded-3xl border bg-card px-10 py-9" data-track-id={TRACK_IDS.summaryScore}>
             <div className="relative flex h-28 w-28 shrink-0 items-center justify-center">
               <svg viewBox="0 0 128 128" className="h-36 w-36 -rotate-90">
                 <defs>
@@ -236,6 +237,7 @@ export function SummaryScreen({
             </div>
 
             <Button
+              data-track-id={TRACK_IDS.summaryChecklistButton}
               onClick={() => setIsChecklistOpen(true)}
               size="lg"
               className="h-14 shrink-0 rounded-full px-8 text-lg font-bold shadow-xl"
@@ -253,6 +255,7 @@ export function SummaryScreen({
           </p>
 
           <Button
+            data-track-id={TRACK_IDS.summaryRestartButton}
             onClick={onRestart}
             variant="outline"
             size="lg"
