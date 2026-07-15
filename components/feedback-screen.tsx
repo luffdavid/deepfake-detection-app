@@ -245,24 +245,7 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
           </div> */}
         </div>
 
-        {/* Recommended trust level */}
-        <div className="animate-slide-up" style={{ animationDelay: "0.35s" }} data-track-id={TRACK_IDS.feedbackRecommended}>
-          <p className="mb-5 text-2xl text-muted-foreground">Recommended:</p>
-          <div className="relative px-3">
-            {/* Gradient track */}
-            <div className="h-4 rounded-full bg-linear-to-r from-emerald-500 via-amber-400 to-red-500" />
-            {/* Thumb indicator */}
-            <div
-              className="absolute top-1/2 h-9 w-9 -translate-y-1/2 rounded-full border-2 border-white bg-white shadow-lg"
-              style={{ left: `calc(${recommendedSliderValue}% - 18px)` }}
-            />
-          </div>
-          <div className="mt-3 flex justify-between px-3 text-base sm:text-lg">
-            <span className="font-medium text-emerald-500">Very trustworthy</span>
-            <span className="font-medium text-amber-400">Not sure</span>
-            <span className="font-medium text-red-500">Not trustworthy</span>
-          </div>
-        </div>
+       
 
         {/* Continue button */}
         <Button
