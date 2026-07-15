@@ -626,9 +626,9 @@ export function VideoExperience({
                   </div>
                   <span className="text-xl font-semibold text-white">{accountName}</span>
                   {scenario.isVerified && (
-                    <svg className="h-6 w-6 text-sky-400" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2l2.4 1.8 3-.3 1 2.8 2.6 1.5-.9 2.9.9 2.9-2.6 1.5-1 2.8-3-.3L12 22l-2.4-1.8-3 .3-1-2.8L3 16.5l.9-2.9L3 10.7l2.6-1.5 1-2.8 3 .3L12 2z" />
-                      <path d="M10.6 14.6l-2.2-2.2 1.1-1.1 1.1 1.1 3-3 1.1 1.1-4.1 4.1z" fill="#fff" />
+                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="12" cy="12" r="10" className="text-sky-400" fill="currentColor" />
+                      <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                     </svg>
                   )}
                   <span className="text-lg text-white/60">· {postDate}</span>

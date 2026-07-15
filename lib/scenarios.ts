@@ -97,8 +97,8 @@ export const scenarios: Scenario[] = [
   {
     id: 'donationappeal-video3',
     title: 'Help us save lives',
-    description: 'Every second counts! Scan the QR code to support children',
-    hint: 'This is heartbreaking...I just donated via the QR code!',
+    description: 'Every second counts! Donate now to help us save lives!',
+    hint: 'This is heartbreaking...I just donated via bank transfer!',
     hintTiming: 5,
     videoSrc: 'https://raw.githubusercontent.com/luffdavid/deepfake-detection-app/main/public/Videos/charity.mp4',
     videoPlaceholder: 'Charity appeal video',
@@ -107,16 +107,16 @@ export const scenarios: Scenario[] = [
     recommendedTrust: 'low',
     feedbackCorrect: 'You are absolutely right!',
     feedbackIncorrect: 'Think again.',
-    educationalTakeaway: 'Sympathy is a powerful manipulation tool. Legitimate charities always provide verifiable credentials, transparent fund usage reports, and official payment channels. Scan QR codes only from organisations you can independently confirm.',
+    educationalTakeaway: 'Sympathy is a powerful manipulation tool. Legitimate charities always provide verifiable credentials, transparent fund usage reports, and official payment channels. Trust bank transfer details only from organisations you can independently verify through official channels.',
     whyConvincing:
-      'Distressing images of suffering are designed to bypass scrutiny through empathy. A ready-to-scan QR code makes giving feel immediate, easy and safe.',
+      'Distressing images of suffering are designed to bypass scrutiny through empathy. Bank transfer details make giving feel immediate, easy and safe.',
     cues: [
       'Strong emotional pressure',
-      'QR-code payment',
+      'Bank transfer details displayed',
       'No verifiable organisation details',
       '"Every second counts" urgency',
     ],
-    realWorldAction: 'Donate only through a charity\u2019s official website that you reach yourself, never through a QR code or link inside a video.',
+    realWorldAction: "Donate only through a charity's official website that you reach yourself, never through bank details shown in a video without independent verification.",
     source: 'hwb_ev',
     isVerified: false,
     isFake: true,
@@ -138,16 +138,16 @@ export const scenarios: Scenario[] = [
     recommendedTrust: 'low',
     feedbackCorrect: 'You are absolutely right!',
     feedbackIncorrect: 'Think again.',
-    educationalTakeaway: 'A scary product recall video can look convincing even when it has no proof. Real recalls include official sources, batch numbers, product details, and clear public notices. Before sharing or reacting, always verify the information through trusted authorities, the company’s official website, or credible news sources.',
-    whyConvincing:
-      'Product safety warnings can feel urgent and credible when they use official-looking language, alarming visuals, and a familiar brand. That urgency can push people to react before checking whether the recall is real.',
-    cues: [
+    educationalTakeaway: "A scary product recall video can look convincing even when it has no proof. Real recalls include official sources, batch numbers, product details, and clear public notices. Before sharing or reacting, always verify the information through trusted authorities, the company's official website, or credible news sources.",
+      whyConvincing:
+'Product safety warnings often feel urgent and trustworthy because they use official-looking language, alarming visuals, and familiar brands. Keep in mind that deepfakes are not always created for direct financial gain, they may also be used to spread misinformation or damage a brand’s reputation.',
+      cues: [
       'No official recall notice',
       'No batch numbers or product details',
       'Alarmist framing',
       'Missing source attribution',
     ],
-    realWorldAction: 'Check recall claims through the company’s official website, consumer protection authorities, or credible news coverage before sharing them.',
+    realWorldAction: "Check recall claims through the company's official website, consumer protection authorities, or credible news coverage before sharing them.",
     source: 'patriot_news_de',
     profileImage: '/profile/news.png',
     isVerified: false,
@@ -170,7 +170,7 @@ export const scenarios: Scenario[] = [
     recommendedTrust: 'high',
     feedbackCorrect: 'You are absolutely right!',
     feedbackIncorrect: 'Think again.',
-    educationalTakeaway: 'Trustworthy news can still be serious or worrying, but it gives viewers ways to verify the information. A real news clip usually has a known publisher, careful wording, source context, and matching coverage from other credible outlets. The goal is not just to feel something, but to understand what is known, what is still uncertain, and where the information comes from.',
+    educationalTakeaway: "Trustworthy news can still be serious or worrying, but it gives viewers ways to verify the information. A real news clip usually has a known publisher, careful wording, source context, and matching coverage from other credible outlets. The goal is not just to feel something, but to understand what is known, what is still uncertain, and where the information comes from.",
     whyConvincing:
       'This clip carried genuine signals of trustworthiness: a named, verified institution, a measured and neutral tone, and specific claims you can independently cross-check in other established outlets.',
     cues: [
@@ -179,7 +179,7 @@ export const scenarios: Scenario[] = [
       'Specific, checkable claims',
       'Reported consistently elsewhere',
     ],
-    realWorldAction: 'Recognising real trust signals matters as much as spotting fakes, but still cross-check important news across more than one source.',
+    realWorldAction: "Recognising real trust signals matters as much as spotting fakes, but still cross-check important news across more than one source.",
     source: 'Tagesschau',
     isVerified: true,
     isFake: false,
