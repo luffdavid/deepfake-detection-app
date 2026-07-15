@@ -687,7 +687,21 @@ export function EyeTrackingProvider({ children }: { children: ReactNode }) {
       {/* Red testing dot showing the current gaze position. */}
       <GazeDot />
 
-      {/* Hidden staff-only calibration panel (opened with the "x" key). */}
+      {/* Invisible staff hotspot (bottom-right corner) to open calibration —
+          in addition to the "x" key. Removed while the panel is open so it does
+          not intercept clicks on the panel. */}
+      {active && !calibrationPanelOpen && (
+        <button
+          type="button"
+          aria-hidden="true"
+          tabIndex={-1}
+          onClick={openCalibrationPanel}
+          className="fixed bottom-0 right-0 z-[90] h-14 w-14 cursor-default opacity-0"
+        />
+      )}
+
+      {/* Hidden staff-only calibration panel (opened with the "x" key or the
+          invisible bottom-right hotspot). */}
       {active && <CalibrationOverlay />}
 
       {debug && <EyeTrackingDebugOverlay />}
