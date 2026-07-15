@@ -8,12 +8,25 @@ import { TRACK_IDS } from "@/lib/track-ids"
 import { useAnalytics } from "@/hooks/use-analytics"
 import {
   Heart,
+  HeartOff,
   MessageCircle,
   Share2,
   Bookmark,
   ChevronRight,
   ChevronLeft,
   Search,
+  Sparkles,
+  Check,
+  Repeat2,
+  Link2,
+  Ghost,
+  Building2,
+  Smartphone,
+  Flag,
+  Download,
+  PlusCircle,
+  Flame,
+  Cast,
   ImageIcon,
   AtSign,
   Smile,
@@ -188,6 +201,34 @@ function formatCount(value: number): string {
   return value.toLocaleString("de-DE")
 }
 
+function getSimilarContentTags(scenario: Scenario): string[] {
+  const hashtagTags =
+    scenario.hashtags
+      ?.split(" ")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.startsWith("#")) ?? []
+
+  const sourceTag = scenario.source
+    ? `#${scenario.source.toLowerCase().replace(/[^a-z0-9]+/g, "")}`
+    : ""
+
+  const fallbackByScenario: Record<string, string[]> = {
+    "hantavirus-video1": ["#breakingnews", "#healthalert", "#munich"],
+    "trading-video2": ["#cryptotips", "#trading101", "#sidehustle"],
+    "donationappeal-video3": ["#charitytok", "#urgentappeal", "#helpnow"],
+    "product-recall-video4": ["#consumerwarning", "#factcheck", "#viralnews"],
+    "tagesschau-video5": ["#newsupdate", "#bundestag", "#politics"],
+  }
+
+  const uniqueTags = Array.from(
+    new Set(
+      [...hashtagTags, sourceTag, ...(fallbackByScenario[scenario.id] ?? []), "#fyp"].filter(Boolean),
+    ),
+  )
+
+  return uniqueTags.slice(0, 5)
+}
+
 interface VideoExperienceProps {
   scenario: Scenario
   currentIndex: number
@@ -222,12 +263,25 @@ export function VideoExperience({
   const [following, setFollowing] = useState(false)
   const [showComments, setShowComments] = useState(false)
   const [commentInput, setCommentInput] = useState("")
+  const [showSearchPulse, setShowSearchPulse] = useState(false)
+  const [showSimilarContentOverlay, setShowSimilarContentOverlay] = useState(false)
+  const [similarContentTags, setSimilarContentTags] = useState<string[]>(() =>
+    getSimilarContentTags(scenario),
+  )
+  const [showSharePulse, setShowSharePulse] = useState(false)
+  const [showShareOverlay, setShowShareOverlay] = useState(false)
+  const [showShareSuccess, setShowShareSuccess] = useState(false)
+  const [shareSuccessLabel, setShareSuccessLabel] = useState<string>("Shared")
   const [isVideoEnded, setIsVideoEnded] = useState(false)
   const [isVideoPlaying, setIsVideoPlaying] = useState(true)
   const [hasVideoPlayedOnce, setHasVideoPlayedOnce] = useState(false)
   const submittedRef = useRef(false)
   const sliderRef = useRef(50) // immer aktueller Slider-Wert
   const pendingReplayRef = useRef(false)
+  const searchPulseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const searchOverlayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const sharePulseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const shareOverlayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const videoRef = useRef<HTMLVideoElement>(null)
 
@@ -245,6 +299,28 @@ export function VideoExperience({
     const video = videoRef.current
     if (!video || !video.duration || Number.isNaN(video.duration)) return
     setVideoProgress((video.currentTime / video.duration) * 100)
+  }, [])
+
+  const clearSearchEffectTimeouts = useCallback(() => {
+    if (searchPulseTimeoutRef.current) {
+      clearTimeout(searchPulseTimeoutRef.current)
+      searchPulseTimeoutRef.current = null
+    }
+    if (searchOverlayTimeoutRef.current) {
+      clearTimeout(searchOverlayTimeoutRef.current)
+      searchOverlayTimeoutRef.current = null
+    }
+  }, [])
+
+  const clearShareEffectTimeouts = useCallback(() => {
+    if (sharePulseTimeoutRef.current) {
+      clearTimeout(sharePulseTimeoutRef.current)
+      sharePulseTimeoutRef.current = null
+    }
+    if (shareOverlayTimeoutRef.current) {
+      clearTimeout(shareOverlayTimeoutRef.current)
+      shareOverlayTimeoutRef.current = null
+    }
   }, [])
 
   // Show hint after a short delay, but do not auto-submit
@@ -273,10 +349,19 @@ export function VideoExperience({
     setFollowing(false)
     setShowComments(false)
     setCommentInput("")
+    setShowSearchPulse(false)
+    setShowSimilarContentOverlay(false)
+    setSimilarContentTags(getSimilarContentTags(scenario))
+    setShowSharePulse(false)
+    setShowShareOverlay(false)
+    setShowShareSuccess(false)
+    setShareSuccessLabel("Shared")
     setIsVideoEnded(false)
     setIsVideoPlaying(true)
     submittedRef.current = false
-  }, [scenario.id])
+    clearSearchEffectTimeouts()
+    clearShareEffectTimeouts()
+  }, [clearSearchEffectTimeouts, clearShareEffectTimeouts, scenario])
 
   const handleSubmit = useCallback(() => {
     if (submittedRef.current) return
@@ -358,6 +443,78 @@ export function VideoExperience({
     setIsVideoPlaying(false)
     setPhase("interaction")
   }, [])
+
+  const handleFindSimilarContent = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation()
+      clearSearchEffectTimeouts()
+
+      setSimilarContentTags(shuffleItems(getSimilarContentTags(scenario)).slice(0, 5))
+      setShowSearchPulse(true)
+      setShowSimilarContentOverlay(true)
+
+      if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+        navigator.vibrate([18, 28, 18])
+      }
+
+      searchPulseTimeoutRef.current = setTimeout(() => {
+        setShowSearchPulse(false)
+      }, 550)
+
+      searchOverlayTimeoutRef.current = setTimeout(() => {
+        setShowSimilarContentOverlay(false)
+      }, 3200)
+    },
+    [clearSearchEffectTimeouts, scenario],
+  )
+
+  const handleShareTap = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation()
+      clearShareEffectTimeouts()
+
+      setShowSharePulse(true)
+      setShowShareOverlay(true)
+      setShowShareSuccess(false)
+
+      if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+        navigator.vibrate([16, 16])
+      }
+
+      sharePulseTimeoutRef.current = setTimeout(() => {
+        setShowSharePulse(false)
+      }, 480)
+    },
+    [clearShareEffectTimeouts],
+  )
+
+  const handleShareActionSelect = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>, label: string) => {
+      e.stopPropagation()
+      clearShareEffectTimeouts()
+
+      setShareCount((count) => count + 1)
+      setShareSuccessLabel(`Shared via ${label}`)
+      setShowShareSuccess(true)
+
+      if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+        navigator.vibrate([12, 18, 12])
+      }
+
+      shareOverlayTimeoutRef.current = setTimeout(() => {
+        setShowShareOverlay(false)
+        setShowShareSuccess(false)
+      }, 900)
+    },
+    [clearShareEffectTimeouts],
+  )
+
+  useEffect(() => {
+    return () => {
+      clearSearchEffectTimeouts()
+      clearShareEffectTimeouts()
+    }
+  }, [clearSearchEffectTimeouts, clearShareEffectTimeouts])
 
   return (
     <div className="h-screen w-screen overflow-hidden px-4 pt-2 pb-2">
@@ -514,15 +671,147 @@ export function VideoExperience({
 
               <div className="absolute top-0 left-0 right-0 z-20 flex items-center gap-4 px-5 pt-5">
                 <ChevronLeft className="h-9 w-9 shrink-0 text-white" />
-                <div
+                <button
+                  type="button"
+                  onClick={handleFindSimilarContent}
                   data-track-id={TRACK_IDS.scenarioSearchBar}
-                  className="flex h-14 flex-1 items-center gap-3 rounded-full bg-white/15 px-4.5 backdrop-blur-sm"
+                  className={`flex h-14 flex-1 items-center gap-3 rounded-full px-4.5 backdrop-blur-sm transition-all duration-300 ${
+                    showSearchPulse
+                      ? "scale-[1.03] bg-cyan-200/25 ring-2 ring-cyan-300/80 shadow-[0_0_32px_rgba(34,211,238,0.45)]"
+                      : "bg-white/15"
+                  }`}
                 >
-                  <Search className="h-7 w-7 shrink-0 text-white/70" />
-                  <span className="flex-1 truncate text-lg text-white/70">Find similar content</span>
+                  <Search className={`h-7 w-7 shrink-0 ${showSearchPulse ? "text-cyan-200" : "text-white/70"}`} />
+                  <span className="flex-1 truncate text-left text-lg text-white/85">Find similar content</span>
                   <span className="text-lg font-medium text-white">Search</span>
-                </div>
+                </button>
               </div>
+
+              {showSimilarContentOverlay && (
+                <div className="pointer-events-none absolute top-20 left-4 right-4 z-30">
+                  <div className="overflow-hidden rounded-2xl border border-white/30 bg-black/70 px-4 py-3.5 shadow-2xl backdrop-blur-md">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 animate-pulse text-cyan-300" />
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100">Discover</p>
+                      <span className="ml-auto text-xs font-medium text-emerald-300">Live matches</span>
+                    </div>
+                    <p className="text-sm text-white/75">People are watching these related topics right now:</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {similarContentTags.map((tag, index) => (
+                        <span
+                          key={`${tag}-${index}`}
+                          className={`rounded-full border border-white/25 bg-white/10 px-3 py-1 text-sm font-semibold text-white ${
+                            index % 2 === 0 ? "animate-pulse" : ""
+                          }`}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/20">
+                      <div className="h-full w-full animate-pulse rounded-full bg-gradient-to-r from-cyan-300 via-emerald-300 to-lime-300" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {showShareOverlay && (
+                <div className="absolute inset-0 z-40 flex flex-col justify-end">
+                  <button
+                    type="button"
+                    aria-label="Close share sheet"
+                    className="absolute inset-0 bg-black/45"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      clearShareEffectTimeouts()
+                      setShowShareOverlay(false)
+                      setShowShareSuccess(false)
+                    }}
+                  />
+
+                  <div
+                    className="relative rounded-t-[1.6rem] bg-zinc-900 text-white shadow-2xl animate-comments-up"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {showShareSuccess && (
+                      <div className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2 rounded-full bg-zinc-900/92 px-4 py-1.5 text-sm font-medium text-white shadow-xl">
+                        <span className="inline-flex items-center gap-1.5">
+                          <Check className="h-4 w-4 text-emerald-400" />
+                          {shareSuccessLabel}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="flex items-center px-4 py-3">
+                      <Search className="h-8 w-8 text-white/80" />
+                      <p className="flex-1 text-center text-2xl font-semibold">Send to</p>
+                      <button
+                        type="button"
+                        aria-label="Close"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          clearShareEffectTimeouts()
+                          setShowShareOverlay(false)
+                          setShowShareSuccess(false)
+                        }}
+                        className="rounded-full p-1 text-white/80 hover:bg-white/10"
+                      >
+                        <X className="h-8 w-8" />
+                      </button>
+                    </div>
+
+                    <div className="h-px bg-white/10" />
+
+                    <div className="space-y-6 px-4 pt-5 pb-7">
+                      <div className="flex flex-wrap justify-center gap-5 pb-1">
+                        {[
+                          { label: "Repost", Icon: Repeat2, iconClass: "bg-yellow-400 text-zinc-900" },
+                          { label: "WhatsApp", Icon: MessageCircle, iconClass: "bg-emerald-500 text-white" },
+                          { label: "Copy link", Icon: Link2, iconClass: "bg-blue-500 text-white" },
+                          { label: "Snapchat", Icon: Ghost, iconClass: "bg-yellow-300 text-zinc-900" },
+                          { label: "WA Business", Icon: Building2, iconClass: "bg-emerald-500 text-white" },
+                          { label: "Status", Icon: Smartphone, iconClass: "bg-emerald-500 text-white" },
+                        ].map(({ label, Icon, iconClass }) => (
+                          <button
+                            key={label}
+                            type="button"
+                            onClick={(e) => handleShareActionSelect(e, label)}
+                            className="flex w-20 shrink-0 flex-col items-center"
+                          >
+                            <span className={`flex h-16 w-16 items-center justify-center rounded-full ${iconClass}`}>
+                              <Icon className="h-8 w-8" />
+                            </span>
+                            <span className="mt-2 text-center text-[13px] leading-tight text-white/90">{label}</span>
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="flex flex-wrap justify-center gap-5 pb-1">
+                        {[
+                          { label: "Report", Icon: Flag },
+                          { label: "Not interested", Icon: HeartOff },
+                          { label: "Download", Icon: Download },
+                          { label: "Add to Story", Icon: PlusCircle },
+                          { label: "Promote", Icon: Flame },
+                          { label: "Cast", Icon: Cast },
+                        ].map(({ label, Icon }) => (
+                          <button
+                            key={label}
+                            type="button"
+                            onClick={(e) => handleShareActionSelect(e, label)}
+                            className="flex w-20 shrink-0 flex-col items-center"
+                          >
+                            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-zinc-700 text-white/75">
+                              <Icon className="h-8 w-8" />
+                            </span>
+                            <span className="mt-2 text-center text-[13px] leading-tight text-white/70">{label}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="absolute right-4 bottom-[13%] z-10 flex flex-col items-center gap-6.5">
                 <div data-track-id={TRACK_IDS.scenarioProfile} className="relative mb-1">
@@ -593,15 +882,22 @@ export function VideoExperience({
 
                 <button
                   data-track-id={TRACK_IDS.scenarioShareButton}
-                  onClick={(e) => {
-                      e.stopPropagation()
-                      setShareCount((count) => count + 1)
-                    }
-                  }
-                  className="flex flex-col items-center transition-transform active:scale-90"
+                  onClick={handleShareTap}
+                  className={`flex flex-col items-center transition-transform active:scale-90 ${
+                    showSharePulse ? "scale-110" : ""
+                  }`}
                   aria-label="Share"
                 >
-                  <Share2 className="h-12 w-12 fill-white text-white" />
+                  <div className="relative">
+                    <Share2
+                      className={`h-12 w-12 fill-white ${
+                        showSharePulse ? "text-emerald-300" : "text-white"
+                      }`}
+                    />
+                    {showSharePulse && (
+                      <Sparkles className="absolute -top-2 -right-2 h-5 w-5 animate-bounce text-emerald-300" />
+                    )}
+                  </div>
                   <span className="mt-1 text-base font-semibold text-white">{formatCount(shareBase + shareCount)}</span>
                 </button>
 
@@ -788,12 +1084,14 @@ export function VideoExperience({
             </div>
 
             {/* Video progress bar */}
-            <div className="absolute bottom-16 left-0 right-0 z-30 h-2 bg-white/20">
-              <div
-                className="h-full bg-white"
-                style={{ width: `${videoProgress}%`, transition: "width 0.1s linear" }}
-              />
-            </div>
+            {!showShareOverlay && (
+              <div className="absolute bottom-16 left-0 right-0 z-30 h-2 bg-white/20">
+                <div
+                  className="h-full bg-white"
+                  style={{ width: `${videoProgress}%`, transition: "width 0.1s linear" }}
+                />
+              </div>
+            )}
           </div>
           </div>
 
