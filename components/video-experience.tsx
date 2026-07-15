@@ -216,6 +216,7 @@ export function VideoExperience({
   )
   const [liked, setLiked] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [shareCount, setShareCount] = useState(0)
   const [following, setFollowing] = useState(false)
   const [showComments, setShowComments] = useState(false)
   const [commentInput, setCommentInput] = useState("")
@@ -265,6 +266,7 @@ export function VideoExperience({
     setComments(getCommentsForScenario(scenario.id))
     setLiked(false)
     setSaved(false)
+    setShareCount(0)
     setFollowing(false)
     setShowComments(false)
     setCommentInput("")
@@ -588,11 +590,16 @@ export function VideoExperience({
 
                 <button
                   data-track-id={TRACK_IDS.scenarioShareButton}
+                  onClick={(e) => {
+                      e.stopPropagation()
+                      setShareCount((count) => count + 1)
+                    }
+                  }
                   className="flex flex-col items-center transition-transform active:scale-90"
                   aria-label="Share"
                 >
                   <Share2 className="h-12 w-12 fill-white text-white" />
-                  <span className="mt-1 text-base font-semibold text-white">{formatCount(shareBase)}</span>
+                  <span className="mt-1 text-base font-semibold text-white">{formatCount(shareBase + shareCount)}</span>
                 </button>
 
                 <div className="mt-1 h-14 w-14 overflow-hidden rounded-full border-2 border-zinc-800 bg-zinc-700">
