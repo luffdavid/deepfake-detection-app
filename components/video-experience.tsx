@@ -155,6 +155,7 @@ export function VideoExperience({
   const [isVideoEnded, setIsVideoEnded] = useState(false)
   const [isVideoPlaying, setIsVideoPlaying] = useState(true)
   const [isVideoCompleteModalOpen, setIsVideoCompleteModalOpen] = useState(false)
+  const [hasVideoPlayedOnce, setHasVideoPlayedOnce] = useState(false)
   const submittedRef = useRef(false)
   const sliderRef = useRef(50) // immer aktueller Slider-Wert
 
@@ -273,6 +274,18 @@ export function VideoExperience({
   }, [scenario.id, sessionId, trackVideoReplay])
 
   const handleOpenRating = useCallback(() => {
+    setIsVideoCompleteModalOpen(false)
+    setPhase("interaction")
+  }, [])
+
+  const handleSkipVideo = useCallback(() => {
+    const video = videoRef.current
+
+    if (video) {
+      video.pause()
+    }
+
+    setIsVideoPlaying(false)
     setIsVideoCompleteModalOpen(false)
     setPhase("interaction")
   }, [])
@@ -401,6 +414,7 @@ export function VideoExperience({
                     setIsVideoEnded(true)
                     setIsVideoPlaying(false)
                     setIsVideoCompleteModalOpen(true)
+                    setHasVideoPlayedOnce(true)
                   }}
                 />
               )}
@@ -672,7 +686,7 @@ export function VideoExperience({
           </div>
 
           {/* Progress dots */}
-          <div data-track-id={TRACK_IDS.scenarioProgress} className="mt-2 flex justify-center gap-2">
+          <div data-track-id={TRACK_IDS.scenarioProgress} className="mt-10 flex justify-center gap-2">
             {Array.from({ length: totalScenarios }).map((_, i) => (
               <div
                 key={i}
@@ -682,6 +696,20 @@ export function VideoExperience({
               />
             ))}
           </div>
+
+          {hasVideoPlayedOnce && (
+            <div className="mr-70 mt-3 flex w-full justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleSkipVideo}
+                className="h-16 rounded-2xl px-8 text-xl font-semibold"
+              >
+                Skip video
+                <ChevronRight className="ml-2 h-6 w-6" />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
       )}
@@ -699,7 +727,7 @@ export function VideoExperience({
             </DialogDescription>
           </DialogHeader>
 
-          <DialogFooter className="sm:grid sm:grid-cols-2">
+          <DialogFooter className="sm:grid sm:grid-cols-2 mb-20">
             <Button
               type="button"
               variant="outline"
