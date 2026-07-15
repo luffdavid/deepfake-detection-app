@@ -58,6 +58,13 @@ export default function ExperimentScenarioPage() {
     ? scenarios.findIndex((entry) => entry.id === scenario.id)
     : -1
 
+  const continueLabel =
+    scenarioIndex === scenarios.length - 1
+      ? "Show results"
+      : scenarioIndex === scenarios.length - 2
+        ? "Last scenario"
+        : "Next scenario"
+
   const handleVideoSubmit = useCallback(
     (trust: TrustLevel) => {
       if (!scenario) return
@@ -127,6 +134,7 @@ export default function ExperimentScenarioPage() {
           scenario={scenario}
           userTrust={userTrust}
           onContinue={handleContinue}
+          continueLabel={continueLabel}
         />
       )}
     </main>
