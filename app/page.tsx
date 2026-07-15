@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect, useRef } from "react"
+import dynamic from "next/dynamic"
 import { IntroScreen } from "@/components/intro-screen"
 import { VideoExperience } from "@/components/video-experience"
 import { FeedbackScreen } from "@/components/feedback-screen"
@@ -17,7 +18,18 @@ import {
 import { scenarios, TrustLevel, isCorrectAssessment } from "@/lib/scenarios"
 import { useSessionTracking } from "@/hooks/use-session-tracking"
 import { useAnalytics } from "@/hooks/use-analytics"
+import { recordAttemptForCurrentParticipant } from "@/lib/face/participant-session"
 import { Clock3 } from "lucide-react"
+
+// Browser-only: the face pipeline bundles TFJS and must never be included in the
+// server (SSR) bundle, where the package would resolve to its Node entry.
+const FaceRecognitionController = dynamic(
+  () =>
+    import("@/components/face/face-recognition-controller").then(
+      (m) => m.FaceRecognitionController,
+    ),
+  { ssr: false },
+)
 
 type Screen = "intro" | "video" | "feedback" | "summary" 
 
@@ -112,12 +124,25 @@ export default function TrustCheckApp() {
         console.log('🎯 Tracking session_completed for sessionId:', sessionId)
         trackSessionCompleted(sessionId)
         sessionCompletedTrackedRef.current = true
+
+        // Associate this attempt's performance with the locally recognized
+        // participant (no-op if no participant is recognized). Local only.
+        void recordAttemptForCurrentParticipant({
+          sessionId,
+          correctCount: results.filter((r) => r.isCorrect).length,
+          totalCount: scenarios.length,
+          details: results.map((r) => ({
+            scenarioId: r.scenarioId,
+            userTrust: r.userTrust,
+            isCorrect: r.isCorrect,
+          })),
+        })
       }
     } else if (currentScreen !== "summary") {
       // Reset tracking flag when leaving summary (so next session can track again)
       sessionCompletedTrackedRef.current = false
     }
-  }, [currentScreen, sessionId, trackSessionCompleted])
+  }, [currentScreen, sessionId, trackSessionCompleted, results])
 
   // Listen for session timeout on public display and reset only the UI state.
   useEffect(() => {
@@ -229,6 +254,11 @@ export default function TrustCheckApp() {
 
   return (
     <main className="h-screen w-screen overflow-hidden bg-background">
+      {/* Local, in-browser face recognition. Renders nothing user-visible by
+          default (debug overlay is dev-only; kiosk status is opt-in). Mounted
+          only after the intro so the camera + library load on a user gesture. */}
+      {currentScreen !== "intro" && <FaceRecognitionController enabled />}
+
       {/* Dev shortcut to preview the end screen directly */}
       {currentScreen !== "summary" && currentScreen !== "intro" && (
        <button

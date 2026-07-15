@@ -15,6 +15,7 @@ import {
   getAverageVideosPerSession,
 } from '@/lib/db'
 import { scenarios } from '@/lib/scenarios'
+import { getFaceProgressOverview } from '@/lib/face/server/analytics'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 function formatPercent(value: number, total: number) {
@@ -93,6 +94,7 @@ export default async function AnalyticsDashboardPage() {
       replayStats,
       sessionStats,
       avgVideosPerSession,
+      faceProgress,
     ] = await Promise.all([
       getEventStats(),
       getAnalyticsEvents({ limit: 50 }),
@@ -101,6 +103,7 @@ export default async function AnalyticsDashboardPage() {
       getVideoReplayStats(),
       getSessionStats(),
       getAverageVideosPerSession(),
+      getFaceProgressOverview(),
     ])
 
     const totalSessionCount = stats.totalSessions
@@ -368,6 +371,130 @@ export default async function AnalyticsDashboardPage() {
                     </p>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </section>
+
+          <section className="space-y-4">
+            <Card className="border-border/70 bg-card/85 shadow-xl backdrop-blur">
+              <CardHeader>
+                <CardTitle className="text-2xl">
+                  Face Recognition{' '}
+                  <span className="bg-linear-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">
+                    Repeated-Attempt Progress
+                  </span>
+                </CardTitle>
+                <CardDescription>
+                  Locally recognized participants and whether the same person improves across repeated
+                  attempts. All templates are stored encrypted server-side; only aggregates are shown here.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                  <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+                    <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Recognized participants</p>
+                    <p className="mt-2 text-3xl font-bold text-emerald-400">{faceProgress.participants}</p>
+                    <p className="mt-2 text-xs text-emerald-300">
+                      {faceProgress.recognizedAgain} recognized more than once
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-4">
+                    <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Returning (multi-attempt)</p>
+                    <p className="mt-2 text-3xl font-bold text-cyan-300">{faceProgress.returning}</p>
+                    <p className="mt-2 text-xs text-cyan-200">Participants with more than one attempt</p>
+                  </div>
+                  <div className="rounded-xl border border-fuchsia-500/20 bg-fuchsia-500/5 p-4">
+                    <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Improved</p>
+                    <p className="mt-2 text-3xl font-bold text-fuchsia-300">
+                      {faceProgress.multiAttemptCount > 0
+                        ? ((faceProgress.improvedCount / faceProgress.multiAttemptCount) * 100).toFixed(0)
+                        : '0'}%
+                    </p>
+                    <p className="mt-2 text-xs text-fuchsia-200">
+                      {faceProgress.improvedCount}/{faceProgress.multiAttemptCount} did better on a later attempt
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
+                    <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Avg improvement</p>
+                    <p
+                      className={`mt-2 text-3xl font-bold ${
+                        faceProgress.avgImprovement >= 0 ? 'text-emerald-400' : 'text-red-400'
+                      }`}
+                    >
+                      {(faceProgress.avgImprovement * 100 >= 0 ? '+' : '') +
+                        (faceProgress.avgImprovement * 100).toFixed(1)}{' '}
+                      pp
+                    </p>
+                    <p className="mt-2 text-xs text-amber-200">Last vs first attempt (accuracy)</p>
+                  </div>
+                </div>
+
+                {faceProgress.rows.length === 0 ? (
+                  <p className="rounded-xl border border-border/60 bg-background/40 p-4 text-sm text-muted-foreground">
+                    No recognized participants yet. Records appear here after enrollment and completed attempts.
+                  </p>
+                ) : (
+                  <div className="overflow-x-auto rounded-xl border border-border/60 bg-background/40">
+                    <table className="w-full min-w-[720px] text-sm">
+                      <thead>
+                        <tr className="border-b border-border/60 text-left text-xs uppercase tracking-[0.12em] text-muted-foreground">
+                          <th className="px-4 py-3 font-medium">Participant</th>
+                          <th className="px-4 py-3 font-medium">Attempts</th>
+                          <th className="px-4 py-3 font-medium">Times seen</th>
+                          <th className="px-4 py-3 font-medium">First</th>
+                          <th className="px-4 py-3 font-medium">Last</th>
+                          <th className="px-4 py-3 font-medium">Best</th>
+                          <th className="px-4 py-3 font-medium">Δ (last−first)</th>
+                          <th className="px-4 py-3 font-medium">Last seen</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {faceProgress.rows.map((r) => {
+                          const first = r.firstScore
+                          const last = r.lastScore
+                          const delta = first !== null && last !== null ? (last - first) * 100 : null
+                          const pct = (v: number | null) => (v === null ? '—' : `${(v * 100).toFixed(0)}%`)
+                          return (
+                            <tr key={r.id} className="border-b border-border/40 last:border-0">
+                              <td className="px-4 py-3 font-mono text-xs text-muted-foreground" title={r.id}>
+                                {r.id.slice(0, 8)}
+                              </td>
+                              <td className="px-4 py-3 tabular-nums">{r.attempts}</td>
+                              <td className="px-4 py-3 tabular-nums">{r.observations}</td>
+                              <td className="px-4 py-3 tabular-nums">{pct(first)}</td>
+                              <td className="px-4 py-3 tabular-nums">{pct(last)}</td>
+                              <td className="px-4 py-3 tabular-nums">{pct(r.bestScore)}</td>
+                              <td className="px-4 py-3 tabular-nums">
+                                {delta === null ? (
+                                  <span className="text-muted-foreground">—</span>
+                                ) : (
+                                  <span
+                                    className={
+                                      delta > 0
+                                        ? 'text-emerald-400'
+                                        : delta < 0
+                                          ? 'text-red-400'
+                                          : 'text-muted-foreground'
+                                    }
+                                  >
+                                    {delta > 0 ? '+' : ''}
+                                    {delta.toFixed(0)} pp
+                                  </span>
+                                )}
+                              </td>
+                              <td className="px-4 py-3 text-xs text-muted-foreground">
+                                {new Date(r.lastSeenAt).toLocaleString('en-GB', {
+                                  dateStyle: 'short',
+                                  timeStyle: 'short',
+                                })}
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </section>
