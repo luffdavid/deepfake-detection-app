@@ -26,7 +26,7 @@ export default function ExperimentScenarioPage() {
   const scenario = getScenarioBySlug(slug)
   const page = getExperimentPageBySlug(slug)
 
-  const { sessionId, addResult } = useExperiment()
+  const { sessionId, addResult, resetExperiment } = useExperiment()
   const { trackSkipToResults } = useAnalytics()
 
   const [phase, setPhase] = useState<Phase>("video")
@@ -81,6 +81,11 @@ export default function ExperimentScenarioPage() {
     router.push(COMPLETE_ROUTE)
   }, [router, scenarioIndex, sessionId, trackSkipToResults])
 
+  const handleRestartToIntro = useCallback(() => {
+    resetExperiment()
+    router.push(INTRO_ROUTE)
+  }, [resetExperiment, router])
+
   if (!scenario || !page) {
     return null
   }
@@ -93,8 +98,15 @@ export default function ExperimentScenarioPage() {
     <main className="h-screen w-screen overflow-hidden bg-background">
       {/* Dev shortcut to preview the end screen directly */}
       <button
+        onClick={handleRestartToIntro}
+        className="fixed bottom-5 left-5 z-50 rounded-2xl border border-border bg-card/90 px-8 py-5 text-xl font-semibold text-muted-foreground shadow-xl backdrop-blur transition-colors hover:bg-card hover:text-foreground"
+      >
+        Restart
+      </button>
+
+      <button
         onClick={handleSkipToSummary}
-        className="fixed bottom-1 right-1 z-50 rounded-2xl border border-border bg-card/90 px-8 py-5 text-xl font-semibold text-muted-foreground shadow-xl backdrop-blur transition-colors hover:bg-card hover:text-foreground"
+        className="fixed bottom-5 right-5 z-50 rounded-2xl border border-border bg-card/90 px-8 py-5 text-xl font-semibold text-muted-foreground shadow-xl backdrop-blur transition-colors hover:bg-card hover:text-foreground"
       >
         Skip to results
       </button>

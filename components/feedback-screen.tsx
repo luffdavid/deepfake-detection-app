@@ -98,8 +98,6 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
   return (
     <div className="relative flex h-screen min-h-screen w-screen flex-col items-center justify-center overflow-hidden p-10">
       <div className="absolute right-8 top-8 z-20 flex items-center gap-5">
-        <p className="hidden text-4xl text-slate-400 sm:block">Need help?</p>
-
         <Button
           data-track-id={TRACK_IDS.feedbackChecklistButton}
           onClick={() => setIsChecklistOpen(true)}
@@ -107,7 +105,7 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
           className="border-emerald-400/50 bg-emerald-400/10 px-6 py-6 text-3xl text-emerald-100 hover:bg-emerald-400/20"
         >
           <ClipboardCheck className="mr-3 h-8 w-8" />
-          Open checklist
+          Need help? Open checklist
         </Button>
 
         {/* Checklist popup */}
@@ -207,13 +205,6 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
 
         {/* Detailed review */}
         <div className="glass-card animate-slide-up space-y-4 rounded-xl border border-border/60 p-6" style={{ animationDelay: "0.2s" }}>
-          <div className="rounded-xl border border-border/60 bg-background/30 p-5" data-track-id={TRACK_IDS.feedbackWhy}>
-            <h3 className="mb-2 text-2xl font-semibold text-foreground">
-              {authentic ? "Why it was credible" : "Why it was convincing"}
-            </h3>
-            <p className="text-xl leading-relaxed text-muted-foreground">{scenario.whyConvincing}</p>
-          </div>
-
           <div className="rounded-xl border border-border/60 bg-background/30 p-5" data-track-id={TRACK_IDS.feedbackCues}>
             <h3 className="mb-3 text-2xl font-semibold text-foreground">
               {authentic ? "Trust signals to recognise" : "Signals that mattered"}
@@ -239,6 +230,13 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
                 )
               })}
             </ul>
+          </div>
+
+          <div className="rounded-xl border border-border/60 bg-background/30 p-5" data-track-id={TRACK_IDS.feedbackWhy}>
+            <h3 className="mb-2 text-2xl font-semibold text-foreground">
+              {authentic ? "Why it was credible" : "Why it was convincing"}
+            </h3>
+            <p className="text-xl leading-relaxed text-muted-foreground">{scenario.whyConvincing}</p>
           </div>
 
          {/*  <div className="rounded-xl border border-emerald-500/35 bg-emerald-500/10 p-5">
