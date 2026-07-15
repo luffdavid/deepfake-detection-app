@@ -160,7 +160,7 @@ export const scenarios: Scenario[] = [
   },
   {
     id: 'tagesschau-video5',
-    title: 'Tagesschau: Bundestag passes new law',
+    title: 'Bundestag passes new law',
     description: 'The Bundestag passed the new law today with a broad majority. More details in the evening news.',
     hint: 'This seems trustworthy because the source is identifiable...',
     hintTiming: 5,
