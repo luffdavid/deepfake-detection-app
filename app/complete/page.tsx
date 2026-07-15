@@ -1,12 +1,13 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { SummaryScreen } from "@/components/summary-screen"
 import { useExperiment } from "@/components/experiment-provider"
 import { usePageTracking } from "@/hooks/use-page-tracking"
 import { scenarios } from "@/lib/scenarios"
 import { INTRO_ROUTE, PAGE_VERSION } from "@/lib/experiment-config"
+import { recordAttemptForCurrentParticipant } from "@/lib/face/participant-session"
 
 export default function CompletePage() {
   const router = useRouter()
@@ -19,6 +20,24 @@ export default function CompletePage() {
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  // Associate this attempt's performance with the locally recognized
+  // participant (no-op if none recognized / server unreachable). Fires once.
+  const recordedRef = useRef(false)
+  useEffect(() => {
+    if (recordedRef.current || results.length === 0) return
+    recordedRef.current = true
+    void recordAttemptForCurrentParticipant({
+      sessionId,
+      correctCount: results.filter((r) => r.isCorrect).length,
+      totalCount: scenarios.length,
+      details: results.map((r) => ({
+        scenarioId: r.scenarioId,
+        userTrust: r.userTrust,
+        isCorrect: r.isCorrect,
+      })),
+    })
+  }, [results, sessionId])
 
   const correctCount = useMemo(
     () => results.filter((result) => result.isCorrect).length,

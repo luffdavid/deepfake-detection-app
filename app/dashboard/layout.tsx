@@ -4,6 +4,7 @@
  */
 
 import type { Metadata } from 'next'
+import { DashboardNav } from './nav'
 
 export const metadata: Metadata = {
   title: 'Analytics Dashboard | TrustCheck',
@@ -15,5 +16,10 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <div className="h-dvh overflow-y-auto overflow-x-hidden">{children}</div>
+  return (
+    <div className="flex h-dvh bg-background">
+      <DashboardNav />
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">{children}</div>
+    </div>
+  )
 }

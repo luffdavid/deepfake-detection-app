@@ -23,6 +23,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import dynamic from 'next/dynamic'
+
+// Local, in-browser face recognition. Browser-only (ssr:false) because it
+// bundles TFJS; it only starts on the experiment routes (enabled below).
+const FaceRecognitionController = dynamic(
+  () =>
+    import('@/components/face/face-recognition-controller').then(
+      (m) => m.FaceRecognitionController,
+    ),
+  { ssr: false },
+)
 
 export interface ScenarioResult {
   scenarioId: string
@@ -146,6 +157,9 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
       value={{ sessionId, results, addResult, startExperiment, resetExperiment }}
     >
       {children}
+
+      {/* Face recognition runs only during the experiment routes. */}
+      <FaceRecognitionController enabled={isTrackingEnabled} />
 
       <Dialog open={isInactivityWarningOpen}>
         <DialogContent
