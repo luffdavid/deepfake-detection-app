@@ -727,7 +727,7 @@ export function VideoExperience({
             </DialogDescription>
           </DialogHeader>
 
-          <DialogFooter className="sm:grid sm:grid-cols-2 mb-20">
+          <DialogFooter className="sm:grid sm:grid-cols-2">
             <Button
               type="button"
               variant="outline"
