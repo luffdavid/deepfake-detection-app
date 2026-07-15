@@ -64,7 +64,7 @@ export const scenarios: Scenario[] = [
   },
   {
     id: 'trading-video2',
-    title: 'Turn €500 into €50,000',
+    title: 'Turn €500 into €50k',
     description: 'I made guaranteed profits with my secret trading strategy! DM me "PROFIT" to join my free signal group 🚀💰',
     hint: 'The dashboard looks impressive!! Is this real?',
     hintTiming: 5,
@@ -160,7 +160,7 @@ export const scenarios: Scenario[] = [
   },
   {
     id: 'tagesschau-video5',
-    title: 'Bundestag passes new law',
+    title: 'VW plans job cuts',
     description: 'The Bundestag passed the new law today with a broad majority. More details in the evening news.',
     hint: 'This seems trustworthy because the source is identifiable...',
     hintTiming: 5,
