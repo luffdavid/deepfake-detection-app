@@ -32,7 +32,7 @@ export interface Scenario {
 export const scenarios: Scenario[] = [
   {
     id: 'hantavirus-video1',
-    title: 'Hantavirus outbreak in Munich',
+    title: 'Hantavirus outbreak',
     description: 'Breaking: Deadly Hantavirus outbreak in Munich! Authorities warn of high mortality rate.',
     hint: 'This looks like an official news update...',
     hintTiming: 5,
@@ -64,7 +64,7 @@ export const scenarios: Scenario[] = [
   },
   {
     id: 'trading-video2',
-    title: 'How I turned €500 into €50,000',
+    title: 'Turn €500 into €50,000',
     description: 'I made guaranteed profits with my secret trading strategy! DM me "PROFIT" to join my free signal group 🚀💰',
     hint: 'The dashboard looks impressive!! Is this real?',
     hintTiming: 5,
@@ -96,7 +96,7 @@ export const scenarios: Scenario[] = [
   },
   {
     id: 'donationappeal-video3',
-    title: 'Help us save lives — donate today',
+    title: 'Help us save lives',
     description: 'Every second counts! Scan the QR code to support children',
     hint: 'This is heartbreaking...I just donated via the QR code!',
     hintTiming: 5,
