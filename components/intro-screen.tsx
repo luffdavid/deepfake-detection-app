@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { TRACK_IDS } from "@/lib/track-ids"
 import { Play, Shield, Eye, Download } from "lucide-react"
 
 interface IntroScreenProps {
@@ -35,14 +36,20 @@ export function IntroScreen({
         </div>
 
         {/* Main headline */}
-        <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-6 text-balance">
+        <h1
+          data-track-id={TRACK_IDS.introTitle}
+          className="text-6xl md:text-8xl font-bold tracking-tight mb-6 text-balance"
+        >
           Can you spot
           <br />
           <span className="text-accent">fake content?</span>
         </h1>
 
         {/* Subtitle */}
-        <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
+        <p
+          data-track-id={TRACK_IDS.introSubtitle}
+          className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed"
+        >
           Rate how trustworthy each video feels.
           <br />
           Test your ability to detect AI-generated content, deepfakes, and misinformation.
@@ -50,7 +57,7 @@ export function IntroScreen({
 
         {/* Loading progress indicator */}
         {!isVideosReady && (
-          <div className="mb-8 w-full max-w-xs">
+          <div data-track-id={TRACK_IDS.introLoadingBar} className="mb-8 w-full max-w-xs">
             <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full bg-gradient-to-r from-accent to-accent/50 transition-all duration-300 ease-out"
@@ -67,6 +74,7 @@ export function IntroScreen({
 
         {/* Start button */}
         <Button
+          data-track-id={TRACK_IDS.introStartButton}
           onClick={onStart}
           disabled={!isVideosReady}
           size="lg"
@@ -77,7 +85,10 @@ export function IntroScreen({
         </Button>
 
         {/* Info badge */}
-        <div className="mt-16 flex items-center justify-center gap-3 text-muted-foreground">
+        <div
+          data-track-id={TRACK_IDS.introInfoBadge}
+          className="mt-16 flex items-center justify-center gap-3 text-muted-foreground"
+        >
           <Eye className="w-5 h-5" />
           <span className="text-sm tracking-wide uppercase">5 Scenarios • Interactive Trust Rating</span>
         </div>

@@ -3,4 +3,5 @@ packages:
 
 allowBuilds:
   bufferutil: true
+  core-js: false
   utf-8-validate: true

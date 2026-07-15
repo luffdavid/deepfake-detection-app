@@ -11,6 +11,7 @@ import {
 } from "@/lib/scenarios"
 
 import { Button } from "@/components/ui/button"
+import { TRACK_IDS } from "@/lib/track-ids"
 import { useState } from "react"
 
 import {
@@ -61,6 +62,7 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
         <p className="hidden text-4xl text-slate-400 sm:block">Need help?</p>
 
         <Button
+          data-track-id={TRACK_IDS.feedbackChecklistButton}
           onClick={() => setIsChecklistOpen(true)}
           variant="outline"
           className="border-emerald-400/50 bg-emerald-400/10 px-6 py-6 text-3xl text-emerald-100 hover:bg-emerald-400/20"
@@ -141,7 +143,7 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
         </div>
 
         {/* Result header */}
-        <div className="space-y-4 text-center">
+        <div className="space-y-4 text-center" data-track-id={TRACK_IDS.feedbackResult}>
           <div
             className={`inline-flex rounded-full p-6 ${
               isCorrect ? "bg-emerald-500/20" : "bg-red-500/20"
@@ -166,14 +168,14 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
 
         {/* Detailed review */}
         <div className="glass-card animate-slide-up space-y-4 rounded-xl border border-border/60 p-6" style={{ animationDelay: "0.2s" }}>
-          <div className="rounded-xl border border-border/60 bg-background/30 p-5">
+          <div className="rounded-xl border border-border/60 bg-background/30 p-5" data-track-id={TRACK_IDS.feedbackWhy}>
             <h3 className="mb-2 text-2xl font-semibold text-foreground">
               {authentic ? "Why it was credible" : "Why it was convincing"}
             </h3>
             <p className="text-xl leading-relaxed text-muted-foreground">{scenario.whyConvincing}</p>
           </div>
 
-          <div className="rounded-xl border border-border/60 bg-background/30 p-5">
+          <div className="rounded-xl border border-border/60 bg-background/30 p-5" data-track-id={TRACK_IDS.feedbackCues}>
             <h3 className="mb-3 text-2xl font-semibold text-foreground">
               {authentic ? "Trust signals to recognise" : "Signals that mattered"}
             </h3>
@@ -199,7 +201,7 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
         </div>
 
         {/* Recommended trust level */}
-        <div className="animate-slide-up" style={{ animationDelay: "0.35s" }}>
+        <div className="animate-slide-up" style={{ animationDelay: "0.35s" }} data-track-id={TRACK_IDS.feedbackRecommended}>
           <p className="mb-5 text-2xl text-muted-foreground">Recommended:</p>
           <div className="relative px-3">
             {/* Gradient track */}
@@ -219,6 +221,7 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
 
         {/* Continue button */}
         <Button
+          data-track-id={TRACK_IDS.feedbackNextButton}
           onClick={onContinue}
           size="lg"
           className="w-full rounded-xl bg-emerald-600 py-10 text-3xl hover:bg-emerald-700"
