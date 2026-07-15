@@ -56,6 +56,7 @@ interface FeedbackScreenProps {
   scenario: Scenario
   userTrust: TrustLevel
   onContinue: () => void
+  continueLabel: string
 }
 
 function getCueIcon(cue: string) {
@@ -89,7 +90,7 @@ function getCueIcon(cue: string) {
   return cueIconMap[cue] ?? Shield
 }
 
-export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScreenProps) {
+export function FeedbackScreen({ scenario, userTrust, onContinue, continueLabel }: FeedbackScreenProps) {
   const isCorrect = isCorrectAssessment(userTrust, scenario.recommendedTrust)
   const recommendedSliderValue = getTrustLevelValue(scenario.recommendedTrust)
   const authentic = !scenario.isFake
@@ -254,7 +255,7 @@ export function FeedbackScreen({ scenario, userTrust, onContinue }: FeedbackScre
           size="lg"
           className="w-full rounded-xl bg-emerald-600 py-10 text-3xl hover:bg-emerald-700"
         >
-          Next scenario
+          {continueLabel}
           <ArrowRight className="ml-3 h-9 w-9" />
         </Button>
       </div>
