@@ -36,7 +36,7 @@ import {
   Delete,
 } from "lucide-react"
 
-const HINT_DELAY = 10
+const HINT_LEAD_TIME = 5
 
 const TOUCH_KEYBOARD_ROWS = [
   ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
@@ -250,6 +250,7 @@ export function VideoExperience({
     const video = videoRef.current
     if (!video || !video.duration || Number.isNaN(video.duration)) return
     setVideoProgress((video.currentTime / video.duration) * 100)
+    setShowHint(video.duration - video.currentTime <= HINT_LEAD_TIME)
   }, [])
 
   const clearSearchEffectTimeouts = useCallback(() => {
@@ -273,15 +274,6 @@ export function VideoExperience({
       shareOverlayTimeoutRef.current = null
     }
   }, [])
-
-  // Show hint after a short delay, but do not auto-submit
-  useEffect(() => {
-    if (phase !== "interaction") return
-    const timeout = setTimeout(() => {
-      setShowHint(true)
-    }, HINT_DELAY * 1000)
-    return () => clearTimeout(timeout)
-  }, [phase])
 
   // Reset on scenario change
   useEffect(() => {
@@ -386,6 +378,7 @@ export function VideoExperience({
     }
 
     setVideoProgress(0)
+    setShowHint(false)
     setIsVideoEnded(false)
     setIsVideoPlaying(true)
     pendingReplayRef.current = true
