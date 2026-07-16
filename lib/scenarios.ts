@@ -156,7 +156,7 @@ export const scenarios: Scenario[] = [
     likes: '42,891',
     comments: '8,234',
     shares: '15,672',
-    hashtags: '#politics #afd #germany',
+    hashtags: '#cocacola #product #ffb',
   },
   {
     id: 'tagesschau-video5',
