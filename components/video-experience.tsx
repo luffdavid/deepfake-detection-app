@@ -33,9 +33,16 @@ import {
   X,
   User,
   Play,
+  Delete,
 } from "lucide-react"
 
 const HINT_DELAY = 10
+
+const TOUCH_KEYBOARD_ROWS = [
+  ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+  ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+  ["z", "x", "c", "v", "b", "n", "m"],
+]
 
 function generateRandomCommentUser(): string {
   const prefixes = [
@@ -263,6 +270,8 @@ export function VideoExperience({
   const [following, setFollowing] = useState(false)
   const [showComments, setShowComments] = useState(false)
   const [commentInput, setCommentInput] = useState("")
+  const [showTouchKeyboard, setShowTouchKeyboard] = useState(false)
+  const [keyboardUppercase, setKeyboardUppercase] = useState(true)
   const [showSearchPulse, setShowSearchPulse] = useState(false)
   const [showSimilarContentOverlay, setShowSimilarContentOverlay] = useState(false)
   const [similarContentTags, setSimilarContentTags] = useState<string[]>(() =>
@@ -349,6 +358,8 @@ export function VideoExperience({
     setFollowing(false)
     setShowComments(false)
     setCommentInput("")
+    setShowTouchKeyboard(false)
+    setKeyboardUppercase(true)
     setShowSearchPulse(false)
     setShowSimilarContentOverlay(false)
     setSimilarContentTags(getSimilarContentTags(scenario))
@@ -387,7 +398,23 @@ export function VideoExperience({
       ...prev,
     ])
     setCommentInput("")
+    setShowTouchKeyboard(false)
+    setKeyboardUppercase(true)
   }, [commentInput])
+
+  const handleTouchKey = useCallback((key: string) => {
+    if (key === "backspace") {
+      setCommentInput((value) => value.slice(0, -1))
+      return
+    }
+    if (key === "space") {
+      setCommentInput((value) => `${value} `)
+      return
+    }
+
+    setCommentInput((value) => `${value}${keyboardUppercase ? key.toUpperCase() : key}`)
+    if (keyboardUppercase) setKeyboardUppercase(false)
+  }, [keyboardUppercase])
 
   const handleVideoClick = useCallback(() => {
     const video = videoRef.current
@@ -982,21 +1009,23 @@ export function VideoExperience({
                     onClick={(e) => {
                         e.stopPropagation()
                         setShowComments(false)
+                        setShowTouchKeyboard(false)
                       }
                     } />
-                  <div className="animate-comments-up relative flex max-h-[80%] flex-col rounded-t-2xl bg-zinc-900">
+                  <div className={`animate-comments-up relative flex flex-col rounded-t-2xl bg-zinc-900 ${showTouchKeyboard ? "max-h-[96%]" : "max-h-[80%]"}`}>
                     <div className="flex items-center justify-between border-b border-white/10 px-5 py-4.5">
                       <span className="text-xl font-semibold text-white">{formatCount(commentCount)} Comments</span>
                       <button onClick={(e) => { 
                             e.stopPropagation()
                             setShowComments(false)
+                            setShowTouchKeyboard(false)
                           } 
                         }
                         aria-label="Close">
                         <X className="h-8 w-8 text-white/70" />
                       </button>
                     </div>
-                    <div className="flex-1 space-y-6 overflow-hidden px-5 py-4.5">
+                    <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-5 py-4.5">
                       <div className="flex items-start gap-3.5">
                         <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-zinc-300 to-zinc-500 text-base font-bold text-zinc-900">
                           UB
@@ -1064,10 +1093,14 @@ export function VideoExperience({
                       <input
                         value={commentInput}
                         onChange={(e) => setCommentInput(e.target.value)}
+                        onFocus={() => setShowTouchKeyboard(true)}
+                        onPointerDown={() => setShowTouchKeyboard(true)}
                         onKeyDown={(e) => {
                           if (e.key === "Enter") handleAddComment()
                         }}
+                        inputMode="none"
                         placeholder="Add comment ..."
+                        aria-label="Comment text"
                         className="flex-1 rounded-full bg-zinc-800 px-4.5 py-3 text-lg text-white placeholder:text-white/40 outline-none focus:ring-1 focus:ring-emerald-500"
                       />
                       <button
@@ -1078,6 +1111,63 @@ export function VideoExperience({
                         Post
                       </button>
                     </div>
+                    {showTouchKeyboard && (
+                      <div
+                        className="border-t border-white/10 bg-zinc-950 px-2 pb-3 pt-2"
+                        aria-label="Touch keyboard"
+                        onPointerDown={(e) => e.preventDefault()}
+                      >
+                        {TOUCH_KEYBOARD_ROWS.map((row, rowIndex) => (
+                          <div key={row.join("")} className={`mb-1.5 flex justify-center gap-1 ${rowIndex === 1 ? "px-3" : rowIndex === 2 ? "px-8" : ""}`}>
+                            {row.map((key) => (
+                              <button
+                                key={key}
+                                type="button"
+                                onClick={() => handleTouchKey(key)}
+                                className="flex h-10 min-w-0 flex-1 items-center justify-center rounded-md bg-zinc-700 text-lg font-medium text-white shadow-sm active:bg-zinc-500"
+                                aria-label={`Type ${key}`}
+                              >
+                                {keyboardUppercase ? key.toUpperCase() : key}
+                              </button>
+                            ))}
+                          </div>
+                        ))}
+                        <div className="flex gap-1 px-1">
+                          <button
+                            type="button"
+                            onClick={() => setKeyboardUppercase((value) => !value)}
+                            className={`h-10 rounded-md px-4 text-sm font-semibold ${keyboardUppercase ? "bg-white text-zinc-950" : "bg-zinc-700 text-white"}`}
+                            aria-label="Toggle uppercase"
+                            aria-pressed={keyboardUppercase}
+                          >
+                            Shift
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleTouchKey("space")}
+                            className="h-10 flex-1 rounded-md bg-zinc-700 text-sm text-white active:bg-zinc-500"
+                          >
+                            Space
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleTouchKey("backspace")}
+                            className="flex h-10 w-14 items-center justify-center rounded-md bg-zinc-700 text-white active:bg-zinc-500"
+                            aria-label="Backspace"
+                          >
+                            <Delete className="h-5 w-5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleAddComment}
+                            disabled={!commentInput.trim()}
+                            className="h-10 rounded-md bg-emerald-500 px-4 text-sm font-bold text-zinc-950 disabled:bg-zinc-800 disabled:text-white/30"
+                          >
+                            Post
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
