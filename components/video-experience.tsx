@@ -1157,14 +1157,6 @@ export function VideoExperience({
                           >
                             <Delete className="h-5 w-5" />
                           </button>
-                          <button
-                            type="button"
-                            onClick={handleAddComment}
-                            disabled={!commentInput.trim()}
-                            className="h-10 rounded-md bg-emerald-500 px-4 text-sm font-bold text-zinc-950 disabled:bg-zinc-800 disabled:text-white/30"
-                          >
-                            Post
-                          </button>
                         </div>
                       </div>
                     )}
