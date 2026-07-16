@@ -103,10 +103,13 @@ export function FeedbackScreen({ scenario, userTrust, onContinue, continueLabel 
           data-track-id={TRACK_IDS.feedbackChecklistButton}
           onClick={() => setIsChecklistOpen(true)}
           variant="outline"
-          className="border-emerald-400/50 bg-emerald-400/10 px-6 py-6 text-3xl text-emerald-100 hover:bg-emerald-400/20"
+          className="h-auto border-emerald-400/50 bg-emerald-400/10 px-6 py-3 text-3xl text-emerald-100 hover:bg-emerald-400/20"
         >
           <ClipboardCheck className="mr-3 h-8 w-8" />
-          Need help? Open checklist
+          <span className="flex flex-col items-start leading-tight">
+            <span>Need help?</span>
+            <span>Open checklist</span>
+          </span>
         </Button>
 
         {/* Checklist popup */}
