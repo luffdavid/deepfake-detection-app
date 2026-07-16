@@ -51,10 +51,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${geistMono.variable} bg-background`}>
-      <head>
-        <link rel="dns-prefetch" href="https://pub-5d3075f6487b4d3b9aea4e8c811e8bff.r2.dev" />
-        <link rel="preconnect" href="https://pub-5d3075f6487b4d3b9aea4e8c811e8bff.r2.dev" crossOrigin="" />
-      </head>
       <body className="font-sans antialiased min-h-screen">
         <ExperimentProvider>{children}</ExperimentProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
