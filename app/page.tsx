@@ -40,16 +40,18 @@ export default function IntroPage() {
     setVideosReady(false)
     setLoadingProgress(0)
 
-    const preloadVideo = document.createElement("video")
-    preloadVideo.muted = true
-    preloadVideo.playsInline = true
-    preloadVideo.preload = "auto"
-
     const preloadSingleVideo = (src: string): Promise<boolean> =>
       new Promise<boolean>((resolve) => {
+        const preloadVideo = document.createElement("video")
+        preloadVideo.muted = true
+        preloadVideo.playsInline = true
+        preloadVideo.preload = "auto"
+
         const timeout = setTimeout(() => {
           preloadVideo.removeEventListener("loadeddata", onSuccess)
           preloadVideo.removeEventListener("error", onError)
+          preloadVideo.removeAttribute("src")
+          preloadVideo.load()
           console.warn(`Video preload timeout: ${src}`)
           resolve(false)
         }, 30000)
@@ -58,6 +60,8 @@ export default function IntroPage() {
           clearTimeout(timeout)
           preloadVideo.removeEventListener("loadeddata", onSuccess)
           preloadVideo.removeEventListener("error", onError)
+          preloadVideo.removeAttribute("src")
+          preloadVideo.load()
           resolve(true)
         }
 
@@ -65,6 +69,8 @@ export default function IntroPage() {
           clearTimeout(timeout)
           preloadVideo.removeEventListener("loadeddata", onSuccess)
           preloadVideo.removeEventListener("error", onError)
+          preloadVideo.removeAttribute("src")
+          preloadVideo.load()
           console.warn(`Video preload error: ${src}`)
           resolve(false)
         }
@@ -107,8 +113,6 @@ export default function IntroPage() {
 
     return () => {
       cancelled = true
-      preloadVideo.removeAttribute("src")
-      preloadVideo.load()
     }
   }, [])
 
