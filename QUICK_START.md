@@ -1,292 +1,138 @@
-# Quick Start: Analytics Implementation
+# Quick Start - TrustCheck (Current Version)
 
-## 📋 What Was Implemented
+This quick start reflects the current project state, including:
 
-### 1. Database Layer
-- **File**: `lib/db.ts`
-- PostgreSQL schema with flexible JSONB columns for event properties
-- Functions for storing and querying events
-- Automatic schema initialization on first use
+- Route-based experiment flow
+- PostgreSQL analytics
+- Local face recognition with encrypted server-side templates
+- Internal dashboard (analytics, participants, settings)
 
-### 2. API Endpoint
-- **File**: `app/api/analytics/track/route.ts`
-- POST endpoint that receives events from client
-- Server-side only - never exposes database credentials
-- Stores events in PostgreSQL
+## 1) Prerequisites
 
-### 3. Enhanced Analytics Hook
-- **File**: `hooks/use-analytics.ts`
-- Now tracks events in BOTH Vercel Analytics AND PostgreSQL
-- Maintains exact same event names and properties
-- Async database storage (fire-and-forget)
-- Does not interfere with user experience
+- Node.js LTS
+- pnpm
+- PostgreSQL via Vercel Postgres (or compatible DATABASE_URL)
 
-### 4. Analytics Dashboard
-- **File**: `app/dashboard/analytics/page.tsx`
-- Real-time visualization of analytics data
-- Charts: Pie chart (by type), Line chart (over time), Bar chart (counts)
-- Recent events table
-- Session statistics
-
-### 5. Supporting Files
-- `app/dashboard/layout.tsx` - Dashboard layout wrapper
-- `app/api/analytics/init/route.ts` - Manual database initialization
-- `ANALYTICS_GUIDE.md` - Comprehensive documentation
-- `setup-analytics.sh` - Automated setup script
-
----
-
-## 🎯 Events Tracked (No Changes to Existing Logic)
-
-All original event names and properties are **preserved exactly**:
-
-| Event Name | Properties | Triggered On |
-|---|---|---|
-| `session_completed` | `{ sessionId }` | User completes all scenarios |
-| `video_replay` | `{ sessionId, videoId }` | User replays a video |
-| `slider_submitted` | `{ sessionId, videoId, sliderValue, isCorrect }` | User submits assessment |
-
----
-
-## 🚀 Getting Started (Local Development)
-
-### Step 1: Set Up PostgreSQL Connection
-
-```bash
-# Copy the template
-cp .env.example .env.local
-
-# Add your Vercel Postgres DATABASE_URL to .env.local
-# Get it from: Vercel Dashboard → Storage → Postgres → Connection String
-```
-
-### Step 2: Install Dependencies
+## 2) Install
 
 ```bash
 pnpm install
 ```
 
-This adds `@vercel/postgres` package (if not already installed).
+## 3) Configure Environment
 
-### Step 3: Start Development Server
+Create local env file:
+
+```bash
+cp .env.example .env.local
+```
+
+Add at least:
+
+```bash
+DATABASE_URL=postgres://...
+```
+
+If you want face recognition endpoints (/api/face/*), also add:
+
+```bash
+# Base64-encoded 32-byte key (AES-256)
+FACE_TEMPLATE_ENC_KEY=...
+
+# Optional, defaults to 1
+FACE_TEMPLATE_ENC_KEY_VERSION=1
+```
+
+If you want to use dashboard settings deletion tools, also add:
+
+```bash
+ADMIN_API_TOKEN=your-strong-admin-token
+```
+
+Optional hardening:
+
+```bash
+FACE_API_ALLOWED_ORIGINS=https://your-domain.com,https://your-admin-domain.com
+```
+
+## 4) Run
 
 ```bash
 pnpm dev
 ```
 
-The database schema will be **automatically initialized** on first access to:
-- `/api/analytics/track` (POST)
-- `/dashboard/analytics` (GET)
+Open:
 
-### Step 4: Test Event Tracking
+- Participant app: http://localhost:3000
+- Analytics dashboard: http://localhost:3000/dashboard/analytics
+- Participants dashboard: http://localhost:3000/dashboard/participants
+- Settings dashboard: http://localhost:3000/dashboard/settings
 
-**Enable Debug Mode** (optional):
+## 5) Verify Core Flow
+
+1. Start at / and click start.
+2. Go through scenario pages under /experiment/[scenario].
+3. Submit at least one trust rating.
+4. Reach /complete.
+5. Check /dashboard/analytics for recorded events.
+
+Expected key events:
+
+- slider_submitted
+- video_replay
+- skip_to_results
+- session_completed
+- checklist_viewed
+
+## 6) Optional Debug Flags
+
+In browser devtools console:
+
 ```javascript
-// In browser console
 localStorage.setItem('DEBUG_ANALYTICS', 'true')
+localStorage.setItem('DEBUG_SESSION', 'true')
+localStorage.setItem('FACE_DEBUG', 'true')
+location.reload()
 ```
 
-**Use the App**:
-- Go to http://localhost:3000
-- Complete a scenario and submit your assessment
-- Watch the browser console for debug logs
+## 7) Database Initialization Notes
 
-**View Recorded Events**:
-- Visit http://localhost:3000/dashboard/analytics
-- See all tracked events with charts and statistics
+- Analytics schema is initialized from server code paths (for example when loading dashboard analytics).
+- Manual init route is available at GET /api/analytics/init.
 
----
+## 8) Security Checklist Before Production
 
-## 📊 Database Schema
+1. Protect all /dashboard/* routes with authentication/authorization.
+2. Keep .env.local out of git.
+3. Rotate FACE_TEMPLATE_ENC_KEY and ADMIN_API_TOKEN using your secrets workflow.
+4. Restrict face API origins via FACE_API_ALLOWED_ORIGINS where possible.
+5. Review the analytics init route policy for your deployment model.
 
-```sql
-analytics_events (
-  id                UUID           -- Unique event ID
-  event_name        VARCHAR(255)   -- Event name ('session_completed', etc.)
-  properties        JSONB          -- Flexible event properties
-  session_id        VARCHAR(255)   -- Session tracking
-  created_at        TIMESTAMP      -- Event timestamp
-  created_at_date   DATE           -- For grouping by date
-)
-```
+## 9) Troubleshooting
 
-**Why JSONB?** Different events have different properties. JSONB allows flexible storage without extra tables.
+### Dashboard shows loading error
 
----
+- Confirm DATABASE_URL is set correctly.
+- Confirm database is reachable from runtime.
 
-## 🔄 How Events Flow
+### Face endpoints return encryption_unavailable
 
-```
-User clicks slider → Submit button
-        ↓
-useAnalytics().trackSliderSubmitted()
-        ├→ track() [Vercel Analytics]
-        ├→ fetch('/api/analytics/track') [Database]
-        └→ PostgreSQL: INSERT row
-        
-Later: /dashboard/analytics queries data and shows charts
-```
+- FACE_TEMPLATE_ENC_KEY is missing or invalid.
+- It must decode from base64 to exactly 32 bytes.
 
----
+### No analytics events appear
 
-## ✅ Verification Checklist
+- Check browser network calls to /api/analytics/track.
+- Enable DEBUG_ANALYTICS and retry.
 
-- [x] Existing event names unchanged
-- [x] Existing event properties unchanged  
-- [x] Vercel Analytics still works
-- [x] Events also stored in PostgreSQL
-- [x] Dashboard accessible at `/dashboard/analytics`
-- [x] No database credentials in client code
-- [x] Database operations server-only
-- [x] Graceful error handling (analytics doesn't break app)
+### pnpm lint fails with eslint not found
 
----
+- Install eslint in the project dev dependencies or adapt the lint script.
 
-## 🔐 Security Notes
+## 10) File Map
 
-⚠️ **Before Production:**
-
-1. **Protect Dashboard**
-   ```typescript
-   // Add authentication check in app/dashboard/analytics/page.tsx
-   const session = await auth()
-   if (!session?.user?.isAdmin) redirect('/')
-   ```
-
-2. **Secure Database Credentials**
-   - Use Vercel Environment Variables (already configured)
-   - Never commit `.env.local`
-   - Rotate credentials periodically
-
-3. **Disable Init Endpoint** (production)
-   - Remove or require token: `app/api/analytics/init/route.ts`
-
----
-
-## 🧪 Testing
-
-### Manual Testing
-```bash
-# 1. Start server
-pnpm dev
-
-# 2. Open http://localhost:3000
-# 3. Complete a scenario (slider_submitted event)
-# 4. Reach summary screen (session_completed event)
-# 5. Visit http://localhost:3000/dashboard/analytics
-# 6. Verify events appear in table and charts
-```
-
-### Debug Mode
-```javascript
-// Browser console
-localStorage.setItem('DEBUG_ANALYTICS', 'true')
-// Now every event prints to console
-```
-
-### Check Database Directly
-```bash
-# Using Vercel CLI
-vercel postgres connect
-
-# Then query
-SELECT * FROM analytics_events ORDER BY created_at DESC LIMIT 10;
-```
-
----
-
-## 📈 Deployment (Vercel)
-
-### Prerequisites
-1. Vercel Postgres database created in project
-2. Environment variables automatically synced to Vercel
-
-### Deploy
-```bash
-# These commands handle everything
-git add .
-git commit -m "Add analytics database"
-git push
-
-# Vercel auto-deploys with DATABASE_URL env var
-# Dashboard will be at: https://your-project.vercel.app/dashboard/analytics
-```
-
-### First Access
-When you first visit `/dashboard/analytics` on Vercel, the schema is automatically created.
-
----
-
-## 🐛 Troubleshooting
-
-### "Cannot find module '@vercel/postgres'"
-```bash
-pnpm install  # Make sure to install after package.json update
-```
-
-### "Error: DATABASE_URL not found"
-```bash
-# Check .env.local exists with DATABASE_URL
-cat .env.local | grep DATABASE_URL
-
-# Or on Vercel, check project settings → Environment Variables
-```
-
-### No events appearing in dashboard
-1. Check browser console for errors (F12)
-2. Enable debug: `localStorage.setItem('DEBUG_ANALYTICS', 'true')`
-3. Check Network tab - `/api/analytics/track` should return 200
-4. Check server logs for API errors
-
-### Dashboard shows "Error Loading Dashboard"
-1. DATABASE_URL is required
-2. PostgreSQL must be accessible from Vercel
-3. Check server logs: `vercel logs`
-
----
-
-## 📚 Files Changed Summary
-
-### Created (NEW)
-- `lib/db.ts` - Database utilities
-- `app/api/analytics/track/route.ts` - Event tracking endpoint
-- `app/api/analytics/init/route.ts` - Schema initialization
-- `app/dashboard/layout.tsx` - Dashboard layout
-- `app/dashboard/analytics/page.tsx` - Analytics dashboard
-- `ANALYTICS_GUIDE.md` - Full documentation
-- `setup-analytics.sh` - Setup automation
-- `QUICK_START.md` - This file
-
-### Modified (UPDATED)
-- `hooks/use-analytics.ts` - Extended with DB tracking
-- `package.json` - Added `@vercel/postgres`
-
-### Unchanged ✅
-- All event names (3 total)
-- All event properties
-- All component logic
-- Main app functionality
-
----
-
-## 🎓 Learning Resources
-
-- **Vercel Postgres Docs**: https://vercel.com/docs/storage/postgres
-- **Recharts Documentation**: https://recharts.org/
-- **Next.js Server Functions**: https://nextjs.org/docs/app/building-your-application/rendering/server-components
-
----
-
-## ❓ Questions?
-
-See `ANALYTICS_GUIDE.md` for:
-- Detailed architecture explanation
-- Advanced configuration
-- Common issues and solutions
-- Privacy & security considerations
-
----
-
-**Status**: ✅ Production Ready  
-**Last Updated**: 2024  
-**Tested With**: Node.js LTS, pnpm, Vercel Postgres
+- Main flow and routing: app/page.tsx, app/experiment/[scenario]/page.tsx, app/complete/page.tsx
+- Experiment state/session: components/experiment-provider.tsx, hooks/use-session-tracking.ts
+- Analytics: hooks/use-analytics.ts, app/api/analytics/track/route.ts, lib/db.ts
+- Face recognition: hooks/use-face-recognition.ts, app/api/face/*, lib/face/server/*
+- Dashboard: app/dashboard/analytics/page.tsx, app/dashboard/participants/page.tsx, app/dashboard/settings/*

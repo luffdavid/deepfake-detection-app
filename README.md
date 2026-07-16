@@ -1,162 +1,190 @@
 # TrustCheck - Deepfake Detection Experience
 
-![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
-![React](https://img.shields.io/badge/React-19-149eca?logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6?logo=typescript&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06b6d4?logo=tailwindcss&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green)
+Interactive kiosk-style web app for deepfake awareness research in the LMU Usable Security practical. Participants rate short social-style videos, get immediate feedback, and finish with practical media-literacy guidance.
 
-Interactive, web app for PSUIs (Public Security User Interfaces): users rate the trustworthiness of deepfake and real videos and receive immediate, educational feedback on deepfakes and misinformation.
 
-## 1. Project 
-This project has been created for the Usable Security Master Practical @Ludwig-Maximilians-University (LMU).
-### Core Features
+## What The App Does
 
-- Guided multi-screen flow: Intro -> Video Rating -> Feedback -> Summary.
-- TikTok-inspired video experience with comments, reactions, and a trust slider.
-- 5 predefined scenarios (fake + authentic) including explanations, cues, and real-world actions.
-- Immediate per-decision feedback (correct/incorrect) with a security checklist.
-- Results view with an accuracy ring, clip review carousel, and practical takeaways.
-- Session tracking for public displays, including automatic timeout reset.
-- Event tracking via Vercel Analytics
-- Visually polished,kiosk UI with Tailwind v4 design tokens and animations.
+- Presents 5 scenarios (manipulated and authentic) in a social feed-like interface
+- Collects trust ratings via slider and shows per-scenario feedback
+- Shows end-of-run review with score and checklist
+- Tracks kiosk sessions with inactivity warning and auto-reset
+- Associates repeated attempts with locally recognized participants
 
-## 2. Tech Stack & Libraries
+## Current Route Flow
 
-| Technology / Library | Responsibility in Project |
-| --- | --- |
-| Next.js 16 (App Router) | Core framework, routing, build pipeline, SSR infrastructure |
-| React 19 + TypeScript | Component architecture, state management, type safety |
-| Tailwind CSS v4 + PostCSS | Utility-first styling, theme tokens, responsive layouts |
-| shadcn/ui | Reusable UI building blocks built on Radix primitives |
-| Radix UI | Accessibility-focused primitives (dialogs, sliders, tabs, and more) |
-| Lucide React | Consistent icon system for UI and feedback communication |
-| Vercel Analytics | Production event tracking and usage insights |
+Participant journey:
 
-## 3. Architecture / How It Works
+1. / (intro)
+2. /experiment/[scenario] (video phase -> feedback phase, repeated per scenario)
+3. /complete (summary)
+4. restart -> /
 
-The application follows a state-driven single-flow architecture. In [app/page.tsx](app/page.tsx), a `currentScreen` state orchestrates the full user experience.
+Internal routes:
 
-```mermaid
-flowchart LR
-      A[IntroScreen] -->|Start| B[VideoExperience]
-      B -->|Slider Submit| C[FeedbackScreen]
-      C -->|Next Scenario| B
-      C -->|Last Scenario| D[SummaryScreen]
-      D -->|Start again| A
+- /dashboard/analytics
+- /dashboard/participants
+- /dashboard/settings
 
-      E[lib/scenarios.ts] --> B
-      E --> C
-      E --> D
+## Architecture Overview
 
-      F[hooks/use-session-tracking.ts] --> B
-      F --> D
+### 1. Experiment Routing And Tracking Metadata
 
-      G[hooks/use-analytics.ts] --> B
-      G --> D
-```
+- lib/experiment-config.ts is the single source of truth for:
+  - page ids
+  - route mapping
+  - next-route flow
+  - track-id sets (AOI-ready metadata)
+- hooks/use-page-tracking.ts writes page metadata to html data attributes (no data transmission)
+- lib/track-ids.ts defines stable technical ids for tracking-relevant UI areas
 
-### Data Flow at a Glance
+### 2. Session And Experiment State
 
-1. Scenario data is centrally defined in [lib/scenarios.ts](lib/scenarios.ts).
-2. In [components/video-experience.tsx](components/video-experience.tsx), users rate trustworthiness via slider.
-3. In [components/feedback-screen.tsx](components/feedback-screen.tsx), input is evaluated against `recommendedTrust`.
-4. Results are aggregated in [app/page.tsx](app/page.tsx) and visualized in [components/summary-screen.tsx](components/summary-screen.tsx).
-5. Session and analytics hooks capture activity and events throughout the complete flow.
+- components/experiment-provider.tsx owns session id + scenario results
+- hooks/use-session-tracking.ts handles inactivity warning and timeout reset
+- Results persist in sessionStorage for the active browser tab session
 
-> Note: The app is optimized for public-display/kiosk usage, touch interaction, and a clear linear journey so it may look weird on other displays.
+### 3. Analytics Pipeline
 
-## 4. Requirements & Installation
+Client side:
 
-### Prerequisites
+- hooks/use-analytics.ts
+- Tracks to Vercel Analytics and POST /api/analytics/track in parallel
 
-- Node.js (recommended: current LTS, at least compatible with Next.js 16)
-- pnpm 8+
-- Modern browser (Chrome, Edge, Safari) for video playback and touch interaction
+Server side:
 
-### Installation (Step by Step)
+- app/api/analytics/track/route.ts
+- lib/db.ts
+- app/dashboard/analytics/page.tsx
 
-1. Clone the repository
+### 4. Face Recognition Pipeline
 
-```bash
-git clone <repository-url>
-cd deepfake-detection-app
-```
+Client side local processing:
 
-2. Install dependencies
+- hooks/use-face-recognition.ts
+- components/face/face-recognition-controller.tsx
+- Uses @vladmandic/human in browser
+
+Server side matching and storage:
+
+- app/api/face/recognize/route.ts
+- app/api/face/enroll/route.ts
+- app/api/face/attempt/route.ts
+- lib/face/server/*.ts
+
+Security model highlights:
+
+- Templates are encrypted server-side with AES-256-GCM
+- No raw frames or descriptors are persisted in browser storage
+- Only pseudonymous participant ids are used in analytics views
+
+## Events Currently Tracked
+
+Core experiment events:
+
+- session_completed
+- video_replay
+- slider_submitted
+- skip_to_results
+
+Additional UX event:
+
+- checklist_viewed
+
+## Environment Variables
+
+Required for analytics and dashboard data:
+
+- DATABASE_URL
+
+Recommended / optional from Vercel Postgres templates:
+
+- DATABASE_URL_UNPOOLED
+- POSTGRES_URL
+- POSTGRES_URL_NON_POOLING
+
+Required for face template encryption:
+
+- FACE_TEMPLATE_ENC_KEY
+  - Base64-encoded 32-byte key (AES-256)
+
+Optional key metadata:
+
+- FACE_TEMPLATE_ENC_KEY_VERSION (default: 1)
+
+Required for dashboard settings admin actions:
+
+- ADMIN_API_TOKEN
+
+Optional cross-origin allowlist for face APIs:
+
+- FACE_API_ALLOWED_ORIGINS
+
+## Local Development
+
+1. Install dependencies
 
 ```bash
 pnpm install
 ```
 
+2. Create local environment file
 
+```bash
+cp .env.example .env.local
+```
 
-3. Start the development server
+3. Add required variables to .env.local
+
+- DATABASE_URL
+- FACE_TEMPLATE_ENC_KEY (if you use face recognition endpoints)
+- ADMIN_API_TOKEN (if you use dashboard settings destructive actions)
+
+4. Start dev server
 
 ```bash
 pnpm dev
 ```
 
-4. Open the app in your browser
+5. Open app
 
-```text
-http://localhost:3000
-```
+- http://localhost:3000
 
-> Critical note: Analytics mounting in [app/layout.tsx](app/layout.tsx#L55) is only enabled in `production`. Local runs therefore do not show Vercel Analytics events in production dashboards by default.
->
-> Critical note: In [hooks/use-session-tracking.ts](hooks/use-session-tracking.ts#L4), timeout is currently set to 60 seconds (`SESSION_TIMEOUT_MS = 60 * 1000`) 
+6. Open dashboard
 
-## 5. Usage
+- http://localhost:3000/dashboard/analytics
+- http://localhost:3000/dashboard/participants
+- http://localhost:3000/dashboard/settings
 
-### Development
+## Debug Flags
 
-```bash
-pnpm dev
-```
+In browser devtools console:
 
-### Linting
-
-```bash
-pnpm lint
-```
-
-### Production Build + Start
-
-```bash
-pnpm build
-pnpm start
-```
-
-### Enable Analytics/Session Debug in Browser
-
-```js
-// Run in browser console
+```javascript
 localStorage.setItem('DEBUG_ANALYTICS', 'true')
 localStorage.setItem('DEBUG_SESSION', 'true')
+localStorage.setItem('FACE_DEBUG', 'true')
 location.reload()
 ```
 
-### Project Structure (Key Areas)
+## Scripts
 
-```text
-app/
-   layout.tsx              # Root layout + Analytics mounting in production
-   page.tsx                # Main state and screen orchestration
-components/
-   intro-screen.tsx        # Entry screen
-   video-experience.tsx    # Video interaction + slider + social mockup
-   feedback-screen.tsx     # Correctness + educational feedback
-   summary-screen.tsx      # Accuracy + review + takeaways
-   ui/                     # shadcn/Radix-based UI components
-hooks/
-   use-session-tracking.ts # Session ID + timeout behavior
-   use-analytics.ts        # Event tracking wrapper
-lib/
-   scenarios.ts            # Scenario data + evaluation logic
-```
+- pnpm dev - run local development server
+- pnpm build - production build
+- pnpm start - run production build
+- pnpm lint - eslint .
 
+## Operational Notes
 
-### License
+- app/layout.tsx mounts Vercel Analytics only in production
+- app/api/analytics/init/route.ts exists for manual analytics schema initialization
+- Dashboard routes are internal tools and should be protected before public deployment
+- Face API origin checks and in-memory rate limiting are implemented server-side
 
-This project is licensed under the MIT License.
+## Quick Start Doc
+
+See QUICK_START.md for an operator-focused setup and test checklist.
+
+## License
+
+MIT
