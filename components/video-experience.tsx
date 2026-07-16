@@ -1174,7 +1174,7 @@ export function VideoExperience({
             </div>
 
             {/* Video progress bar */}
-            {!showShareOverlay && (
+            {!showShareOverlay && !showComments && (
               <div className="absolute bottom-16 left-0 right-0 z-30 h-2 bg-white/20">
                 <div
                   className="h-full bg-white"
