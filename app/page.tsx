@@ -6,6 +6,7 @@ import { IntroScreen } from "@/components/intro-screen"
 import { useExperiment } from "@/components/experiment-provider"
 import { usePageTracking } from "@/hooks/use-page-tracking"
 import { scenarios } from "@/lib/scenarios"
+import { hasPreloadedVideos, preloadVideosOnce } from "@/lib/video-preload"
 import { INTRO_ROUTE, PAGE_VERSION, getExperimentRoutes, getPageByRoute } from "@/lib/experiment-config"
 
 export default function IntroPage() {
@@ -36,66 +37,24 @@ export default function IntroPage() {
       return
     }
 
+    if (hasPreloadedVideos()) {
+      setVideosReady(true)
+      setLoadingProgress(100)
+      return
+    }
+
     let cancelled = false
     setVideosReady(false)
     setLoadingProgress(0)
 
-    const preloadSingleVideo = (src: string): Promise<boolean> =>
-      new Promise<boolean>((resolve) => {
-        const preloadVideo = document.createElement("video")
-        preloadVideo.muted = true
-        preloadVideo.playsInline = true
-        preloadVideo.preload = "auto"
-
-        const timeout = setTimeout(() => {
-          preloadVideo.removeEventListener("loadeddata", onSuccess)
-          preloadVideo.removeEventListener("error", onError)
-          preloadVideo.removeAttribute("src")
-          preloadVideo.load()
-          console.warn(`Video preload timeout: ${src}`)
-          resolve(false)
-        }, 30000)
-
-        const onSuccess = () => {
-          clearTimeout(timeout)
-          preloadVideo.removeEventListener("loadeddata", onSuccess)
-          preloadVideo.removeEventListener("error", onError)
-          preloadVideo.removeAttribute("src")
-          preloadVideo.load()
-          resolve(true)
-        }
-
-        const onError = () => {
-          clearTimeout(timeout)
-          preloadVideo.removeEventListener("loadeddata", onSuccess)
-          preloadVideo.removeEventListener("error", onError)
-          preloadVideo.removeAttribute("src")
-          preloadVideo.load()
-          console.warn(`Video preload error: ${src}`)
-          resolve(false)
-        }
-
-        preloadVideo.addEventListener("loadeddata", onSuccess, { once: true })
-        preloadVideo.addEventListener("error", onError, { once: true })
-        preloadVideo.src = src
-        preloadVideo.load()
-      })
-
     const warmAllVideos = async () => {
-      const promises = videoSources.map((src, index) => {
-        return preloadSingleVideo(src).then((success) => {
-          if (!cancelled) {
-            setLoadingProgress((prev) => {
-              const newProgress = ((index + 1) / videoSources.length) * 100
-              return Math.max(prev, newProgress)
-            })
-          }
-          return success
-        })
-      })
-
       try {
-        await Promise.all(promises)
+        await preloadVideosOnce(videoSources, (progress) => {
+          if (!cancelled) {
+            setLoadingProgress((prev) => Math.max(prev, progress))
+          }
+        })
+
         if (!cancelled) {
           await new Promise((resolve) => setTimeout(resolve, 500))
           setVideosReady(true)

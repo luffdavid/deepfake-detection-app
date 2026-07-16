@@ -41,6 +41,14 @@ export default function ExperimentScenarioPage() {
     setMounted(true)
   }, [])
 
+  useEffect(() => {
+    router.prefetch(COMPLETE_ROUTE)
+    router.prefetch(INTRO_ROUTE)
+    if (page?.nextRoute) {
+      router.prefetch(page.nextRoute)
+    }
+  }, [page?.nextRoute, router])
+
   // Reset the phase whenever the scenario route changes.
   useEffect(() => {
     setPhase("video")

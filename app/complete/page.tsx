@@ -21,6 +21,10 @@ export default function CompletePage() {
     setMounted(true)
   }, [])
 
+  useEffect(() => {
+    router.prefetch(INTRO_ROUTE)
+  }, [router])
+
   // Associate this attempt's performance with the locally recognized
   // participant (no-op if none recognized / server unreachable). Fires once.
   const recordedRef = useRef(false)

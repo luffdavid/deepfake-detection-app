@@ -607,7 +607,7 @@ export function VideoExperience({
                   autoPlay
                   muted
                   playsInline
-                  preload="metadata"
+                  preload="auto"
                   onTimeUpdate={handleTimeUpdate}
                   onEnded={() => {
                     setIsVideoEnded(true)
