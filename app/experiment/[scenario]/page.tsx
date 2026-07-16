@@ -108,7 +108,7 @@ export default function ExperimentScenarioPage() {
         onClick={handleRestartToIntro}
         className="fixed bottom-10 left-10 z-50 rounded-2xl border border-border bg-card/90 px-8 py-5 text-xl font-semibold text-muted-foreground shadow-xl backdrop-blur transition-colors hover:bg-card hover:text-foreground"
       >
-        Restart
+        Restart experience
       </button>
 
       <button
