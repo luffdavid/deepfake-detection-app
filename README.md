@@ -156,6 +156,39 @@ pnpm dev
 - http://localhost:3000/dashboard/participants
 - http://localhost:3000/dashboard/settings
 
+## Windows Kiosk Mode
+
+The deployed prototype can be run as a full-screen interactive kiosk using Microsoft Edge and Windows Assigned Access.
+
+Deployed prototype:
+
+* https://deepfake-detection-lmu.vercel.app/
+
+### Set Up the Kiosk
+
+1. Open **Windows Settings**.
+2. Navigate to **Accounts > Other users**.
+3. Under **Set up a kiosk**, select **Get started**.
+4. Create a new local kiosk account or select an existing standard account.
+5. Select **Microsoft Edge** as the kiosk application.
+6. Choose **Digital sign or interactive display** so that the prototype is displayed as a single full-screen website.
+7. Enter the following URL:
+
+```text
+https://deepfake-detection-lmu.vercel.app/
+```
+
+8. Complete the setup and sign out of the current Windows account.
+9. Sign in to the newly created kiosk account. Microsoft Edge should open the prototype automatically in full-screen mode.
+
+To leave the kiosk account, press `Ctrl + Alt + Delete` and sign out.
+
+> The Windows kiosk configuration is available on supported Windows Pro, Education, Enterprise, and IoT Enterprise editions. Administrator permissions are required to configure the kiosk account.
+
+For additional information, see the Microsoft documentation on configuring a single-app kiosk with Assigned Access:
+
+* https://learn.microsoft.com/en-us/windows/configuration/assigned-access/quickstart-kiosk
+
 ## Debug Flags
 
 In browser devtools console:
